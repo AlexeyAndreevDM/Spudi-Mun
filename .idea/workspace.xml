@@ -1,7 +1,186 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="">
+    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="Scratched version">
+      <change afterPath="$PROJECT_DIR$/Video-PyGame-main/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Video-PyGame-main/assets/Board.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Video-PyGame-main/assets/O.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Video-PyGame-main/assets/Roboto-Regular.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Video-PyGame-main/assets/Tic Tac Toe Background.psd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Video-PyGame-main/assets/Winning Line.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Video-PyGame-main/assets/Winning O.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Video-PyGame-main/assets/Winning X.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Video-PyGame-main/assets/X.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Video-PyGame-main/function1.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Video-PyGame-main/pyvidplayer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pyvidplayer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/white_cube.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 100.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 101.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 102.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 103.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 104.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 105.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 106.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 107.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 190.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 21.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 22.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 23.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 24.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 248.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 25.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 26.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 27.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 28.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 283.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 287.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 29.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 30.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 31.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 310.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 32.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 322.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 323.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 328.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 33.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 34.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 345.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 346.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 35.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 36.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 369.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 37.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 370.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 38.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 39.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 40.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 400.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 401.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 402.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 403.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 404.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 405.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 406.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 41.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 42.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 43.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 44.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 448.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 449.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 45.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 450.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 451.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 452.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 453.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 454.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 455.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 456.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 457.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 458.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 459.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 46.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 460.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 461.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 462.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 47.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 479.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 48.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 49.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 50.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 51.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 52.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 53.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 54.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 55.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 56.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 57.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 58.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 59.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 60.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 61.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 62.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 63.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 64.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 65.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 66.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 67.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 68.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 69.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 70.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 71.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 72.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 73.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 74.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 75.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 76.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 77.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 78.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 79.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 80.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 81.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 82.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 83.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 84.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 85.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 86.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 87.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 88.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 89.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 90.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 91.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 92.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 93.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 94.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 95.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 96.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 97.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 98.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тема 99.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 123.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 124.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 125.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 126.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 127.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 128.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 129.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 130.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 131.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 132.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 133.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 134.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 135.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 136.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 137.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 138.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 139.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 140.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 141.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 142.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 17.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 18.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 19.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 20.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 21.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 22.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 23.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 24.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 25.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 26.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 27.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 28.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 29.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 30.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 31.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 32.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 33.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 34.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 35.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Тима 36.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -16,13 +195,17 @@
   "associatedIndex": 6
 }]]></component>
   <component name="ProjectId" id="35VY2GrW7XSdhzOCk1SUvDh4LgA" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Python.main.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true"
   }
@@ -67,14 +250,28 @@
       <option name="presentableId" value="Default" />
       <updated>1763196496401</updated>
     </task>
+    <task id="LOCAL-00001" summary="Scratched version">
+      <option name="closed" value="true" />
+      <created>1763196935680</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1763196935681</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Scratched version" />
+    <option name="LAST_COMMIT_MESSAGE" value="Scratched version" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>8</line>
+          <line>916</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
