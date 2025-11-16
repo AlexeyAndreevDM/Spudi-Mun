@@ -47,7 +47,7 @@ def load_image_safe(path, default_image="white_cube.png", convert_alpha=True):
 
 
 def main_menu():
-    st = 0
+    st = 5
     global cut_scene
     global im
     global diff
@@ -56,8 +56,14 @@ def main_menu():
     global subst
     expectation = randint(500, 600)
     # randint(1500, 2600)
+
+    vp = 0
+    d_arc = 0.0
+    time = 0
+    subst = 'OFF'#
+
     pygame.mixer.music.load("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Music/Web Launch.mp3")
-    pygame.mixer.music.play()
+    # pygame.mixer.music.play()#
     while True:
         if st == 0:
             font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
@@ -501,9 +507,6 @@ def main_menu():
                     if event1.key == pygame.K_x:
                         pygame.mixer.music.pause()
                         st = 5
-                        vp = 0
-                        d_arc = 0.0
-                        time = 0
                     if event1.key == pygame.K_o:
                         st = 3
                 if event1.type == pygame.KEYDOWN:
@@ -552,7 +555,7 @@ def main_menu():
                             pi + d_arc, 11 * pi / 6 + d_arc)
             pygame.display.update()
             pygame.time.wait(7)
-            time += 7
+            time += 100
             if time >= expectation:
                 if vp == 0:
                     # intro()

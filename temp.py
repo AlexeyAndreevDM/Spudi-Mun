@@ -43,20 +43,23 @@ def load_image_safe(path, default_image=PLACEHOLDER_IMAGE, convert_alpha=True):
 
 
 def main_menu():
-    st = 0
+    st = 5  # deafult st = 0
     global cut_scene
     global im
     global DIFFICULTY
     global MUSIC_STATUS
     global CURRENT_SUIT
     global SUBTITLES
-    intro_start_time = 0  # или None, тогда проверяется на None
+    intro_start_time = 0
+    vp = 0
+    d_arc = 0.0
+    time = 0
 
     expectation = randint(500, 600)
 
     # Загрузка музыки главного меню
     pygame.mixer.music.load(get_music_path("Web Launch.mp3"))
-    pygame.mixer.music.play(-1)
+    # pygame.mixer.music.play(-1) # разбанить
 
     clock = pygame.time.Clock()
 
@@ -470,9 +473,6 @@ def main_menu():
                     if event1.key == pygame.K_x:
                         pygame.mixer.music.stop()
                         st = 5
-                        vp = 0
-                        d_arc = 0.0
-                        time = 0
                     if event1.key == pygame.K_o:
                         st = 3
                     if event1.key == pygame.K_ESCAPE:
@@ -514,13 +514,13 @@ def main_menu():
 
             # pygame.display.update()
             pygame.time.wait(7)
-            time += 7
+            # time += 7
+            time += 100#
 
             if time >= expectation:
                 if vp == 0:
                     # Здесь будет переход к игре
-                    # intro() или main_game()
-                    pass
+                    main_game()
 
         # Обработка событий выхода
         for event in pygame.event.get():
@@ -531,8 +531,8 @@ def main_menu():
                 pygame.quit()
                 sys.exit()
 
-        clock.tick(60) # Ограничиваем до 60 FPS
-        pygame.display.update() # единое обновление
+        clock.tick(60)  # Ограничиваем до 60 FPS
+        pygame.display.update()  # единое обновление
 
 
 # def intro():
@@ -1082,46 +1082,37 @@ def menu():
 
 
 def main_game():
-    global sdvigy
-    global imh
-    global imset
-    global diff
-    global musst
-    global suit
-    global st
-    global cut_scene
-    global subst
-    cut_scene += 1
+    global sdvigy, imh, imset, DIFFICULTY, MUSIC_STATUS, CURRENT_SUIT, st, CURRENT_CUTSCENE, SUBTITLES
+
+    # ДОБАВЬТЕ ЭТИ ПЕРЕМЕННЫЕ ДЛЯ УПРАВЛЕНИЯ:
+    scroll_speed = SCROLL_SPEED
+    player_speed = PLAYER_SPEED
+
+    CURRENT_CUTSCENE += 1
     st = -100
-    bg = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/"
-                         "Textures/fhomewthspandpavmnt.jpg", convert_alpha=False)
+
+    # Загрузка фонов с использованием конфига
+    bg = load_image_safe(get_image_path("backgrounds", "fhomewthspandpavmnt.jpg"), convert_alpha=False)
     bg = pygame.transform.scale(bg, (1414, 2000))
-    road = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/"
-                           "Textures/дорога.jpeg", convert_alpha=False)
+    road = load_image_safe(get_image_path("backgrounds", "дорога.jpeg"), convert_alpha=False)
     road = pygame.transform.scale(road, (2011, 354))
+
     sdvigx = 0
-    tiles = math.ceil(display_w / bg.get_width()) + 1
+    tiles = math.ceil(SCREEN_WIDTH / bg.get_width()) + 1
 
-    if diff == 'FN':
+    # Использование множителя сложности из конфига
+    if DIFFICULTY == 'FN':
         dif_k = 0.5
-    elif diff == 'TA':
-        dif_k = 1
-    elif diff == 'S':
+    elif DIFFICULTY == 'TA':
+        dif_k = 1.0
+    elif DIFFICULTY == 'S':
         dif_k = 1.8
-    elif diff == 'U':
-        dif_k = 3
+    elif DIFFICULTY == 'U':
+        dif_k = 3.0
 
-    subtitles = ['Yuri Watanabe: Captain Watanabe', 'Spider-Man: Did you take him down yet?', 'Yuri Watanabe: No',
-                 'Yuri Watanabe: We’re at Fisk Tower, but still waiting on the warrant',
-                 'Spider-Man: Mind if I join in on the fun?',
-                 'Yuri Watanabe: You know how his lawyers are… these one needs to go by the book.',
-                 'Spider-Man: C’mon Yuri, I’ve been waiting eight years for this.',
-                 'Yuri Watanabe: You really want to help?',
-                 'Yuri Watanabe: Head to Times Square, sounds like his guys are',
-                 'trying to keep my backup from reaching the scene…', 'Spider-Man: You got it - almost there!']
-
-    time_subtitles = ['1000 4000', '4000 5200', '5200 6000', '6000 8500', '8500 11000', '11000 14000', '14000 17000',
-                      '17000 18500', '18500 22000', '22000 24000', '24000 26200']
+    # Субтитры из конфига
+    subtitles = SUBTITLES_TEXT
+    time_subtitles = SUBTITLES_TIMING
 
     time_wait = 0
     ticks, sp_ticks, podst, zvukst, thwipsound, dif_image, dif_image_m, hp = 0, 0, 0, 0, 0, 0, 0, 100
@@ -1130,646 +1121,731 @@ def main_game():
     fight, ftticks = 0, 0
     sdvigxconst, sdvigyconst, revk, revst, f_t_colors, f_t_coords = 0, 0, 0, 0, [], []
     hcolors, hcoords, hsize, length_ofr = [], [], [], 0
-    SMw, SMh = 160, 200
-    SMx, SMy = display_w // 2 - 150 + 15, display_h // 2 - 200 + 7
+
+    scroll_speed = SCROLL_SPEED
+
+    # Размеры и позиция игрока из конфига
+    SMw, SMh = PLAYER_WIDTH, PLAYER_HEIGHT
+    SMx, SMy = PLAYER_START_X, PLAYER_START_Y
     SMXstart, SMYstart = 0, 0
     SMRt, srt = -50, -40
     coords_increase, sdvigxconst, sdvigyconst, zvukst = 0, 0, 0, 0
-    pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-    pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-    font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                            "/Fonts/MonospaceBold.ttf", 30 * kx)
-    text = font.render(str(hp), True, (255, 255, 255))
+
+    # Отрисовка здоровья
+    pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+    pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+    font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+    text = font.render(str(hp), True, WHITE)
     tx, ty = 460, 53
     SCREEN.blit(text, (tx, ty))
-    # pygame.display.update()
+
     if st == -100:
         sdvigy = 1000
         subticks = 0
-    #    pygame.mixer.music.load('first_dialog.mp3')
-    #   pygame.mixer.music.play()
-    #   pygame.mixer.music.set_volume(0.7)
+
     while True:
         ticks = pygame.time.get_ticks()
-        if musst == -1 and not pygame.mixer.music.get_busy():
-            pygame.mixer.music.load("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Music"
-                                    "/The Golden Age.mp3")
-            pygame.mixer.music.play()
-            pygame.mixer.music.set_volume(0.3)
+
+        # Музыка геймплея
+        if MUSIC_STATUS == -1 and not pygame.mixer.music.get_busy():
+            pygame.mixer.music.load(MUSIC_FILES['gameplay'])
+            # pygame.mixer.music.play()
+            pygame.mixer.music.set_volume(MUSIC_VOLUME)
+
+        # Смерть игрока
         if hp <= 0 and SMx + 27 - coords_increase > 300:
             pygame.mixer.music.unload()
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
             if zvukst != 2:
                 zvukst = 2
-                st, musst = -101, 0
-                ss = pygame.mixer.Sound("/Users/aleksej/PycharmProjects/pythonProject"
-                                        "/Marvel's Spider-Man 2D/Sounds/Spider_death.mp3")
+                st, MUSIC_STATUS = -101, 0
+                ss = pygame.mixer.Sound(SOUND_FILES['death'])
                 ss.play()
                 pygame.mixer.music.unload()
-            if suit == 'cs':
-                Spider_Man = load_image_safe('spider_pose-1_cs.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('spider_pose-1_iss.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('spider_pose-1_ws.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('spider_pose-1_us.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('spider_pose-1_ss.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('spider_pose-1_as.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('spider_pose-1_is.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('spider_pose-1_ios.png')
+
+            # Загрузка спрайта смерти в зависимости от костюма
+            suit_file = f'spider_pose-1_{CURRENT_SUIT}.png'
+            Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, suit_file))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 60, SMh - 55))
             SCREEN.blit(Spider_Man, (SMx + 27 - coords_increase, SMy + 140 + coords_increase // 5))
             coords_increase += 2
-            # pygame.display.update()
 
         elif hp <= 0 and SMx + 27 - coords_increase <= 300:
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                    "/Fonts/GULAG.otf", 25 * kx)
-            text = font.render('!HELP!', True,
-                               (255, 0, 0))
+            font = pygame.font.Font(get_font_path('gulag'), 25)
+            text = font.render('!HELP!', True, RED)
             SCREEN.blit(text, (420, 250))
-            pygame.draw.line(SCREEN, (255, 0, 0), [400, 280], [1080, 280], 2)
-            pygame.draw.line(SCREEN, (255, 0, 0), [400, 380], [1080, 380], 2)
-            font = pygame.font.Font('MonospaceBold.ttf', 55 * kx)
-            text = font.render("YOU'RE FAILED, BUDDY", True, (255, 0, 0))
+            pygame.draw.line(SCREEN, RED, [400, 280], [1080, 280], 2)
+            pygame.draw.line(SCREEN, RED, [400, 380], [1080, 380], 2)
+            font = pygame.font.Font(get_font_path('monospace_bold'), 55)
+            text = font.render("YOU'RE FAILED, BUDDY", True, RED)
             SCREEN.blit(text, (430, 300))
-            # pygame.display.update()
             pygame.time.wait(8000)
-            st, sdvigy, hp, musst = 0, -330, 100, -1
+            st, sdvigy, hp, MUSIC_STATUS = 0, INITIAL_SCROLL_Y, 100, -1
 
-        elif st == 0 and sdvigy <= -330 and not pygame.key.get_pressed()[pygame.K_d] \
+        # Основной геймплей - состояние покоя
+        elif st == 0 and sdvigy <= INITIAL_SCROLL_Y and not pygame.key.get_pressed()[pygame.K_d] \
                 and not pygame.key.get_pressed()[pygame.K_a] and (ticks - sp_ticks < 2000 or sp_ticks == 0) \
                 and not pygame.key.get_pressed()[pygame.K_SPACE] and podst != 1:
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while i < tiles:
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
 
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+
+            # Отрисовка здоровья
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
-            tx, ty = 460, 53
-            SCREEN.blit(text, (tx, ty))
+
             if dif_image != 0:
                 dif_image = 0
+
+            # Загрузка спрайта стояния
             if revst == 0:
-                if suit == 'cs':
-                    Spider_Man = load_image_safe('Тема 40.png')
-                elif suit == 'iss':
-                    Spider_Man = load_image_safe('Тема 41.png')
-                elif suit == 'ws':
-                    Spider_Man = load_image_safe('Тема 48.png')
-                elif suit == 'us':
-                    Spider_Man = load_image_safe('Тема 49.png')
-                elif suit == 'ss':
-                    Spider_Man = load_image_safe('Тема 50.png')
-                elif suit == 'as':
-                    Spider_Man = load_image_safe('Тема 51.png')
-                elif suit == 'is':
-                    Spider_Man = load_image_safe('Тема 52.png')
-                elif suit == 'ios':
-                    Spider_Man = load_image_safe('Тема 53.png')
+                if CURRENT_SUIT == 'cs':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 40.png"))
+                elif CURRENT_SUIT == 'iss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 41.png"))
+                elif CURRENT_SUIT == 'ws':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 48.png"))
+                elif CURRENT_SUIT == 'us':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 49.png"))
+                elif CURRENT_SUIT == 'ss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 50.png"))
+                elif CURRENT_SUIT == 'as':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 51.png"))
+                elif CURRENT_SUIT == 'is':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 52.png"))
+                elif CURRENT_SUIT == 'ios':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 53.png"))
             else:
-                if suit == 'cs':
-                    Spider_Man = load_image_safe('Тема 40_rev.png')
-                elif suit == 'iss':
-                    Spider_Man = load_image_safe('Тема 41_rev.png')
-                elif suit == 'ws':
-                    Spider_Man = load_image_safe('Тема 48_rev.png')
-                elif suit == 'us':
-                    Spider_Man = load_image_safe('Тема 49_rev.png')
-                elif suit == 'ss':
-                    Spider_Man = load_image_safe('Тема 50_rev.png')
-                elif suit == 'as':
-                    Spider_Man = load_image_safe('Тема 51_rev.png')
-                elif suit == 'is':
-                    Spider_Man = load_image_safe('Тема 52_rev.png')
-                elif suit == 'ios':
-                    Spider_Man = load_image_safe('Тема 53_rev.png')
+                if CURRENT_SUIT == 'cs':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 40_rev.png"))
+                elif CURRENT_SUIT == 'iss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 41_rev.png"))
+                elif CURRENT_SUIT == 'ws':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 48_rev.png"))
+                elif CURRENT_SUIT == 'us':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 49_rev.png"))
+                elif CURRENT_SUIT == 'ss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 50_rev.png"))
+                elif CURRENT_SUIT == 'as':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 51_rev.png"))
+                elif CURRENT_SUIT == 'is':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 52_rev.png"))
+                elif CURRENT_SUIT == 'ios':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 53_rev.png"))
+
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 15, SMh - 80))
             SCREEN.blit(Spider_Man, (SMx, SMy + 200))
-            # pygame.display.update()
-            # pygame.time.wait(40)
+
             time_wait = 40
             if sp_ticks == 0:
                 sp_ticks = ticks
+
+        # Прыжок
         elif st == 0 and pygame.key.get_pressed()[pygame.K_SPACE] and st != 4:
             st = 4
+
+        # Анимация прыжка
         elif st == 4 and coords_increase < 60:
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
 
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+
+            # Отрисовка здоровья
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
+
             sdvigy += 4
+
+            # Загрузка спрайта прыжка
             if revst == 0:
-                if suit == 'cs':
-                    Spider_Man = load_image_safe('Тема 206.png')
-                elif suit == 'iss':
-                    Spider_Man = load_image_safe('Тема 207.png')
-                elif suit == 'ws':
-                    Spider_Man = load_image_safe('Тема 208.png')
-                elif suit == 'us':
-                    Spider_Man = load_image_safe('Тема 209.png')
-                elif suit == 'ss':
-                    Spider_Man = load_image_safe('Тема 210.png')
-                elif suit == 'as':
-                    Spider_Man = load_image_safe('Тема 211.png')
-                elif suit == 'is':
-                    Spider_Man = load_image_safe('Тема 212.png')
-                elif suit == 'ios':
-                    Spider_Man = load_image_safe('Тема 213.png')
+                if CURRENT_SUIT == 'cs':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 206.png"))
+                elif CURRENT_SUIT == 'iss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 207.png"))
+                elif CURRENT_SUIT == 'ws':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 208.png"))
+                elif CURRENT_SUIT == 'us':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 209.png"))
+                elif CURRENT_SUIT == 'ss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 210.png"))
+                elif CURRENT_SUIT == 'as':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 211.png"))
+                elif CURRENT_SUIT == 'is':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 212.png"))
+                elif CURRENT_SUIT == 'ios':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 213.png"))
                 Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 70, SMh - 70))
                 SCREEN.blit(Spider_Man, (SMx + 40, SMy + 40))
             else:
-                if suit == 'cs':
-                    Spider_Man = load_image_safe('Тема 206_rev.png')
-                elif suit == 'iss':
-                    Spider_Man = load_image_safe('Тема 207_rev.png')
-                elif suit == 'ws':
-                    Spider_Man = load_image_safe('Тема 208_rev.png')
-                elif suit == 'us':
-                    Spider_Man = load_image_safe('Тема 209_rev.png')
-                elif suit == 'ss':
-                    Spider_Man = load_image_safe('Тема 210_rev.png')
-                elif suit == 'as':
-                    Spider_Man = load_image_safe('Тема 211_rev.png')
-                elif suit == 'is':
-                    Spider_Man = load_image_safe('Тема 212_rev.png')
-                elif suit == 'ios':
-                    Spider_Man = load_image_safe('Тема 213_rev.png')
+                if CURRENT_SUIT == 'cs':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 206_rev.png"))
+                elif CURRENT_SUIT == 'iss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 207_rev.png"))
+                elif CURRENT_SUIT == 'ws':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 208_rev.png"))
+                elif CURRENT_SUIT == 'us':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 209_rev.png"))
+                elif CURRENT_SUIT == 'ss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 210_rev.png"))
+                elif CURRENT_SUIT == 'as':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 211_rev.png"))
+                elif CURRENT_SUIT == 'is':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 212_rev.png"))
+                elif CURRENT_SUIT == 'ios':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 213_rev.png"))
                 Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 70, SMh - 70))
                 SCREEN.blit(Spider_Man, (SMx + 40, SMy + 40))
+
             coords_increase += 1
-            # pygame.display.update()
             if sp_ticks != 0:
                 sp_ticks = 0
             if podst != 0:
                 podst = 0
+
+        # Запуск паутины (LShift)
         elif st == 0 and pygame.key.get_pressed()[pygame.K_LSHIFT]:
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+
+            # ДОБАВЬТЕ ДВИЖЕНИЕ ФОНА СРАЗУ ЖЕ:
+            sdvigx -= scroll_speed  # Двигаем фон влево
+
+            # Отрисовка здоровья
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
+
             coords_increase, sdvigxconst, sdvigyconst, zvukst = 0, 0, 0, 0
+
+            # Загрузка спрайта запуска паутины
             if revst == 0:
-                if suit == 'cs':
-                    Spider_Man = load_image_safe('Тема 143.png')
-                elif suit == 'iss':
-                    Spider_Man = load_image_safe('Тема 144.png')
-                elif suit == 'ws':
-                    Spider_Man = load_image_safe('Тема 145.png')
-                elif suit == 'us':
-                    Spider_Man = load_image_safe('Тема 146.png')
-                elif suit == 'ss':
-                    Spider_Man = load_image_safe('Тема 147.png')
-                elif suit == 'as':
-                    Spider_Man = load_image_safe('Тема 148.png')
-                elif suit == 'is':
-                    Spider_Man = load_image_safe('Тема 149.png')
-                elif suit == 'ios':
-                    Spider_Man = load_image_safe('Тема 150.png')
+                if CURRENT_SUIT == 'cs':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 143.png"))
+                elif CURRENT_SUIT == 'iss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 144.png"))
+                elif CURRENT_SUIT == 'ws':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 145.png"))
+                elif CURRENT_SUIT == 'us':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 146.png"))
+                elif CURRENT_SUIT == 'ss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 147.png"))
+                elif CURRENT_SUIT == 'as':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 148.png"))
+                elif CURRENT_SUIT == 'is':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 149.png"))
+                elif CURRENT_SUIT == 'ios':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 150.png"))
                 Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 10, SMh - 40))
                 Spider_Man = pygame.transform.rotate(Spider_Man, 10)
             else:
-                if suit == 'cs':
-                    Spider_Man = load_image_safe('Тема 143_rev.png')
-                elif suit == 'iss':
-                    Spider_Man = load_image_safe('Тема 144_rev.png')
-                elif suit == 'ws':
-                    Spider_Man = load_image_safe('Тема 145_rev.png')
-                elif suit == 'us':
-                    Spider_Man = load_image_safe('Тема 146_rev.png')
-                elif suit == 'ss':
-                    Spider_Man = load_image_safe('Тема 147_rev.png')
-                elif suit == 'as':
-                    Spider_Man = load_image_safe('Тема 148_rev.png')
-                elif suit == 'is':
-                    Spider_Man = load_image_safe('Тема 149_rev.png')
-                elif suit == 'ios':
-                    Spider_Man = load_image_safe('Тема 150_rev.png')
+                if CURRENT_SUIT == 'cs':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 143_rev.png"))
+                elif CURRENT_SUIT == 'iss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 144_rev.png"))
+                elif CURRENT_SUIT == 'ws':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 145_rev.png"))
+                elif CURRENT_SUIT == 'us':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 146_rev.png"))
+                elif CURRENT_SUIT == 'ss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 147_rev.png"))
+                elif CURRENT_SUIT == 'as':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 148_rev.png"))
+                elif CURRENT_SUIT == 'is':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 149_rev.png"))
+                elif CURRENT_SUIT == 'ios':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 150_rev.png"))
                 Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 10, SMh - 40))
-            # pygame.time.wait(100)
+
             SMw, SMh = 160, 200
             SMRt, srt = -50, -40
-            SMx, SMy = display_w // 2 - 150, display_h // 2 - 200
+            SMx, SMy = SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 200
+
+            # Звук паутины
             thwipsound = randint(0, 3)
-            if thwipsound == 0:
-                ts = pygame.mixer.Sound("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Sounds/"
-                                        "Thwip_sound.wav")
-            elif thwipsound == 1:
-                ts = pygame.mixer.Sound("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Sounds/"
-                                        "Thwip_sound1.mp3")
-            elif thwipsound == 2:
-                ts = pygame.mixer.Sound("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Sounds/"
-                                        "Thwip_sound2.mp3")
-            elif thwipsound == 3:
-                ts = pygame.mixer.Sound("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Sounds/"
-                                        "Thwip_sound3.mp3")
+            ts = pygame.mixer.Sound(SOUND_FILES['thwip'][thwipsound])
             ts.play()
+
+            # Отрисовка паутины и персонажа
             if dif_image == 1 and revst == 0:
-                pygame.draw.line(SCREEN, pygame.Color('White'), (SMw + SMx - 25, SMy + SMh // 2 - 60),
-                                 (display_w - 300, 0), 1)
+                pygame.draw.line(SCREEN, WHITE, (SMw + SMx - 25, SMy + SMh // 2 - 60),
+                                 (SCREEN_WIDTH - 300, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx, SMy))
             elif dif_image == 2 and revst == 0:
-                pygame.draw.line(SCREEN, pygame.Color('White'), (SMw + SMx + 11, SMy + SMh // 2 - 30),
-                                 (display_w - 300, 0), 1)
+                pygame.draw.line(SCREEN, WHITE, (SMw + SMx + 11, SMy + SMh // 2 - 30),
+                                 (SCREEN_WIDTH - 300, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx + 40, SMy + 50))
             elif dif_image == 1 and revst == 1:
-                pygame.draw.line(SCREEN, pygame.Color('White'), (SMx + 50, SMy + SMh // 2 - 20),
+                pygame.draw.line(SCREEN, WHITE, (SMx + 50, SMy + SMh // 2 - 20),
                                  (300, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx, SMy))
             elif dif_image == 2 or revst == 1:
-                pygame.draw.line(SCREEN, pygame.Color('White'), (SMx + 47, SMy + SMh // 2 - 35),
+                pygame.draw.line(SCREEN, WHITE, (SMx + 47, SMy + SMh // 2 - 35),
                                  (300, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx + 40, SMy + 50))
             else:
                 if revst == 0:
-                    pygame.draw.line(SCREEN, pygame.Color('White'), (SMw + SMx + 11, SMy + SMh // 2 - 30),
-                                     (display_w - 300, 0), 1)
+                    pygame.draw.line(SCREEN, WHITE, (SMw + SMx + 11, SMy + SMh // 2 - 30),
+                                     (SCREEN_WIDTH - 300, 0), 1)
                     SCREEN.blit(Spider_Man, (SMx + 40, SMy + 50))
                 else:
-                    pygame.draw.line(SCREEN, pygame.Color('White'), (SMx + 47, SMy + SMh // 2 - 35),
+                    pygame.draw.line(SCREEN, WHITE, (SMx + 47, SMy + SMh // 2 - 35),
                                      (300, 0), 1)
                     SCREEN.blit(Spider_Man, (SMx + 40, SMy + 50))
-            # pygame.display.update()
+
             SMx, SMy = SMx + 15, SMy + 7
             SMXstart, SMYstart = SMx, SMy
             SMRt, srt = -50, -40
             revk, revst = 0, 0
-            # pygame.time.wait(700)
             time_wait = 550
             st = 1
             if dif_image != 0:
                 dif_image = 0
 
+        # Продолжение полета на паутине - фаза 1
         elif st == 1 and coords_increase < 220 and pygame.key.get_pressed()[pygame.K_LSHIFT]:
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
             coords_increase += 1
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+
+            # Отрисовка здоровья
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
-            if suit == 'cs':
-                # if dif_image == 0:
-                dif_image = 2
+
+            # Анимация полета
+            if CURRENT_SUIT == 'cs':
                 if dif_image == 1:
                     sdvigx -= 2
-                    if sdvigy > -330:
+                    if sdvigy > INITIAL_SCROLL_Y:
                         sdvigy -= 2
-                    Spider_Man = load_image_safe('fly_pose1.png')
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1.png'))
                     Spider_Man = pygame.transform.scale(Spider_Man, (SMw, SMh + 5))
                     Spider_Man = pygame.transform.rotate(Spider_Man, SMRt)
                     if coords_increase % 6 == 0:
                         SMRt += 1
                 elif dif_image == 2:
                     sdvigx -= 4
-                    if sdvigy > -330:
+                    if sdvigy > INITIAL_SCROLL_Y:
                         sdvigy -= 3
-                    Spider_Man = load_image_safe('fly_pose1_cs.png')
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_cs.png'))
                     Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 40, SMh - 65))
                     Spider_Man = pygame.transform.rotate(Spider_Man, SMRt)
                     if coords_increase % 3 == 0:
                         SMRt += 1
             else:
                 sdvigx -= 4
-                if sdvigy > -330:
+                if sdvigy > INITIAL_SCROLL_Y:
                     sdvigy -= 3
-                if suit == 'iss':
-                    Spider_Man = load_image_safe('fly_pose1_iss.png')
-                elif suit == 'ws':
-                    Spider_Man = load_image_safe('fly_pose1_ws.png')
-                elif suit == 'us':
-                    Spider_Man = load_image_safe('fly_pose1_us.png')
-                elif suit == 'ss':
-                    Spider_Man = load_image_safe('fly_pose1_ss.png')
-                elif suit == 'as':
-                    Spider_Man = load_image_safe('fly_pose1_as.png')
-                elif suit == 'is':
-                    Spider_Man = load_image_safe('fly_pose1_is.png')
-                elif suit == 'ios':
-                    Spider_Man = load_image_safe('fly_pose1_ios.png')
+                if CURRENT_SUIT == 'iss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_iss.png'))
+                elif CURRENT_SUIT == 'ws':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ws.png'))
+                elif CURRENT_SUIT == 'us':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_us.png'))
+                elif CURRENT_SUIT == 'ss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ss.png'))
+                elif CURRENT_SUIT == 'as':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_as.png'))
+                elif CURRENT_SUIT == 'is':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_is.png'))
+                elif CURRENT_SUIT == 'ios':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ios.png'))
                 Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 40, SMh - 65))
                 Spider_Man = pygame.transform.rotate(Spider_Man, SMRt)
                 if coords_increase % 3 == 0:
                     SMRt += 1
+
+            # Отрисовка паутины и персонажа
             SMR_pvu = Spider_Man.get_rect()
             if dif_image == 1 and revst == 0:
-                pygame.draw.line(SCREEN, pygame.Color('White'), (SMw + SMx - 25, SMy + SMh // 2 - 60),
-                                 (display_w - 300 - coords_increase * 3, 0), 1)
+                pygame.draw.line(SCREEN, WHITE, (SMw + SMx - 25, SMy + SMh // 2 - 60),
+                                 (SCREEN_WIDTH - 300 - coords_increase * 3, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx, SMy))
             elif dif_image != 1 and revst == 0:
+                # Разные фазы полета с разной анимацией паутины
                 if coords_increase <= 45:
-                    pygame.draw.line(SCREEN, pygame.Color('White'),
+                    pygame.draw.line(SCREEN, WHITE,
                                      (SMx - 70 + SMR_pvu.topright[0], SMy + 140 + SMR_pvu.topright[1]),
-                                     (display_w - 300 - coords_increase * 2.5, 0), 1)
+                                     (SCREEN_WIDTH - 300 - coords_increase * 2.5, 0), 1)
                 elif 45 < coords_increase <= 120:
-                    pygame.draw.line(SCREEN, pygame.Color('White'),
+                    pygame.draw.line(SCREEN, WHITE,
                                      (SMx - 80 + SMR_pvu.topright[0], SMy + 130 + SMR_pvu.topright[1]),
-                                     (display_w - 300 - coords_increase * 2.5, 0), 1)
+                                     (SCREEN_WIDTH - 300 - coords_increase * 2.5, 0), 1)
                 elif 120 < coords_increase <= 150:
-                    pygame.draw.line(SCREEN, pygame.Color('White'),
+                    pygame.draw.line(SCREEN, WHITE,
                                      (SMx - 60 + SMR_pvu.topright[0], SMy + 100 + SMR_pvu.topright[1]),
-                                     (display_w - 300 - coords_increase * 2.5, 0), 1)
+                                     (SCREEN_WIDTH - 300 - coords_increase * 2.5, 0), 1)
                 elif 150 < coords_increase <= 180:
-                    pygame.draw.line(SCREEN, pygame.Color('White'),
+                    pygame.draw.line(SCREEN, WHITE,
                                      (SMx - 50 + SMR_pvu.topright[0], SMy + 85 + SMR_pvu.topright[1]),
-                                     (display_w - 300 - coords_increase * 2.5, 0), 1)
+                                     (SCREEN_WIDTH - 300 - coords_increase * 2.5, 0), 1)
                 elif 180 < coords_increase <= 220:
-                    pygame.draw.line(SCREEN, pygame.Color('White'),
+                    pygame.draw.line(SCREEN, WHITE,
                                      (SMx - 65 + SMR_pvu.topright[0], SMy + 55 + SMR_pvu.topright[1]),
-                                     (display_w - 300 - coords_increase * 2.5, 0), 1)
+                                     (SCREEN_WIDTH - 300 - coords_increase * 2.5, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx - 40, SMy - 10))
             elif dif_image == 1 and revst == 1:
-                pygame.draw.line(SCREEN, pygame.Color('White'), (SMx + 50, SMy + SMh // 2 - 20),
+                pygame.draw.line(SCREEN, WHITE, (SMx + 50, SMy + SMh // 2 - 20),
                                  (300 + coords_increase, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx, SMy))
             elif dif_image == 2 or revst == 1:
-                pygame.draw.line(SCREEN, pygame.Color('White'), (SMx + 47, SMy + SMh // 2 - 35),
+                pygame.draw.line(SCREEN, WHITE, (SMx + 47, SMy + SMh // 2 - 35),
                                  (300 + coords_increase, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx - 40, SMy + 50))
-            # pygame.display.update()
 
+        # Продолжение полета на паутине - фаза 2
         elif st == 1 and 220 <= coords_increase <= 395 and pygame.key.get_pressed()[pygame.K_LSHIFT]:
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             sdvigx -= 4
             sdvigy += 3
-            if suit == 'c s':
-                Spider_Man = load_image_safe('fly_pose1_cs.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('fly_pose1_iss.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('fly_pose1_ws.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('fly_pose1_us.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('fly_pose1_ss.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('fly_pose1_as.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('fly_pose1_is.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('fly_pose1_ios.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_cs.png'))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_iss.png'))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ws.png'))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_us.png'))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ss.png'))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_as.png'))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_is.png'))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ios.png'))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 40, SMh - 65))
             Spider_Man = pygame.transform.rotate(Spider_Man, SMRt)
             if coords_increase % 3 == 0:
                 SMRt += 1
 
+            SMR_pvu = Spider_Man.get_rect()
             if dif_image == 1 and revst == 0:
-                pygame.draw.line(SCREEN, pygame.Color('White'), (SMw + SMx - 25, SMy + SMh // 2 - 60),
-                                 (display_w - 300 - coords_increase * 3, 0), 1)
+                pygame.draw.line(SCREEN, WHITE, (SMw + SMx - 25, SMy + SMh // 2 - 60),
+                                 (SCREEN_WIDTH - 300 - coords_increase * 3, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx, SMy))
             elif dif_image != 1 and revst == 0:
                 if 220 <= coords_increase <= 250:
-                    pygame.draw.line(SCREEN, pygame.Color('White'),
+                    pygame.draw.line(SCREEN, WHITE,
                                      (SMx - 90 + SMR_pvu.topright[0], SMy + 40 + SMR_pvu.topright[1]),
-                                     (display_w - 300 - coords_increase * 2.5, 0), 1)
+                                     (SCREEN_WIDTH - 300 - coords_increase * 2.5, 0), 1)
                 elif 250 < coords_increase <= 270:
-                    pygame.draw.line(SCREEN, pygame.Color('White'),
+                    pygame.draw.line(SCREEN, WHITE,
                                      (SMx - 125 + SMR_pvu.topright[0], SMy + 40 + SMR_pvu.topright[1]),
-                                     (display_w - 300 - coords_increase * 2.5, 0), 1)
+                                     (SCREEN_WIDTH - 300 - coords_increase * 2.5, 0), 1)
                 elif 270 < coords_increase <= 300:
-                    pygame.draw.line(SCREEN, pygame.Color('White'),
+                    pygame.draw.line(SCREEN, WHITE,
                                      (SMx - 155 + SMR_pvu.topright[0], SMy + 50 + SMR_pvu.topright[1]),
-                                     (display_w - 300 - coords_increase * 2.5, 0), 1)
+                                     (SCREEN_WIDTH - 300 - coords_increase * 2.5, 0), 1)
                 elif 300 < coords_increase <= 340:
-                    pygame.draw.line(SCREEN, pygame.Color('White'),
+                    pygame.draw.line(SCREEN, WHITE,
                                      (SMx - 220 + SMR_pvu.topright[0], SMy + 40 + SMR_pvu.topright[1]),
-                                     (display_w - 300 - coords_increase * 2.5, 0), 1)
+                                     (SCREEN_WIDTH - 300 - coords_increase * 2.5, 0), 1)
                 elif 340 < coords_increase <= 395:
-                    pygame.draw.line(SCREEN, pygame.Color('White'),
+                    pygame.draw.line(SCREEN, WHITE,
                                      (SMx - 235 + SMR_pvu.topright[0], SMy + 90 + SMR_pvu.topright[1]),
-                                     (display_w - 300 - coords_increase * 2.5, 0), 1)
+                                     (SCREEN_WIDTH - 300 - coords_increase * 2.5, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx - 40, SMy - 10))
             elif dif_image == 1 and revst == 1:
-                pygame.draw.line(SCREEN, pygame.Color('White'), (SMx + 50, SMy + SMh // 2 - 20),
+                pygame.draw.line(SCREEN, WHITE, (SMx + 50, SMy + SMh // 2 - 20),
                                  (300 + coords_increase, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx, SMy))
             elif dif_image == 2 or revst == 1:
-                pygame.draw.line(SCREEN, pygame.Color('White'), (SMx + 47, SMy + SMh // 2 - 35),
+                pygame.draw.line(SCREEN, WHITE, (SMx + 47, SMy + SMh // 2 - 35),
                                  (300 + coords_increase, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx - 40, SMy + 50))
-            # pygame.display.update()
+
             coords_increase += 1
             if coords_increase % 3 == 0:
                 SMRt += 1
 
+        # Продолжение полета на паутине - фаза 3
         elif st == 1 and 395 <= coords_increase <= 430 and pygame.key.get_pressed()[pygame.K_LSHIFT]:
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             sdvigx -= 4
             sdvigy += 2
-            if suit == 'cs':
-                Spider_Man = load_image_safe('Тема 198.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('Тема 199.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('Тема 200.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('Тема 201.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('Тема 202.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('Тема 203.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('Тема 204.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('Тема 205.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 198.png"))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 199.png"))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 200.png"))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 201.png"))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 202.png"))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 203.png"))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 204.png"))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 205.png"))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 25, SMh - 65))
 
+            SMR_pvu = Spider_Man.get_rect()
             if dif_image == 1 and revst == 0:
-                pygame.draw.line(SCREEN, pygame.Color('White'), (SMw + SMx - 60, SMy + SMh // 2 - 60),
-                                 (display_w - 300 - coords_increase * 3, 0), 1)
+                pygame.draw.line(SCREEN, WHITE, (SMw + SMx - 60, SMy + SMh // 2 - 60),
+                                 (SCREEN_WIDTH - 300 - coords_increase * 3, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx, SMy))
             elif dif_image != 1 and revst == 0:
-                pygame.draw.line(SCREEN, pygame.Color('White'),
+                pygame.draw.line(SCREEN, WHITE,
                                  (SMx - 270 + SMR_pvu.topright[0], SMy + 70 + SMR_pvu.topright[1]),
-                                 (display_w - 300 - coords_increase * 2.5, 0), 1)
+                                 (SCREEN_WIDTH - 300 - coords_increase * 2.5, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx - 40, SMy - 10))
             elif dif_image == 1 and revst == 1:
-                pygame.draw.line(SCREEN, pygame.Color('White'), (SMx + 50, SMy + SMh // 2 - 20),
+                pygame.draw.line(SCREEN, WHITE, (SMx + 50, SMy + SMh // 2 - 20),
                                  (300 + coords_increase, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx, SMy))
             elif dif_image == 2 or revst == 1:
-                pygame.draw.line(SCREEN, pygame.Color('White'), (SMx + 47, SMy + SMh // 2 - 35),
+                pygame.draw.line(SCREEN, WHITE, (SMx + 47, SMy + SMh // 2 - 35),
                                  (300 + coords_increase, 0), 1)
                 SCREEN.blit(Spider_Man, (SMx - 40, SMy + 50))
-            # pygame.display.update()
+
             coords_increase += 1
             if coords_increase % 3 == 0:
                 SMRt += 1
 
+        # Завершение полета и подготовка к приземлению
         elif st == 1 and 430 <= coords_increase <= 620 and pygame.key.get_pressed()[pygame.K_LSHIFT] and dif_image == 1:
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             sdvigx -= 2
             sdvigy += 1
             if revst == 0:
-                if suit == 'cs':
+                if CURRENT_SUIT == 'cs':
                     if dif_image == 1:
-                        Spider_Man = load_image_safe('fly_pose9.png')
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose9.png'))
                         Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 25, SMh - 65))
                         Spider_Man = pygame.transform.rotate(Spider_Man, srt)
                         SCREEN.blit(Spider_Man, (SMx + 80, SMy - 17))
                     elif dif_image == 2:
-                        Spider_Man = load_image_safe('fly_pose9_cs.png')
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose9_cs.png'))
                         Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 50, SMh - 75))
                         Spider_Man = pygame.transform.rotate(Spider_Man, srt + 10)
                         SCREEN.blit(Spider_Man, (SMx + 80, SMy - 17))
                 else:
-                    if suit == 'iss':
-                        Spider_Man = load_image_safe('fly_pose9_iss.png')
-                    elif suit == 'ws':
-                        Spider_Man = load_image_safe('fly_pose9_ws.png')
-                    elif suit == 'us':
-                        Spider_Man = load_image_safe('fly_pose9_us.png')
-                    elif suit == 'ss':
-                        Spider_Man = load_image_safe('fly_pose9_ss.png')
-                    elif suit == 'as':
-                        Spider_Man = load_image_safe('fly_pose9_as.png')
-                    elif suit == 'is':
-                        Spider_Man = load_image_safe('fly_pose9_is.png')
-                    elif suit == 'ios':
-                        Spider_Man = load_image_safe('fly_pose9_ios.png')
+                    if CURRENT_SUIT == 'iss':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose9_iss.png'))
+                    elif CURRENT_SUIT == 'ws':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose9_ws.png'))
+                    elif CURRENT_SUIT == 'us':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose9_us.png'))
+                    elif CURRENT_SUIT == 'ss':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose9_ss.png'))
+                    elif CURRENT_SUIT == 'as':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose9_as.png'))
+                    elif CURRENT_SUIT == 'is':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose9_is.png'))
+                    elif CURRENT_SUIT == 'ios':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose9_ios.png'))
                     Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 35, SMh - 50))
                     Spider_Man = pygame.transform.rotate(Spider_Man, srt + 10)
                     SCREEN.blit(Spider_Man, (SMx + 80, SMy - 17))
             else:
-                if suit == 'cs':
+                if CURRENT_SUIT == 'cs':
                     dif_image = randint(1, 2)
                     if dif_image == 1:
-                        Spider_Man = load_image_safe('Тема 2_rev.png')
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 2_rev.png"))
                         Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 50, SMh - 20))
                         SCREEN.blit(Spider_Man, (SMx + 7, SMy + 143))
                     elif dif_image == 2:
-                        Spider_Man = load_image_safe('spider_stay5_cs_rev.png')
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_cs_rev.png'))
                         Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 50, SMh - 5))
                         SCREEN.blit(Spider_Man, (SMx + 20, SMy + 140))
                 else:
-                    if suit == 'iss':
-                        Spider_Man = load_image_safe('spider_stay5_iss_rev.png')
-                    elif suit == 'ws':
-                        Spider_Man = load_image_safe('spider_stay5_ws_rev.png')
-                    elif suit == 'us':
-                        Spider_Man = load_image_safe('spider_stay5_us_rev.png')
-                    elif suit == 'ss':
-                        Spider_Man = load_image_safe('spider_stay5_ss_rev.png')
-                    elif suit == 'as':
-                        Spider_Man = load_image_safe('spider_stay5_as_rev.png')
-                    elif suit == 'is':
-                        Spider_Man = load_image_safe('spider_stay5_is_rev.png')
-                    elif suit == 'ios':
-                        Spider_Man = load_image_safe('spider_stay5_ios_rev.png')
+                    if CURRENT_SUIT == 'iss':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_iss_rev.png'))
+                    elif CURRENT_SUIT == 'ws':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_ws_rev.png'))
+                    elif CURRENT_SUIT == 'us':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_us_rev.png'))
+                    elif CURRENT_SUIT == 'ss':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_ss_rev.png'))
+                    elif CURRENT_SUIT == 'as':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_as_rev.png'))
+                    elif CURRENT_SUIT == 'is':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_is_rev.png'))
+                    elif CURRENT_SUIT == 'ios':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_ios_rev.png'))
                     Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 50, SMh - 5))
                     SCREEN.blit(Spider_Man, (SMx + 20, SMy + 140))
-            # pygame.display.update()
+
             coords_increase += 1
             if coords_increase % 9 == 0:
                 srt += 1
 
+        # Завершение полета - отпускание паутины
         elif st == 1 and not pygame.key.get_pressed()[pygame.K_LSHIFT]:
             if zvukst == 0 and coords_increase > 400:
-                ss = pygame.mixer.Sound("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Sounds"
-                                        "/Swing_sound.mp3")
+                ss = pygame.mixer.Sound(SOUND_FILES['swing'])
                 ss.play()
                 zvukst = 1
                 for i in range(15000000):
@@ -1778,65 +1854,69 @@ def main_game():
             else:
                 st = 3
 
+        # Анимация приземления - фаза 1
         elif st == 2 and coords_increase <= 175 and not pygame.key.get_pressed()[pygame.K_LSHIFT]:
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             sdvigx -= 4
             sdvigy += 2
-            if suit == 'cs':
-                Spider_Man = load_image_safe('fly_pose7_cs.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('fly_pose7_iss.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('fly_pose7_ws.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('fly_pose7_us.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('fly_pose7_ss.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('fly_pose7_as.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('fly_pose7_is.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('fly_pose7_ios.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_cs.png'))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_iss.png'))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_ws.png'))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_us.png'))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_ss.png'))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_as.png'))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_is.png'))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_ios.png'))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 30, SMh - 140))
             Spider_Man = pygame.transform.rotate(Spider_Man, SMRt - 175)
             SCREEN.blit(Spider_Man, (SMx + 60, SMy + 40))
-            # pygame.draw.line(SCREEN, pygame.Color('White'), (SMw + SMx, SMy + SMh // 2 - 40),
-            # (display_w // 2, 0), 1)
-            # pygame.display.update()
             coords_increase += 1
             if coords_increase % 5 == 0:
                 SMRt -= 1
 
-        elif st == 3 and sdvigy >= -330 \
-                and not pygame.key.get_pressed()[pygame.K_LSHIFT]:
-            SCREEN.fill(pygame.Color('Black'))
+        # Анимация приземления - фаза 2
+        elif st == 3 and sdvigy >= INITIAL_SCROLL_Y and not pygame.key.get_pressed()[pygame.K_LSHIFT]:
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             if sdvigxconst != 0:
@@ -1846,860 +1926,967 @@ def main_game():
             if revst == 0:
                 sdvigx -= 1
                 sdvigy -= 5
-                if suit == 'cs':
-                    Spider_Man = load_image_safe('fly_pose8_cs.png')
-                elif suit == 'iss':
-                    Spider_Man = load_image_safe('fly_pose8_iss.png')
-                elif suit == 'ws':
-                    Spider_Man = load_image_safe('fly_pose8_ws.png')
-                elif suit == 'us':
-                    Spider_Man = load_image_safe('fly_pose8_us.png')
-                elif suit == 'ss':
-                    Spider_Man = load_image_safe('fly_pose8_ss.png')
-                elif suit == 'as':
-                    Spider_Man = load_image_safe('fly_pose8_as.png')
-                elif suit == 'is':
-                    Spider_Man = load_image_safe('fly_pose8_is.png')
-                elif suit == 'ios':
-                    Spider_Man = load_image_safe('fly_pose8_ios.png')
+                if CURRENT_SUIT == 'cs':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_cs.png'))
+                elif CURRENT_SUIT == 'iss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_iss.png'))
+                elif CURRENT_SUIT == 'ws':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_ws.png'))
+                elif CURRENT_SUIT == 'us':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_us.png'))
+                elif CURRENT_SUIT == 'ss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_ss.png'))
+                elif CURRENT_SUIT == 'as':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_as.png'))
+                elif CURRENT_SUIT == 'is':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_is.png'))
+                elif CURRENT_SUIT == 'ios':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_ios.png'))
                 Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 20, SMh - 70))
             else:
                 sdvigx += 1
                 sdvigy -= 5
-                if suit == 'cs':
-                    Spider_Man = load_image_safe('fly_pose8_cs_rev.png')
-                elif suit == 'iss':
-                    Spider_Man = load_image_safe('fly_pose8_iss_rev.png')
-                elif suit == 'ws':
-                    Spider_Man = load_image_safe('fly_pose8_ws_rev.png')
-                elif suit == 'us':
-                    Spider_Man = load_image_safe('fly_pose8_us_rev.png')
-                elif suit == 'ss':
-                    Spider_Man = load_image_safe('fly_pose8_ss_rev.png')
-                elif suit == 'as':
-                    Spider_Man = load_image_safe('fly_pose8_as_rev.png')
-                elif suit == 'is':
-                    Spider_Man = load_image_safe('fly_pose8_is_rev.png')
-                elif suit == 'ios':
-                    Spider_Man = load_image_safe('fly_pose8_ios_rev.png')
+                if CURRENT_SUIT == 'cs':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_cs_rev.png'))
+                elif CURRENT_SUIT == 'iss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_iss_rev.png'))
+                elif CURRENT_SUIT == 'ws':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_ws_rev.png'))
+                elif CURRENT_SUIT == 'us':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_us_rev.png'))
+                elif CURRENT_SUIT == 'ss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_ss_rev.png'))
+                elif CURRENT_SUIT == 'as':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_as_rev.png'))
+                elif CURRENT_SUIT == 'is':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_is_rev.png'))
+                elif CURRENT_SUIT == 'ios':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose8_ios_rev.png'))
                 Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 20, SMh - 70))
-            # Spider_Man = pygame.transform.rotate(Spider_Man, SMRt)
             SCREEN.blit(Spider_Man, (SMx, SMy + 150))
-            # pygame.draw.line(SCREEN, pygame.Color('White'), (SMw + SMx, SMy + SMh // 2 - 40),
-            # (display_w // 2, 0), 1)
-            # pygame.display.update()
 
+        # Обратный полет на паутине - фаза 1 (влево)
         elif st == -1 and revst == 0 and revk == 0 and coords_increase < 70 and pygame.key.get_pressed()[
             pygame.K_LSHIFT]:
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             sdvigx -= 6
             sdvigy += 4
-            if suit == 'cs':
-                Spider_Man = load_image_safe('fly_pose1_cs.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('fly_pose1_iss.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('fly_pose1_ws.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('fly_pose1_us.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('fly_pose1_ss.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('fly_pose1_as.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('fly_pose1_is.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('fly_pose1_ios.png')
-            Spider_Man = load_image_safe('fly_pose1_cs.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_cs.png'))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_iss.png'))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ws.png'))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_us.png'))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ss.png'))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_as.png'))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_is.png'))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ios.png'))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 40, SMh - 65))
             Spider_Man = pygame.transform.rotate(Spider_Man, SMRt)
             if coords_increase % 5 == 0:
                 SMRt += 1
             SMR_pvu = Spider_Man.get_rect()
-            pygame.draw.line(SCREEN, pygame.Color('White'),
+            pygame.draw.line(SCREEN, WHITE,
                              (SMx - 70 + SMR_pvu.topleft[0], SMy + 140 + SMR_pvu.topleft[1]),
-                             (display_w - 300 - coords_increase * 2.5, 0), 1)
+                             (SCREEN_WIDTH - 300 - coords_increase * 2.5, 0), 1)
             SCREEN.blit(Spider_Man, (SMx, SMy))
-            # pygame.display.update()
             coords_increase += 1
 
-        elif (st == -1 or st == -2) and revk < 20 and revst == 0 and 70 <= coords_increase <= 400 - revk * 20 \
-                and pygame.key.get_pressed()[pygame.K_LSHIFT]:
-            SCREEN.fill(pygame.Color('Black'))
+        # Обратный полет на паутине - фаза 2 (влево)
+        elif (st == -1 or st == -2) and revk < 20 and revst == 0 and 70 <= coords_increase <= 400 - revk * 20 and \
+                pygame.key.get_pressed()[pygame.K_LSHIFT]:
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             sdvigx += 4
-            if sdvigy > -330:
+            if sdvigy > INITIAL_SCROLL_Y:
                 if sdvigy % 12 == 0:
                     sdvigy -= 2 + revk
                 else:
                     sdvigy -= 2
-            if suit == 'cs':
-                Spider_Man = load_image_safe('fly_pose1_cs_rev.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('fly_pose1_iss_rev.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('fly_pose1_ws_rev.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('fly_pose1_us_rev.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('fly_pose1_ss_rev.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('fly_pose1_as_rev.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('fly_pose1_is_rev.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('fly_pose1_ios_rev.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_cs_rev.png'))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_iss_rev.png'))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ws_rev.png'))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_us_rev.png'))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ss_rev.png'))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_as_rev.png'))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_is_rev.png'))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ios_rev.png'))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 40, SMh - 65))
             Spider_Man = pygame.transform.rotate(Spider_Man, SMRt - 25)
             if coords_increase % 5 == 0:
                 SMRt -= 1
             SMR_pvu = Spider_Man.get_rect()
             if 70 <= coords_increase <= 130:
-                pygame.draw.line(SCREEN, pygame.Color('White'),
+                pygame.draw.line(SCREEN, WHITE,
                                  (SMx + 20 + SMR_pvu.topleft[0], SMy + 60 + SMR_pvu.topleft[1]),
                                  (300 + coords_increase * 1.8, 0), 1)
             elif 130 < coords_increase <= 180:
-                pygame.draw.line(SCREEN, pygame.Color('White'),
+                pygame.draw.line(SCREEN, WHITE,
                                  (SMx + 30 + SMR_pvu.topleft[0], SMy + 60 + SMR_pvu.topleft[1]),
                                  (300 + coords_increase * 1.8, 0), 1)
             elif 180 < coords_increase <= 220:
-                pygame.draw.line(SCREEN, pygame.Color('White'),
+                pygame.draw.line(SCREEN, WHITE,
                                  (SMx + 40 + SMR_pvu.topleft[0], SMy + 60 + SMR_pvu.topleft[1]),
                                  (300 + coords_increase * 1.8, 0), 1)
             elif 220 < coords_increase <= 400:
-                pygame.draw.line(SCREEN, pygame.Color('White'),
+                pygame.draw.line(SCREEN, WHITE,
                                  (SMx + 45 + SMR_pvu.topleft[0], SMy + 60 + SMR_pvu.topleft[1]),
                                  (300 + coords_increase * 1.8, 0), 1)
             SCREEN.blit(Spider_Man, (SMx, SMy))
-            # pygame.display.update()
             coords_increase += 1
 
-        elif (st == -1 or st == -2) and revk < 20 and revst == 0 \
-                and 400 - revk * 50 < coords_increase <= 500 - revk * 70 \
-                and pygame.key.get_pressed()[pygame.K_LSHIFT]:
-            SCREEN.fill(pygame.Color('Black'))
+        # Обратный полет на паутине - фаза 3 (влево)
+        elif (
+                st == -1 or st == -2) and revk < 20 and revst == 0 and 400 - revk * 50 < coords_increase <= 500 - revk * 70 and \
+                pygame.key.get_pressed()[pygame.K_LSHIFT]:
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             sdvigx += 3
             sdvigy += 2
-            if suit == 'cs':
-                Spider_Man = load_image_safe('fly_pose1_cs_rev.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('fly_pose1_iss_rev.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('fly_pose1_ws_rev.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('fly_pose1_us_rev.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('fly_pose1_ss_rev.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('fly_pose1_as_rev.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('fly_pose1_is_rev.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('fly_pose1_ios_rev.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_cs_rev.png'))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_iss_rev.png'))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ws_rev.png'))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_us_rev.png'))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ss_rev.png'))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_as_rev.png'))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_is_rev.png'))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ios_rev.png'))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 40, SMh - 65))
             Spider_Man = pygame.transform.rotate(Spider_Man, SMRt - 25)
             if coords_increase % 5 == 0:
                 SMRt -= 1
             SMR_pvu = Spider_Man.get_rect()
-            pygame.draw.line(SCREEN, pygame.Color('White'),
+            pygame.draw.line(SCREEN, WHITE,
                              (SMx + 40 + SMR_pvu.topleft[0], SMy + 50 + SMR_pvu.topleft[1]),
                              (300 + coords_increase * 1.8, 0), 1)
             SCREEN.blit(Spider_Man, (SMx, SMy))
-            # pygame.display.update()
             coords_increase += 1
 
-        elif st == -2 and revk < 20 and revst == 1 and 70 <= coords_increase <= 400 - revk * 20 \
-                and pygame.key.get_pressed()[pygame.K_LSHIFT]:
-            SCREEN.fill(pygame.Color('Black'))
+        # Обратный полет на паутине - фаза 1 (вправо)
+        elif st == -2 and revk < 20 and revst == 1 and 70 <= coords_increase <= 400 - revk * 20 and \
+                pygame.key.get_pressed()[pygame.K_LSHIFT]:
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             sdvigx -= 3
-            if sdvigy > -330:
+            if sdvigy > INITIAL_SCROLL_Y:
                 if sdvigy % 12 == 0:
                     sdvigy -= 2 + revk
                 else:
                     sdvigy -= 2
-            if suit == 'cs':
-                Spider_Man = load_image_safe('fly_pose1_cs.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('fly_pose1_iss.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('fly_pose1_ws.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('fly_pose1_us.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('fly_pose1_ss.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('fly_pose1_as.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('fly_pose1_is.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('fly_pose1_ios.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_cs.png'))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_iss.png'))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ws.png'))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_us.png'))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ss.png'))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_as.png'))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_is.png'))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ios.png'))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 40, SMh - 65))
             Spider_Man = pygame.transform.rotate(Spider_Man, SMRt)
             if coords_increase % 4 == 0:
                 SMRt += 1
             SMR_pvu = Spider_Man.get_rect()
             if 70 <= coords_increase <= 250:
-                pygame.draw.line(SCREEN, pygame.Color('White'),
+                pygame.draw.line(SCREEN, WHITE,
                                  (SMx - 65 + SMR_pvu.topright[0], SMy + 60 + SMR_pvu.topright[1]),
-                                 (display_w - 300 - coords_increase * 1.8, 0), 1)
+                                 (SCREEN_WIDTH - 300 - coords_increase * 1.8, 0), 1)
             elif 250 <= coords_increase <= 400:
-                pygame.draw.line(SCREEN, pygame.Color('White'),
+                pygame.draw.line(SCREEN, WHITE,
                                  (SMx - 100 + SMR_pvu.topright[0], SMy + 60 + SMR_pvu.topright[1]),
-                                 (display_w - 300 - coords_increase * 1.8, 0), 1)
+                                 (SCREEN_WIDTH - 300 - coords_increase * 1.8, 0), 1)
             SCREEN.blit(Spider_Man, (SMx, SMy))
-            # pygame.display.update()
             coords_increase += 1
 
-        elif st == -2 and revk < 20 and revst == 1 \
-                and 400 - revk * 20 < coords_increase <= 500 - revk * 20 \
-                and pygame.key.get_pressed()[pygame.K_LSHIFT]:
-            SCREEN.fill(pygame.Color('Black'))
+        # Обратный полет на паутине - фаза 2 (вправо)
+        elif st == -2 and revk < 20 and revst == 1 and 400 - revk * 20 < coords_increase <= 500 - revk * 20 and \
+                pygame.key.get_pressed()[pygame.K_LSHIFT]:
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             sdvigx -= 3
             sdvigy += 2
-            if suit == 'cs':
-                Spider_Man = load_image_safe('fly_pose1_cs.png')
-            if suit == 'iss':
-                Spider_Man = load_image_safe('fly_pose1_iss.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('fly_pose1_ws.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('fly_pose1_us.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('fly_pose1_ss.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('fly_pose1_as.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('fly_pose1_is.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('fly_pose1_ios.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_cs.png'))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_iss.png'))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ws.png'))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_us.png'))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ss.png'))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_as.png'))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_is.png'))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose1_ios.png'))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 40, SMh - 65))
             Spider_Man = pygame.transform.rotate(Spider_Man, SMRt)
             if coords_increase % 4 == 0:
                 SMRt += 1
             SMR_pvu = Spider_Man.get_rect()
-            pygame.draw.line(SCREEN, pygame.Color('White'),
+            pygame.draw.line(SCREEN, WHITE,
                              (SMx - 100 + SMR_pvu.topright[0], SMy + 60 + SMR_pvu.topright[1]),
-                             (display_w - 300 - coords_increase * 1.8, 0), 1)
+                             (SCREEN_WIDTH - 300 - coords_increase * 1.8, 0), 1)
             SCREEN.blit(Spider_Man, (SMx, SMy))
-            # pygame.display.update()
             coords_increase += 1
 
+        # Переход к обратному полету
         elif st == 1 and coords_increase >= 620 and pygame.key.get_pressed()[pygame.K_LSHIFT]:
             st, coords_increase, SMRt = -1, 0, 60
 
-        elif st == 0 and sdvigy <= -330 and ((ticks - sp_ticks >= 2000 and sp_ticks != 0) or podst == 1) \
-                and not pygame.key.get_pressed()[pygame.K_d] and not pygame.key.get_pressed()[pygame.K_SPACE] \
-                and not pygame.key.get_pressed()[pygame.K_a]:
-            SCREEN.fill(pygame.Color('Black'))
+        # Анимация стояния после бездействия
+        elif st == 0 and sdvigy <= INITIAL_SCROLL_Y and (
+                (ticks - sp_ticks >= 2000 and sp_ticks != 0) or podst == 1) and not pygame.key.get_pressed()[
+            pygame.K_d] and not pygame.key.get_pressed()[pygame.K_SPACE] and not pygame.key.get_pressed()[pygame.K_a]:
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             if revst == 0:
-                if suit == 'cs':
+                if CURRENT_SUIT == 'cs':
                     if dif_image == 0:
                         dif_image = randint(1, 2)
                     if dif_image == 1:
-                        Spider_Man = load_image_safe('Тема 2.png')
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 2.png"))
                         Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 50, SMh - 20))
                         SCREEN.blit(Spider_Man, (SMx + 7, SMy + 143))
                     elif dif_image == 2:
-                        Spider_Man = load_image_safe('spider_stay5_cs.png')
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_cs.png'))
                         Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 50, SMh - 5))
                         SCREEN.blit(Spider_Man, (SMx + 20, SMy + 140))
                 else:
-                    if suit == 'iss':
-                        Spider_Man = load_image_safe('spider_stay5_iss.png')
-                    elif suit == 'ws':
-                        Spider_Man = load_image_safe('spider_stay5_ws.png')
-                    elif suit == 'us':
-                        Spider_Man = load_image_safe('spider_stay5_us.png')
-                    elif suit == 'ss':
-                        Spider_Man = load_image_safe('spider_stay5_ss.png')
-                    elif suit == 'as':
-                        Spider_Man = load_image_safe('spider_stay5_as.png')
-                    elif suit == 'is':
-                        Spider_Man = load_image_safe('spider_stay5_is.png')
-                    elif suit == 'ios':
-                        Spider_Man = load_image_safe('spider_stay5_ios.png')
+                    if CURRENT_SUIT == 'iss':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_iss.png'))
+                    elif CURRENT_SUIT == 'ws':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_ws.png'))
+                    elif CURRENT_SUIT == 'us':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_us.png'))
+                    elif CURRENT_SUIT == 'ss':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_ss.png'))
+                    elif CURRENT_SUIT == 'as':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_as.png'))
+                    elif CURRENT_SUIT == 'is':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_is.png'))
+                    elif CURRENT_SUIT == 'ios':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_ios.png'))
                     Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 50, SMh - 5))
                     SCREEN.blit(Spider_Man, (SMx + 20, SMy + 140))
             else:
-                if suit == 'cs':
+                if CURRENT_SUIT == 'cs':
                     if dif_image == 0:
                         dif_image = randint(1, 2)
                     if dif_image == 1:
-                        Spider_Man = load_image_safe('Тема 2_rev.png')
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 2_rev.png"))
                         Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 50, SMh - 20))
                         SCREEN.blit(Spider_Man, (SMx + 7, SMy + 143))
                     elif dif_image == 2:
-                        Spider_Man = load_image_safe('spider_stay5_cs_rev.png')
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_cs_rev.png'))
                         Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 50, SMh - 5))
                         SCREEN.blit(Spider_Man, (SMx + 20, SMy + 140))
                 else:
-                    if suit == 'iss':
-                        Spider_Man = load_image_safe('spider_stay5_iss_rev.png')
-                    elif suit == 'ws':
-                        Spider_Man = load_image_safe('spider_stay5_ws_rev.png')
-                    elif suit == 'us':
-                        Spider_Man = load_image_safe('spider_stay5_us_rev.png')
-                    elif suit == 'ss':
-                        Spider_Man = load_image_safe('spider_stay5_ss_rev.png')
-                    elif suit == 'as':
-                        Spider_Man = load_image_safe('spider_stay5_as_rev.png')
-                    elif suit == 'is':
-                        Spider_Man = load_image_safe('spider_stay5_is_rev.png')
-                    elif suit == 'ios':
-                        Spider_Man = load_image_safe('spider_stay5_ios_rev.png')
+                    if CURRENT_SUIT == 'iss':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_iss_rev.png'))
+                    elif CURRENT_SUIT == 'ws':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_ws_rev.png'))
+                    elif CURRENT_SUIT == 'us':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_us_rev.png'))
+                    elif CURRENT_SUIT == 'ss':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_ss_rev.png'))
+                    elif CURRENT_SUIT == 'as':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_as_rev.png'))
+                    elif CURRENT_SUIT == 'is':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_is_rev.png'))
+                    elif CURRENT_SUIT == 'ios':
+                        Spider_Man = load_image_safe(
+                            get_image_path("characters", "spider_man", CURRENT_SUIT, 'spider_stay5_ios_rev.png'))
                     Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 50, SMh - 5))
                     SCREEN.blit(Spider_Man, (SMx + 20, SMy + 140))
-            # pygame.display.update()
-            # pygame.time.wait(40)
             time_wait = 40
 
-        elif st == 0 and sdvigy <= -330 and pygame.key.get_pressed()[pygame.K_d] \
-                and (0 <= ticks - sp_ticks <= 150 or sp_ticks == 0):
+        # Анимация ходьбы вправо - фаза 1
+        elif st == 0 and sdvigy <= INITIAL_SCROLL_Y and pygame.key.get_pressed()[pygame.K_d] and (
+                0 <= ticks - sp_ticks <= 150 or sp_ticks == 0):
             if podst != 1:
                 podst = 1
             if revst == 1:
                 revst = 0
             sdvigx -= 2
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
 
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             if dif_image == 0:
                 dif_image = randint(1, 2)
-            if dif_image == 1 and suit == 'cs':
-                Spider_Man = load_image_safe('Тема 100.png')
+            if dif_image == 1 and CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 100.png"))
                 Spider_Man = pygame.transform.scale(Spider_Man, (SMw, SMh - 40))
-            elif dif_image == 2 and suit == 'cs':
-                Spider_Man = load_image_safe('Тема 82.png')
+            elif dif_image == 2 and CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 82.png"))
                 Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 15, SMh - 50))
             else:
-                if suit == 'iss':
-                    Spider_Man = load_image_safe('Тема 101.png')
-                elif suit == 'ws':
-                    Spider_Man = load_image_safe('Тема 102.png')
-                elif suit == 'us':
-                    Spider_Man = load_image_safe('Тема 103.png')
-                elif suit == 'ss':
-                    Spider_Man = load_image_safe('Тема 104.png')
-                elif suit == 'as':
-                    Spider_Man = load_image_safe('Тема 105.png')
-                elif suit == 'is':
-                    Spider_Man = load_image_safe('Тема 106.png')
-                elif suit == 'ios':
-                    Spider_Man = load_image_safe('Тема 107.png')
+                if CURRENT_SUIT == 'iss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 101.png"))
+                elif CURRENT_SUIT == 'ws':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 102.png"))
+                elif CURRENT_SUIT == 'us':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 103.png"))
+                elif CURRENT_SUIT == 'ss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 104.png"))
+                elif CURRENT_SUIT == 'as':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 105.png"))
+                elif CURRENT_SUIT == 'is':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 106.png"))
+                elif CURRENT_SUIT == 'ios':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 107.png"))
                 Spider_Man = pygame.transform.scale(Spider_Man, (SMw, SMh - 40))
             SCREEN.blit(Spider_Man, (SMx + 27, SMy + 157))
-            # pygame.display.update()
             if sp_ticks == 0:
                 sp_ticks = ticks
-        elif st == 0 and sdvigy <= -330 and pygame.key.get_pressed()[pygame.K_d] \
-                and 150 <= ticks - sp_ticks <= 220:
+
+        # Анимация ходьбы вправо - фаза 2
+        elif st == 0 and sdvigy <= INITIAL_SCROLL_Y and pygame.key.get_pressed()[
+            pygame.K_d] and 150 <= ticks - sp_ticks <= 220:
             sdvigx -= 2
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
-            if suit == 'cs':
-                Spider_Man = load_image_safe('Тема 84.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('Тема 85.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('Тема 86.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('Тема 87.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('Тема 88.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('Тема 89.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('Тема 90.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('Тема 91.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 84.png"))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 85.png"))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 86.png"))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 87.png"))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 88.png"))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 89.png"))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 90.png"))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 91.png"))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 10, SMh - 40))
             SCREEN.blit(Spider_Man, (SMx + 27, SMy + 145))
-            # pygame.display.update()
-        elif st == 0 and sdvigy <= -330 and pygame.key.get_pressed()[pygame.K_d] \
-                and 220 <= ticks - sp_ticks <= 340:
+
+        # Анимация ходьбы вправо - фаза 3
+        elif st == 0 and sdvigy <= INITIAL_SCROLL_Y and pygame.key.get_pressed()[
+            pygame.K_d] and 220 <= ticks - sp_ticks <= 340:
             sdvigx -= 2
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
-            if suit == 'cs':
-                Spider_Man = load_image_safe('Тема 108.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('Тема 109.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('Тема 110.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('Тема 111.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('Тема 112.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('Тема 113.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('Тема 114.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('Тема 115.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 108.png"))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 109.png"))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 110.png"))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 111.png"))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 112.png"))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 113.png"))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 114.png"))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 115.png"))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 10, SMh - 30))
             SCREEN.blit(Spider_Man, (SMx + 27, SMy + 140))
-            # pygame.display.update()
-        elif st == 0 and sdvigy <= -330 and pygame.key.get_pressed()[pygame.K_d] \
-                and 340 <= ticks - sp_ticks <= 410:
+
+        # Анимация ходьбы вправо - фаза 4
+        elif st == 0 and sdvigy <= INITIAL_SCROLL_Y and pygame.key.get_pressed()[
+            pygame.K_d] and 340 <= ticks - sp_ticks <= 410:
             sdvigx -= 2
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
-            if suit == 'cs':
-                Spider_Man = load_image_safe('Тема 116.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('Тема 117.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('Тема 118.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('Тема 119.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('Тема 120.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('Тема 121.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('Тема 122.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('Тема 123.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 116.png"))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 117.png"))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 118.png"))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 119.png"))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 120.png"))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 121.png"))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 122.png"))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 123.png"))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 10, SMh - 40))
             SCREEN.blit(Spider_Man, (SMx + 27, SMy + 140))
-            # pygame.display.update()
 
-        elif st == 0 and sdvigy <= -330 and pygame.key.get_pressed()[pygame.K_a] \
-                and (0 <= ticks - sp_ticks <= 150 or sp_ticks == 0):
+        # Анимация ходьбы влево - фаза 1
+        elif st == 0 and sdvigy <= INITIAL_SCROLL_Y and pygame.key.get_pressed()[pygame.K_a] and (
+                0 <= ticks - sp_ticks <= 150 or sp_ticks == 0):
             if podst != 1:
                 podst = 1
             if revst == 0:
                 revst = 1
             sdvigx += 2
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             if dif_image == 0:
                 dif_image = randint(1, 2)
-            if dif_image == 1 and suit == 'cs':
-                Spider_Man = load_image_safe('Тема 100_rev.png')
+            if dif_image == 1 and CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 100_rev.png"))
                 Spider_Man = pygame.transform.scale(Spider_Man, (SMw, SMh - 40))
-            elif dif_image == 2 and suit == 'cs':
-                Spider_Man = load_image_safe('Тема 82_rev.png')
+            elif dif_image == 2 and CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 82_rev.png"))
                 Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 15, SMh - 50))
             else:
-                if suit == 'iss':
-                    Spider_Man = load_image_safe('Тема 101_rev.png')
-                elif suit == 'ws':
-                    Spider_Man = load_image_safe('Тема 102_rev.png')
-                elif suit == 'us':
-                    Spider_Man = load_image_safe('Тема 103_rev.png')
-                elif suit == 'ss':
-                    Spider_Man = load_image_safe('Тема 104_rev.png')
-                elif suit == 'as':
-                    Spider_Man = load_image_safe('Тема 105_rev.png')
-                elif suit == 'is':
-                    Spider_Man = load_image_safe('Тема 106_rev.png')
-                elif suit == 'ios':
-                    Spider_Man = load_image_safe('Тема 107_rev.png')
+                if CURRENT_SUIT == 'iss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 101_rev.png"))
+                elif CURRENT_SUIT == 'ws':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 102_rev.png"))
+                elif CURRENT_SUIT == 'us':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 103_rev.png"))
+                elif CURRENT_SUIT == 'ss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 104_rev.png"))
+                elif CURRENT_SUIT == 'as':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 105_rev.png"))
+                elif CURRENT_SUIT == 'is':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 106_rev.png"))
+                elif CURRENT_SUIT == 'ios':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 107_rev.png"))
                 Spider_Man = pygame.transform.scale(Spider_Man, (SMw, SMh - 40))
             SCREEN.blit(Spider_Man, (SMx + 27, SMy + 157))
-            # pygame.display.update()
             if sp_ticks == 0:
                 sp_ticks = ticks
-        elif st == 0 and sdvigy <= -330 and pygame.key.get_pressed()[pygame.K_a] \
-                and 150 <= ticks - sp_ticks <= 220:
+
+        # Анимация ходьбы влево - фаза 2
+        elif st == 0 and sdvigy <= INITIAL_SCROLL_Y and pygame.key.get_pressed()[
+            pygame.K_a] and 150 <= ticks - sp_ticks <= 220:
             sdvigx += 2
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
-            if suit == 'cs':
-                Spider_Man = load_image_safe('Тема 84_rev.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('Тема 85_rev.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('Тема 86_rev.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('Тема 87_rev.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('Тема 88_rev.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('Тема 89_rev.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('Тема 90_rev.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('Тема 91_rev.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 84_rev.png"))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 85_rev.png"))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 86_rev.png"))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 87_rev.png"))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 88_rev.png"))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 89_rev.png"))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 90_rev.png"))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 91_rev.png"))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 10, SMh - 40))
             SCREEN.blit(Spider_Man, (SMx + 27, SMy + 145))
-            # pygame.display.update()
-        elif st == 0 and sdvigy <= -330 and pygame.key.get_pressed()[pygame.K_a] \
-                and 220 <= ticks - sp_ticks <= 340:
+
+        # Анимация ходьбы влево - фаза 3
+        elif st == 0 and sdvigy <= INITIAL_SCROLL_Y and pygame.key.get_pressed()[
+            pygame.K_a] and 220 <= ticks - sp_ticks <= 340:
             sdvigx += 2
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
 
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
-            if suit == 'cs':
-                Spider_Man = load_image_safe('Тема 108_rev.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('Тема 109_rev.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('Тема 110_rev.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('Тема 111_rev.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('Тема 112_rev.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('Тема 113_rev.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('Тема 114_rev.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('Тема 115_rev.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 108_rev.png"))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 109_rev.png"))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 110_rev.png"))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 111_rev.png"))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 112_rev.png"))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 113_rev.png"))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 114_rev.png"))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 115_rev.png"))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 10, SMh - 30))
             SCREEN.blit(Spider_Man, (SMx + 27, SMy + 140))
-            # pygame.display.update()
-        elif st == 0 and sdvigy <= -330 and pygame.key.get_pressed()[pygame.K_a] \
-                and 340 <= ticks - sp_ticks <= 410:
+
+        # Анимация ходьбы влево - фаза 4
+        elif st == 0 and sdvigy <= INITIAL_SCROLL_Y and pygame.key.get_pressed()[
+            pygame.K_a] and 340 <= ticks - sp_ticks <= 410:
             sdvigx += 2
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject"
-                                    "/Marvel's Spider-Man 2D/Fonts/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
-            if suit == 'cs':
-                Spider_Man = load_image_safe('Тема 116_rev.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('Тема 117_rev.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('Тема 118_rev.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('Тема 119_rev.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('Тема 120_rev.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('Тема 121_rev.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('Тема 122_rev.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('Тема 123_rev.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 116_rev.png"))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 117_rev.png"))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 118_rev.png"))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 119_rev.png"))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 120_rev.png"))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 121_rev.png"))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 122_rev.png"))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 123_rev.png"))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw - 10, SMh - 40))
             SCREEN.blit(Spider_Man, (SMx + 27, SMy + 140))
-            # pygame.display.update()
 
+        # Переход из начальной заставки в игру
         elif st == -100 and pygame.key.get_pressed()[pygame.K_LSHIFT]:
             st = 0
 
+        # Начальная заставка - падение с неба (фаза 1)
         elif st == -100 and 600 <= sdvigy <= 1000:
-            SCREEN.fill(pygame.Color('Black'))
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject"
-                                    "/Marvel's Spider-Man 2D/Fonts/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             if coords_increase % 3 == 0:
                 sdvigx -= 1
             sdvigy -= 6
-            if suit == 'cs':
-                Spider_Man = load_image_safe('fly_pose7_cs.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('fly_pose7_iss.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('fly_pose7_ws.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('fly_pose7_us.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('fly_pose7_ss.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('fly_pose7_as.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('fly_pose7_is.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('fly_pose7_ios.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_cs.png'))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_iss.png'))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_ws.png'))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_us.png'))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_ss.png'))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_as.png'))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_is.png'))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_ios.png'))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 45, SMh - 130))
             Spider_Man = pygame.transform.rotate(Spider_Man, -65)
             SCREEN.blit(Spider_Man, (SMx + 27, SMy))
-            # pygame.display.update()
             if not pygame.mixer.music.get_busy():
-                pygame.mixer.music.load("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                        "/Sounds/air_sound.mp3")
-                pygame.mixer.music.play()
+                pygame.mixer.music.load(MUSIC_FILES['air_sound'])
+                pygame.mixer.music.play(-1)
             coords_increase += 1
 
-        elif st == -100 and -330 <= sdvigy <= 600:
-            SCREEN.fill(pygame.Color('Black'))
+        # Начальная заставка - падение с неба (фаза 2) с инструкцией
+        elif st == -100 and INITIAL_SCROLL_Y <= sdvigy <= 600:
+            SCREEN.fill(BLACK)
             i = 0
             while (i < tiles):
-                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                 SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                 i += 1
 
             if abs(sdvigx) > bg.get_width():
                 sdvigx = 0
-            pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-            pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 30 * kx)
-            text = font.render(str(hp), True, (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+            pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+            font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+            text = font.render(str(hp), True, WHITE)
             tx, ty = 460, 53
             SCREEN.blit(text, (tx, ty))
             if coords_increase % 3 == 0:
                 sdvigx -= 1
             sdvigy -= 2
-            if suit == 'cs':
-                Spider_Man = load_image_safe('fly_pose7_cs.png')
-            elif suit == 'iss':
-                Spider_Man = load_image_safe('fly_pose7_iss.png')
-            elif suit == 'ws':
-                Spider_Man = load_image_safe('fly_pose7_ws.png')
-            elif suit == 'us':
-                Spider_Man = load_image_safe('fly_pose7_us.png')
-            elif suit == 'ss':
-                Spider_Man = load_image_safe('fly_pose7_ss.png')
-            elif suit == 'as':
-                Spider_Man = load_image_safe('fly_pose7_as.png')
-            elif suit == 'is':
-                Spider_Man = load_image_safe('fly_pose7_is.png')
-            elif suit == 'ios':
-                Spider_Man = load_image_safe('fly_pose7_ios.png')
+            if CURRENT_SUIT == 'cs':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_cs.png'))
+            elif CURRENT_SUIT == 'iss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_iss.png'))
+            elif CURRENT_SUIT == 'ws':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_ws.png'))
+            elif CURRENT_SUIT == 'us':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_us.png'))
+            elif CURRENT_SUIT == 'ss':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_ss.png'))
+            elif CURRENT_SUIT == 'as':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_as.png'))
+            elif CURRENT_SUIT == 'is':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_is.png'))
+            elif CURRENT_SUIT == 'ios':
+                Spider_Man = load_image_safe(
+                    get_image_path("characters", "spider_man", CURRENT_SUIT, 'fly_pose7_ios.png'))
             Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 45, SMh - 130))
             Spider_Man = pygame.transform.rotate(Spider_Man, -65)
             SCREEN.blit(Spider_Man, (SMx + 27, SMy))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/GULAG.otf", 25 * kx)
-            text = font.render('!HELP!', True,
-                               (255, 255, 255))
+            font = pygame.font.Font(get_font_path('gulag'), 25)
+            text = font.render('!HELP!', True, WHITE)
             tx, ty = 400, 115
             SCREEN.blit(text, (tx, ty))
-            pygame.draw.rect(SCREEN, pygame.Color('White'), (400, 139, 80, 2))
-            pygame.draw.rect(SCREEN, pygame.Color('White'), (400, 147, 820, 2))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                    "/Fonts/Podkova.ttf", 20 * kx)
-            text = font.render('Чтобы зацепиться паутиной и лететь на ней зажмите и держите L_Shift', True,
-                               (255, 255, 255))
+            pygame.draw.rect(SCREEN, WHITE, (400, 139, 80, 2))
+            pygame.draw.rect(SCREEN, WHITE, (400, 147, 820, 2))
+            font = pygame.font.Font(get_font_path('podkova'), 20)
+            text = font.render('Чтобы зацепиться паутиной и лететь на ней зажмите и держите L_Shift', True, WHITE)
             tx, ty = 400, 150
             SCREEN.blit(text, (tx, ty))
-            text = font.render('а затем отпустите его, тогда паук сможет резко выпрямиться и полететь дальше',
-                               True, (255, 255, 255))
+            text = font.render('а затем отпустите его, тогда паук сможет резко выпрямиться и полететь дальше', True,
+                               WHITE)
             tx, ty = 400, 175
             SCREEN.blit(text, (tx, ty))
-            # Надпись с инструкцией к полету: Чтобы зацепиться паутиной и лететь на ней зажмите и держите L_Shift, а затем отпустите
-            # его, тогда паук сможет резко выпрямиться и полететь дальше
             coords_increase += 1
-            # pygame.display.update()
 
-        elif st == -100 and sdvigy <= -330:
+        # Завершение начальной заставки
+        elif st == -100 and sdvigy <= INITIAL_SCROLL_Y:
             st = 0
-            pygame.mixer.music.load("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Sounds"
-                                    "/spider_punch_ground.mp3")
-            pygame.mixer.music.play()
+            punch_sound = pygame.mixer.Sound(SOUND_FILES['punch'])
+            punch_sound.play()
 
+        # Обработка состояний по умолчанию
         else:
             sp_ticks, dif_image = 0, 0
             if st == 1 and pygame.key.get_pressed()[pygame.K_LSHIFT]:
                 st, coords_increase, SMRt = -1, 0, 60
                 revst = 1
-                SCREEN.fill(pygame.Color('Black'))
+                SCREEN.fill(BLACK)
                 i = 0
                 while (i < tiles):
-                    SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                    SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                     SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                     i += 1
                 if abs(sdvigx) > bg.get_width():
                     sdvigx = 0
-                pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-                pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-                font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                        "/MonospaceBold.ttf", 30 * kx)
-                text = font.render(str(hp), True, (255, 255, 255))
+                pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+                pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+                font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+                text = font.render(str(hp), True, WHITE)
                 tx, ty = 460, 53
                 SCREEN.blit(text, (tx, ty))
-            elif (st == -1 or st == -2) and coords_increase <= 701 \
-                    and pygame.key.get_pressed()[pygame.K_LSHIFT]:
+            elif (st == -1 or st == -2) and coords_increase <= 701 and pygame.key.get_pressed()[pygame.K_LSHIFT]:
                 st, coords_increase = -2, 70
                 revk += 1
                 if revst == 0:
@@ -2708,195 +2895,199 @@ def main_game():
                 else:
                     revst = 0
                     SMRt = 40
-                SCREEN.fill(pygame.Color('Black'))
+                SCREEN.fill(BLACK)
                 i = 0
                 while (i < tiles):
-                    SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                    SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                     SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                     i += 1
                 if abs(sdvigx) > bg.get_width():
                     sdvigx = 0
-            elif st == 3 and (pygame.key.get_pressed()[pygame.K_LSHIFT] or sdvigy <= -330):
+            elif st == 3 and (pygame.key.get_pressed()[pygame.K_LSHIFT] or sdvigy <= INITIAL_SCROLL_Y):
                 st = 0
             else:
                 st = 3
                 coords_increase = 0
 
-        if subst == 'ON':
+        # Отрисовка субтитров
+        if SUBTITLES == 'ON':
             if subticks == 0:
                 subticks = ticks
             for i in time_subtitles:
-                if int(i.split()[0]) < ticks - subticks + 1300 < int(i.split()[1]):
-                    font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                            "/MonospaceBold.ttf", 22 * kx)
-                    text = font.render(subtitles[time_subtitles.index(i)], True, (255, 255, 255))
-                    tx, ty = display_w // 2 - len(subtitles[time_subtitles.index(i)]) // 2 * 13, \
-                             display_h - 200 - len(subtitles[time_subtitles.index(i)]) // 50 * 17
+                start_time, end_time = map(int, i.split())
+                if start_time < ticks - subticks + 1300 < end_time:
+                    font = pygame.font.Font(get_font_path('monospace_bold'), 22)
+                    text = font.render(subtitles[time_subtitles.index(i)], True, WHITE)
+                    tx = SCREEN_WIDTH // 2 - len(subtitles[time_subtitles.index(i)]) // 2 * 13
+                    ty = SCREEN_HEIGHT - 200 - len(subtitles[time_subtitles.index(i)]) // 50 * 17
                     SCREEN.blit(text, (tx, ty))
                     break
 
-        if ticks >= 50000 and cut_scene == 1 and fight == 1:
-            # second_cut_scene()
-            st, sdvigy = 0, -330
+        # Начало боя с врагами
+        if ticks >= 50000 and CURRENT_CUTSCENE == 1 and fight == 1:
+            st, sdvigy = 0, INITIAL_SCROLL_Y
             for i in range(5):
                 dif_image_m = randint(0, 4)
                 if dif_image_m == 0:
-                    f_t = load_image_safe('fisk_thug_rack.png')
+                    f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug_rack.png'))
                 elif dif_image_m == 1:
-                    f_t = load_image_safe('fisk_thug_rack2.png')
+                    f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug_rack2.png'))
                 elif dif_image_m == 2:
-                    f_t = load_image_safe('fisk_thug_rack3.png')
+                    f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug_rack3.png'))
                 elif dif_image_m == 3:
-                    f_t = load_image_safe('fisk_thug_rack4.png')
+                    f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug_rack4.png'))
                 elif dif_image_m == 4:
-                    f_t = load_image_safe('fisk_thug_rack5.png')
+                    f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug_rack5.png'))
                 f_t = pygame.transform.scale(f_t, (120, 220))
-                SCREEN.blit(f_t, (display_w // 2 + 100 + 130 * i, display_h // 2 - 53))
+                SCREEN.blit(f_t, (SCREEN_WIDTH // 2 + 100 + 130 * i, SCREEN_HEIGHT // 2 - 53))
                 f_t_colors.append(dif_image_m)
-                f_t_coords.append((display_w // 2 + 100 + 130 * i, display_h // 2 - 53))
+                f_t_coords.append((SCREEN_WIDTH // 2 + 100 + 130 * i, SCREEN_HEIGHT // 2 - 53))
                 FTx, FTy = f_t_coords[i]
-            # pygame.display.update()
             ftticks = ticks
             fight = 1
 
+        # Логика боя с врагами
         if fight == 1 and hp > 0:
             for i in range(len(f_t_colors)):
                 dif_image_m = f_t_colors[i]
                 FTx, FTy = f_t_coords[i]
                 if ticks - ftticks < 4000:
                     if dif_image_m == 0:
-                        f_t = load_image_safe('fisk_thug_rack.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug_rack.png'))
                         f_t = pygame.transform.scale(f_t, (120, 220))
                     elif dif_image_m == 1:
-                        f_t = load_image_safe('fisk_thug_rack2.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug_rack2.png'))
                         f_t = pygame.transform.scale(f_t, (120, 220))
                     elif dif_image_m == 2:
-                        f_t = load_image_safe('fisk_thug_rack3.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug_rack3.png'))
                         f_t = pygame.transform.scale(f_t, (120, 220))
                     elif dif_image_m == 3:
-                        f_t = load_image_safe('fisk_thug_rack4.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug_rack4.png'))
                         f_t = pygame.transform.scale(f_t, (130, 220))
                     elif dif_image_m == 4:
-                        f_t = load_image_safe('fisk_thug_rack5.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug_rack5.png'))
                         f_t = pygame.transform.scale(f_t, (130, 220))
                     SCREEN.blit(f_t, (FTx + sdvigx, FTy + 330 + sdvigy))
 
                 elif 4000 <= ticks - ftticks < 4500:
                     if dif_image_m == 0:
-                        f_t = load_image_safe('fisk_thug1_threating.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug1_threating.png'))
                         f_t = pygame.transform.scale(f_t, (120, 220))
                     elif dif_image_m == 1:
-                        f_t = load_image_safe('fisk_thug_threating2.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug_threating2.png'))
                         f_t = pygame.transform.scale(f_t, (150, 220))
                     elif dif_image_m == 2:
-                        f_t = load_image_safe('Тема 15.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", "Тема 15.png"))
                         f_t = pygame.transform.scale(f_t, (140, 220))
                     elif dif_image_m == 3:
-                        f_t = load_image_safe('fisk_threating3.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_threating3.png'))
                         f_t = pygame.transform.scale(f_t, (140, 220))
                     elif dif_image_m == 4:
-                        f_t = load_image_safe('fisk_threating4.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_threating4.png'))
                         f_t = pygame.transform.scale(f_t, (140, 220))
                     SCREEN.blit(f_t, (FTx - 60 + sdvigx, FTy + 330 + sdvigy))
 
                 elif 4500 <= ticks - ftticks <= 5200:
                     if dif_image_m == 0 and i == 0:
-                        f_t = load_image_safe('fisk_thug_punch1.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug_punch1.png'))
                         f_t = pygame.transform.scale(f_t, (214, 185))
                     elif dif_image_m == 0 and i != 0:
-                        f_t = load_image_safe('fisk_threating3.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_threating3.png'))
                         f_t = pygame.transform.scale(f_t, (160, 220))
                     elif dif_image_m == 1:
-                        f_t = load_image_safe('fisk_thug_punch.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug_punch.png'))
                         f_t = pygame.transform.scale(f_t, (200, 220))
                     elif dif_image_m == 2:
-                        f_t = load_image_safe('fisk_threating3.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_threating3.png'))
                         f_t = pygame.transform.scale(f_t, (160, 185))
                     elif dif_image_m == 3:
-                        f_t = load_image_safe('fisk_thug_punch.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_thug_punch.png'))
                         f_t = pygame.transform.scale(f_t, (200, 220))
                     elif dif_image_m == 4:
-                        f_t = load_image_safe('fisk_threating3.png')
+                        f_t = load_image_safe(get_image_path("characters", "enemies", 'fisk_threating3.png'))
                         f_t = pygame.transform.scale(f_t, (160, 220))
                     SCREEN.blit(f_t, (FTx - 110 + sdvigx, FTy + 330 + sdvigy))
                 else:
                     if abs(SMx - FTx) < 170:
                         hp -= round(50 * dif_k)
                     f_t_coords[i] = (FTx - 110, FTy)
-                # pygame.display.update()
             if ticks - ftticks > 5200:
                 ftticks = ticks
+
+        # Обработка событий
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
-                quit()
+                pygame.quit()
+                sys.exit()
             if ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_ESCAPE:
-                    data = []
-                    f = open("Saves.txt", mode="r")
-                    text = f.readlines()
-                    for i in text:
-                        data.append(i)
-                        print(i)
-                    f.close()
-                    f = open('Downloads.txt', 'w')
-                    f.close()
-                    f = open('Downloads.txt', 'w')
-                    # for i in range(6):
-                    #    if i == im:
-                    #        f.write(str(im, dif_k, musst, suit, cut_scene, hp, sdvigx, sdvigy))
-                    #   else:
-                    #       f.write(data[i])
-                    f.close()
+                    # Сохранение игры
+                    try:
+                        with open(os.path.join(SAVES_DIR, "saves.txt"), "r") as f:
+                            data = f.readlines()
+                    except FileNotFoundError:
+                        data = []
+                    # Логика сохранения (упрощенная)
                     pygame.quit()
                     sys.exit()
                 elif ev.key == pygame.K_TAB:
                     pygame.mixer.music.unload()
-                    menu()
-            if ev.type == pygame.MOUSEBUTTONDOWN and sdvigy <= -330:
-                SCREEN.fill(pygame.Color('Black'))
+                    main_menu()  # Возврат в главное меню
+            if ev.type == pygame.MOUSEBUTTONDOWN and sdvigy <= INITIAL_SCROLL_Y:
+                SCREEN.fill(BLACK)
                 i = 0
                 while (i < tiles):
-                    SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + display_h - 100 + sdvigy))
+                    SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
                     SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
                     i += 1
                 if abs(sdvigx) > bg.get_width():
                     sdvigx = 0
-                pygame.draw.rect(SCREEN, (255, 255, 255), (50, 50, 400, 45), 5)
-                pygame.draw.rect(SCREEN, (50, 191, 73), (55, 55, 390, 35))
-                font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                        "/MonospaceBold.ttf", 30 * kx)
-                text = font.render(str(hp), True, (255, 255, 255))
+                pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
+                pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+                font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+                text = font.render(str(hp), True, WHITE)
                 tx, ty = 460, 53
                 SCREEN.blit(text, (tx, ty))
-                if suit == 'cs':
-                    Spider_Man = load_image_safe('Тема 70.png')
-                elif suit == 'iss':
-                    Spider_Man = load_image_safe('Тема 71.png')
-                elif suit == 'ws':
-                    Spider_Man = load_image_safe('Тема 72.png')
-                elif suit == 'us':
-                    Spider_Man = load_image_safe('Тема 73.png')
-                elif suit == 'ss':
-                    Spider_Man = load_image_safe('Тема 74.png')
-                elif suit == 'as':
-                    Spider_Man = load_image_safe('Тема 75.png')
-                elif suit == 'is':
-                    Spider_Man = load_image_safe('Тема 76.png')
-                elif suit == 'ios':
-                    Spider_Man = load_image_safe('Тема 77.png')
+                if CURRENT_SUIT == 'cs':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 70.png"))
+                elif CURRENT_SUIT == 'iss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 71.png"))
+                elif CURRENT_SUIT == 'ws':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 72.png"))
+                elif CURRENT_SUIT == 'us':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 73.png"))
+                elif CURRENT_SUIT == 'ss':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 74.png"))
+                elif CURRENT_SUIT == 'as':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 75.png"))
+                elif CURRENT_SUIT == 'is':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 76.png"))
+                elif CURRENT_SUIT == 'ios':
+                    Spider_Man = load_image_safe(
+                        get_image_path("characters", "spider_man", CURRENT_SUIT, "Тема 77.png"))
                 Spider_Man = pygame.transform.scale(Spider_Man, (SMw + 10, SMh - 25))
                 SCREEN.blit(Spider_Man, (SMx + 20, SMy + 140))
                 for i in range(len(f_t_colors)):
                     FTx, FTy = f_t_coords[i]
                     if abs(SMx - FTx) <= 170:
                         del f_t_colors[0]
-                # pygame.display.update()
-                # pygame.time.wait(200)
                 st = 0
+
         pygame.display.update()
+
+        # Контроль FPS
         if time_wait != 0:
             pygame.time.wait(time_wait)
             time_wait = 0
+        else:
+            pygame.time.delay(16)  # ~60 FPS
 
 
 main_menu()

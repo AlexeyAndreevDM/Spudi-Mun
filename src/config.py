@@ -256,6 +256,27 @@ def get_font_path(font_name):
     """Возвращает путь к шрифту"""
     return FONT_FILES.get(font_name, FONT_FILES['monospace_bold'])
 
+def load_image_safe(path, default_image=PLACEHOLDER_IMAGE, convert_alpha=True):
+    """Безопасно загружает изображение. Если файл не найден, использует изображение-заглушку."""
+    try:
+        if convert_alpha:
+            image = pygame.image.load(path).convert_alpha()
+        else:
+            image = pygame.image.load(path).convert()
+        return image
+    except (pygame.error, FileNotFoundError):
+        print(f"Warning: File {path} not found, using default: {default_image}")
+        try:
+            if convert_alpha:
+                return pygame.image.load(default_image).convert_alpha()
+            else:
+                return pygame.image.load(default_image).convert()
+        except:
+            print(f"Emergency: Creating colored square for {path}")
+            surf = pygame.Surface((50, 50))
+            surf.fill((255, 0, 255))
+            return surf
+
 
 # =============================================
 # ПРОВЕРКА СУЩЕСТВОВАНИЯ ДИРЕКТОРИЙ
