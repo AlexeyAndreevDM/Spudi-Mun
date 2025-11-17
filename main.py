@@ -1090,6 +1090,9 @@ def main_game():
     CURRENT_CUTSCENE += 1
     st = -100
 
+    web_swing_speed_x = 0
+    web_swing_speed_y = 0
+
     # Загрузка фонов
     bg = load_image_safe(get_image_path("backgrounds", "fhomewthspandpavmnt.jpg"), convert_alpha=False)
     bg = pygame.transform.scale(bg, (1414, 2000))
@@ -1124,21 +1127,23 @@ def main_game():
             if sdvigy > -330:
                 sdvigy -= 6  # Двигаем фон вниз (игрок "падает")
 
-        # Движение при полете на паутине - ИСПРАВЛЕННАЯ ЛОГИКА
         elif player.st == 1 and keys[pygame.K_LSHIFT]:
             # Первая фаза полета (вверх)
             if player.coords_increase < 220:
                 sdvigx -= 4
-                if sdvigy > -330:  # Ограничиваем минимальную высоту
-                    sdvigy -= 3
+                sdvigy -= 3  # <-- Пусть двигается вверх, даже если ниже -330
+                # УБРАТЬ: if sdvigy < -330: sdvigy = -330
             # Вторая фаза полета (вниз) - ЗАМЕДЛЕННАЯ СКОРОСТЬ
             elif 220 <= player.coords_increase <= 395:
                 sdvigx -= 4
-                sdvigy += 1  # Уменьшили с 3 до 1 для замедления
+                sdvigy += 1
             # Третья фаза полета (выравнивание)
             elif 395 <= player.coords_increase <= 430:
                 sdvigx -= 4
                 sdvigy += 2
+
+            # Управление во время полета на паутине
+            player.continue_web_swing()
 
         # Движение при ходьбе
         elif player.st == 0 and player.on_ground:
@@ -1167,6 +1172,10 @@ def main_game():
         # Синхронизация переменных
         st = player.st
         hp = player.health
+
+        # Проверка: если игрок перешёл в состояние 0 из -100, установить sdvigy на "землю"
+        if st == 0 and player.on_ground:
+            sdvigy = -330  # <-- Убедиться, что sdvigy на уровне земли
 
         # Обработка смерти игрока
         if hp <= 0:

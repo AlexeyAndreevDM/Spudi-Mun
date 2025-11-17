@@ -134,11 +134,11 @@ class Player:
         if self.st == 0 and keys[pygame.K_SPACE] and self.st != 4:
             self.st = 4
             self.coords_increase = 0
-
         # Бросок паутины
-        if self.st == 0 and keys[pygame.K_LSHIFT]:
+        # Проверяем возможность начать полёт из состояния 0 или -100
+        if (self.st == 0 or self.st == -100) and keys[pygame.K_LSHIFT]:
+            print(f"[DEBUG] handle_input: LSHIFT pressed, current st = {self.st}")  # <-- НОВОЕ
             self.start_web_swing(ticks)
-
         # Движение влево/вправо
         if self.st == 0 and self.on_ground:
             if keys[pygame.K_d]:
@@ -149,25 +149,21 @@ class Player:
                 self.move_left(ticks)
                 self.facing_right = False
                 self.revst = 1
-
         # Управление во время полета на паутине
         if self.st == 1 and keys[pygame.K_LSHIFT]:
             self.continue_web_swing()
-
         # Отпускание паутины
         if self.st == 1 and not keys[pygame.K_LSHIFT]:
             self.release_web_swing(ticks)
 
-        # Переход из начального состояния
-        if self.st == -100 and keys[pygame.K_LSHIFT]:
-            self.st = 0
-
     def start_web_swing(self, ticks):
         """Начало полета на паутине"""
+        print(f"[DEBUG] start_web_swing: called, changing st from {self.st} to 1")  # <-- НОВОЕ
         self.st = 1
         self.coords_increase = 0
         self.SMRt = -50
         self.web_swinging = True
+        print(f"[DEBUG] start_web_swing: new st = {self.st}, web_swinging = {self.web_swinging}")  # <-- НОВОЕ
         self.play_web_sound()
 
     def continue_web_swing(self):
@@ -204,15 +200,20 @@ class Player:
 
     def update(self, keys, ticks, sdvigy):
         """Обновление состояния игрока"""
+        print(f"[DEBUG] update: st = {self.st}, sdvigy = {sdvigy}, web_swinging = {self.web_swinging}")  # <-- НОВОЕ
         self.handle_input(keys, ticks)
 
         # Проверка на землю
-        if sdvigy <= -330 and not self.web_swinging and self.st != -100:
-            self.on_ground = True
-            if self.st in [2, 3]:
+        # Убираем условие self.st != -100, чтобы позволить игроку "приземлиться" из состояния -100
+        # Но при этом не выставляем on_ground, если он в полёте (web_swinging)
+        if sdvigy <= -330 and not self.web_swinging:
+            if self.st in [2, 3]:  # <-- Если был в падении или отпущен
                 self.st = 0
+            self.on_ground = True
+            print(f"[DEBUG] update: on_ground = True, st = {self.st}")  # <-- НОВОЕ
         else:
             self.on_ground = False
+            print(f"[DEBUG] update: on_ground = False")  # <-- НОВОЕ
 
     def draw(self, screen, sdvigx, sdvigy):
         """Отрисовка игрока"""
@@ -232,54 +233,81 @@ class Player:
 
             # Отрисовка паутины
             if self.web_swinging:
-                self.draw_web_line(screen)
+                self.draw_web_line(screen, sdvigx, sdvigy)
 
     def get_render_info(self):
         """Определение текущего спрайта"""
         direction = "" if self.facing_right else "_rev"
-
         if self.health <= 0:
             return "death", (27, 140), 0
-
         if self.st == -100:
             return "swing_7", (27, 0), -65
         elif self.st == 0:
-            if not hasattr(self, 'last_animation_time'):
-                self.last_animation_time = pygame.time.get_ticks()
-                self.dif_image = random.randint(1, 2)
-
-            current_time = pygame.time.get_ticks()
-            if current_time - self.last_animation_time > 2000:
-                self.dif_image = random.randint(1, 2)
-                self.last_animation_time = current_time
-
-            if self.revst == 0:
-                return f"idle_{self.dif_image}", (20, 140), 0
+            if self.on_ground:
+                # Проверяем движение для анимации ходьбы
+                if hasattr(self, 'walking') and self.walking:
+                    walk_cycle = int(pygame.time.get_ticks() / 100) % 5 + 1  # Пример
+                    return f"walk_{walk_cycle}{direction}", (20, 140), 0
+                else:
+                    return "idle_1", (20, 140), 0
             else:
-                return f"idle_{self.dif_image}_rev", (20, 140), 0
-        elif self.st == 1:
-            return f"swing_1{direction}", (-40, -10), self.SMRt
-        elif self.st == 2:
-            return "swing_7", (60, 40), self.SMRt - 175
-        elif self.st == 3:
-            return f"swing_8{direction}", (0, 150), 0
-        elif self.st == 4:
-            return f"jump{direction}", (40, 40), 0
+                return f"swing_8{direction}", (0, 150), 0
+        elif self.st == 1:  # <-- Полёт на паутине
+                # Плавное вращение в пределах ~70 градусов (на 15 градусов меньше)
+                # coords_increase идёт от 0 до 620
+                # Нарисуем кривую: от -35 до +35
+            if self.coords_increase < 310:  # Первая половина
+                    # От 0 до 310: вращение от -35 до 0
+                rotation = -40 + (self.coords_increase / 310) * 40
+            else:  # Вторая половина
+                    # От 310 до 620: вращение от 0 до +35
+                rotation = (self.coords_increase - 310) / 310 * 45
 
+                # Ограничиваем вращение в пределах -35..+35
+            rotation = max(-40, min(45, rotation))
+
+
+
+            # Выбираем спрайт в зависимости от фазы
+            # Можно использовать один и тот же спрайт или разные
+            # Пример: используем swing_1 для всей фазы
+            return f"swing_1{direction}", (20, 100), rotation
+
+        elif self.st == 2:  # <-- Отпускание паутины
+            return f"swing_8{direction}", (0, 150), 0
+        elif self.st == 3:  # <-- Свободное падение
+            return f"swing_7{direction}", (27, 0), -65
+        elif self.st == 4:  # <-- Прыжок
+            return f"jump{direction}", (40, 40), 0
         return "idle_1", (20, 140), 0
 
-    def draw_web_line(self, screen):
-        """Отрисовка линии паутины"""
+    def draw_web_line(self, screen, sdvigx, sdvigy):
+        # Примерная высота, где паутина цепляется к зданию
+        building_top_y = -2000 + SCREEN_HEIGHT - 100 + sdvigy + 100
+
+        # Вычисляем координаты края спрайта на экране, откуда тянется паутина
+        sprite_key, draw_position, rotation = self.get_render_info()
+        sprite_screen_x = self.screen_x + draw_position[0]
+        sprite_screen_y = self.screen_y + draw_position[1]
+
+        # Создаём Rect
+        sprite_rect = pygame.Rect(sprite_screen_x, sprite_screen_y, self.width, self.height)
+        print("Позиции", sprite_rect.topright, sprite_screen_x, sprite_screen_y)
+
+        # Выбираем стартовую точку в зависимости от направления
         if self.facing_right:
-            start_x = self.screen_x + 100
-            start_y = self.screen_y + 80
-            end_x = SCREEN_WIDTH - 300 - self.coords_increase * 2
-            end_y = 100
+            start_x, start_y = sprite_rect.topright  # <-- Правый верхний угол
         else:
-            start_x = self.screen_x + 50
-            start_y = self.screen_y + 80
+            start_x, start_y = sprite_rect.topleft  # <-- Левый верхний угол
+
+        # end_x — координата на экране, где крепится паутина к зданию
+        # Привязываем к краю фона в зависимости от направления
+        if self.facing_right:
+            end_x = SCREEN_WIDTH - 250 * SCALE_X - self.coords_increase * 2
+        else:
             end_x = 300 + self.coords_increase * 2
-            end_y = 100
+
+        end_y = building_top_y
 
         pygame.draw.line(screen, WHITE, (start_x, start_y), (end_x, end_y), 2)
 
