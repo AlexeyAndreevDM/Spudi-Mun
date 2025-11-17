@@ -81,8 +81,8 @@ GRAVITY = 0.5
 TERMINAL_VELOCITY = 20
 
 # Игрок
-PLAYER_WIDTH = 160
-PLAYER_HEIGHT = 200
+PLAYER_WIDTH = 150
+PLAYER_HEIGHT = 150
 PLAYER_START_X = SCREEN_WIDTH // 2 - 150 + 15
 PLAYER_START_Y = SCREEN_HEIGHT // 2 - 200 + 7
 PLAYER_SPEED = 5
@@ -255,6 +255,7 @@ def get_music_path(*path_parts):
 def get_font_path(font_name):
     """Возвращает путь к шрифту"""
     return FONT_FILES.get(font_name, FONT_FILES['monospace_bold'])
+
 
 def load_image_safe(path, default_image=PLACEHOLDER_IMAGE, convert_alpha=True):
     """Безопасно загружает изображение. Если файл не найден, использует изображение-заглушку."""

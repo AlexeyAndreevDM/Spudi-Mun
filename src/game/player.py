@@ -64,50 +64,42 @@ class Player:
             # Основные позы
             self.sprites = {
                 # Поза приземления
-                'pose_land': self.load_and_scale_image('Тема 40.png', self.width - 15, self.height - 80),
-                'pose_land_rev': self.load_and_scale_image('Тема 40_rev.png', self.width - 15, self.height - 80),
-
+                'pose_land': self.load_and_scale_image('Тема 40.png', self.width, self.height),
+                'pose_land_rev': self.load_and_scale_image('Тема 40_rev.png', self.width, self.height),
                 # Прыжок
-                'jump': self.load_and_scale_image('Тема 206.png', self.width - 70, self.height - 70),
-                'jump_rev': self.load_and_scale_image('Тема 206_rev.png', self.width - 70, self.height - 70),
-
+                'jump': self.load_and_scale_image('Тема 206.png', self.width, self.height),
+                'jump_rev': self.load_and_scale_image('Тема 206_rev.png', self.width, self.height),
                 # Паутина
-                'web_throw': self.load_and_scale_image('Тема 143.png', self.width - 10, self.height - 40),
-                'web_throw_rev': self.load_and_scale_image('Тема 143_rev.png', self.width - 10, self.height - 40),
-                'swing_1': self.load_and_scale_image('fly_pose1_cs.png', self.width + 40, self.height - 65),
-                'swing_1_rev': self.load_and_scale_image('fly_pose1_cs_rev.png', self.width + 40, self.height - 65),
-                'swing_7': self.load_and_scale_image('fly_pose7_cs.png', self.width + 30, self.height - 140),
-                'swing_8': self.load_and_scale_image('fly_pose8_cs.png', self.width - 20, self.height - 70),
-                'swing_8_rev': self.load_and_scale_image('fly_pose8_cs_rev.png', self.width - 20, self.height - 70),
-                'swing_9': self.load_and_scale_image('fly_pose9_cs.png', self.width - 25, self.height - 65),
-
+                'web_throw': self.load_and_scale_image('Тема 143.png', self.width, self.height),
+                'web_throw_rev': self.load_and_scale_image('Тема 143_rev.png', self.width, self.height),
+                'swing_1': self.load_and_scale_image('fly_pose1_cs.png', self.width, self.height),
+                'swing_1_rev': self.load_and_scale_image('fly_pose1_cs_rev.png', self.width, self.height),
+                'swing_7': self.load_and_scale_image('fly_pose7_cs.png', self.width, self.height),
+                'swing_8': self.load_and_scale_image('fly_pose8_cs.png', self.width, self.height),
+                'swing_8_rev': self.load_and_scale_image('fly_pose8_cs_rev.png', self.width, self.height),
+                'swing_9': self.load_and_scale_image('fly_pose9_cs.png', self.width, self.height),
                 # Стояние
-                'idle_1': self.load_and_scale_image('Тема 2.png', self.width - 50, self.height - 20),
-                'idle_2': self.load_and_scale_image('spider_stay5_cs.png', self.width - 50, self.height - 5),
-                'idle_1_rev': self.load_and_scale_image('Тема 2_rev.png', self.width - 50, self.height - 20),
-                'idle_2_rev': self.load_and_scale_image('spider_stay5_cs_rev.png', self.width - 50, self.height - 5),
-
+                'idle_1': self.load_and_scale_image('Тема 2.png', self.width, self.height),
+                'idle_2': self.load_and_scale_image('spider_stay5_cs.png', self.width, self.height),
+                'idle_1_rev': self.load_and_scale_image('Тема 2_rev.png', self.width, self.height),
+                'idle_2_rev': self.load_and_scale_image('spider_stay5_cs_rev.png', self.width, self.height),
                 # Ходьба
-                'walk_1': self.load_and_scale_image('Тема 100.png', self.width, self.height - 40),
-                'walk_2': self.load_and_scale_image('Тема 82.png', self.width - 15, self.height - 50),
-                'walk_3': self.load_and_scale_image('Тема 84.png', self.width - 10, self.height - 40),
-                'walk_4': self.load_and_scale_image('Тема 108.png', self.width + 10, self.height - 30),
-                'walk_5': self.load_and_scale_image('Тема 116.png', self.width - 10, self.height - 40),
-
-                'walk_1_rev': self.load_and_scale_image('Тема 100_rev.png', self.width, self.height - 40),
-                'walk_2_rev': self.load_and_scale_image('Тема 82_rev.png', self.width - 15, self.height - 50),
-                'walk_3_rev': self.load_and_scale_image('Тема 84_rev.png', self.width - 10, self.height - 40),
-                'walk_4_rev': self.load_and_scale_image('Тема 108_rev.png', self.width + 10, self.height - 30),
-                'walk_5_rev': self.load_and_scale_image('Тема 116_rev.png', self.width - 10, self.height - 40),
-
+                'walk_1': self.load_and_scale_image('Тема 100.png', self.width, self.height),
+                'walk_2': self.load_and_scale_image('Тема 82.png', self.width, self.height),
+                'walk_3': self.load_and_scale_image('Тема 84.png', self.width, self.height),
+                'walk_4': self.load_and_scale_image('Тема 108.png', self.width, self.height),
+                'walk_5': self.load_and_scale_image('Тема 116.png', self.width, self.height),
+                'walk_1_rev': self.load_and_scale_image('Тема 100_rev.png', self.width, self.height),
+                'walk_2_rev': self.load_and_scale_image('Тема 82_rev.png', self.width, self.height),
+                'walk_3_rev': self.load_and_scale_image('Тема 84_rev.png', self.width, self.height),
+                'walk_4_rev': self.load_and_scale_image('Тема 108_rev.png', self.width, self.height),
+                'walk_5_rev': self.load_and_scale_image('Тема 116_rev.png', self.width, self.height),
                 # Смерть
-                'death': self.load_and_scale_image('spider_pose-1_cs.png', self.width + 60, self.height - 55),
-
+                'death': self.load_and_scale_image('spider_pose-1_cs.png', self.width, self.height),
                 # Удар
-                'punch': self.load_and_scale_image('Тема 70.png', self.width + 10, self.height - 25),
+                'punch': self.load_and_scale_image('Тема 70.png', self.width, self.height),
             }
             print("Спрайты игрока загружены успешно")
-
         except Exception as e:
             print(f"Ошибка загрузки спрайтов: {e}")
 
@@ -121,19 +113,20 @@ class Player:
                 os.path.join(IMAGES_DIR, filename),
                 filename  # Прямой путь
             ]
-
             for image_path in paths_to_try:
                 if os.path.exists(image_path):
                     image = load_image_safe(image_path, convert_alpha=True)
                     return pygame.transform.scale(image, (int(width), int(height)))
-
             # Если файл не найден ни по одному пути
             print(f"Файл не найден: {filename}")
-            return load_image_safe(PLACEHOLDER_IMAGE, convert_alpha=True)
-
+            # МАСШТАБИРУЕМ заглушку до нужного размера
+            placeholder = load_image_safe(PLACEHOLDER_IMAGE, convert_alpha=True)
+            return pygame.transform.scale(placeholder, (int(width), int(height)))
         except Exception as e:
             print(f"Ошибка загрузки {filename}: {e}")
-            return load_image_safe(PLACEHOLDER_IMAGE, convert_alpha=True)
+            # МАСШТАБИРУЕМ заглушку до нужного размера
+            placeholder = load_image_safe(PLACEHOLDER_IMAGE, convert_alpha=True)
+            return pygame.transform.scale(placeholder, (int(width), int(height)))
 
     def handle_input(self, keys, ticks):
         """Обработка ввода пользователя"""
