@@ -51,6 +51,8 @@ class Player:
         # Паутина
         self.web_swinging = False
 
+        self.swing_cycle = 0  # Счетчик циклов раскачки для затухания
+
         # Здоровье
         self.health = PLAYER_MAX_HEALTH
 
@@ -136,7 +138,7 @@ class Player:
             self.coords_increase = 0
         # Бросок паутины
         # Проверяем возможность начать полёт из состояния 0 или -100
-        if (self.st == 0 or self.st == -100) and keys[pygame.K_LSHIFT]:
+        if (self.st == 4 or self.st == -100) and keys[pygame.K_LSHIFT]:
             print(f"[DEBUG] handle_input: LSHIFT pressed, current st = {self.st}")  # <-- НОВОЕ
             self.start_web_swing(ticks)
         # Движение влево/вправо
@@ -167,16 +169,18 @@ class Player:
         self.play_web_sound()
 
     def continue_web_swing(self):
-        """Продолжение полета на паутине"""
+        """Продолжение полета на паутине с цикличной раскачкой"""
         self.coords_increase += 1
 
         if self.coords_increase % 3 == 0:
             self.SMRt += 1
 
         if self.coords_increase >= 620:
-            self.st = -1
             self.coords_increase = 0
-            self.SMRt = 60
+            self.facing_right = not self.facing_right  # Разворот для обратной стороны
+            self.swing_cycle += 1  # Увеличить цикл для затухания
+            self.SMRt = -50  # Сброс фазы
+            # НЕ меняем st! Остается 1 для продолжения раскачки
 
     def release_web_swing(self, ticks):
         """Отпускание паутины"""
@@ -202,7 +206,6 @@ class Player:
         """Обновление состояния игрока"""
         print(f"[DEBUG] update: st = {self.st}, sdvigy = {sdvigy}, web_swinging = {self.web_swinging}")  # <-- НОВОЕ
         self.handle_input(keys, ticks)
-
         # Проверка на землю
         # Убираем условие self.st != -100, чтобы позволить игроку "приземлиться" из состояния -100
         # Но при этом не выставляем on_ground, если он в полёте (web_swinging)
@@ -252,25 +255,14 @@ class Player:
                     return "idle_1", (20, 140), 0
             else:
                 return f"swing_8{direction}", (0, 150), 0
-        elif self.st == 1:  # <-- Полёт на паутине
-                # Плавное вращение в пределах ~70 градусов (на 15 градусов меньше)
-                # coords_increase идёт от 0 до 620
-                # Нарисуем кривую: от -35 до +35
-            if self.coords_increase < 310:  # Первая половина
-                    # От 0 до 310: вращение от -35 до 0
+        elif self.st == 1:
+            if self.coords_increase < 310:
                 rotation = -40 + (self.coords_increase / 310) * 40
-            else:  # Вторая половина
-                    # От 310 до 620: вращение от 0 до +35
+            else:
                 rotation = (self.coords_increase - 310) / 310 * 45
-
-                # Ограничиваем вращение в пределах -35..+35
             rotation = max(-40, min(45, rotation))
-
-
-
-            # Выбираем спрайт в зависимости от фазы
-            # Можно использовать один и тот же спрайт или разные
-            # Пример: используем swing_1 для всей фазы
+            if not self.facing_right:
+                rotation = -rotation  # Инвертировать вращение для обратного направления
             return f"swing_1{direction}", (20, 100), rotation
 
         elif self.st == 2:  # <-- Отпускание паутины
