@@ -1127,34 +1127,27 @@ def main_game():
             if sdvigy > -415:
                 sdvigy -= 6  # Двигаем фон вниз (игрок "падает")
 
-        elif player.st == 1 and keys[pygame.K_LSHIFT]:
-            # Горизонталь: всегда в направлении facing_right (раскачка влево-вправо)
-            horiz_speed = 4 * (0.95 ** player.swing_cycle)  # Затухание скорости
-            if player.facing_right:
+        elif (player.st == 1 or player.st == -1) and keys[pygame.K_LSHIFT]:
+            # Горизонталь: вправо для st=1, влево для st=-1
+            horiz_speed = 4 * (0.95 ** player.swing_cycle)
+            if player.st == 1:  # Полёт вправо
                 sdvigx -= horiz_speed
-            else:
+            else:  # Полёт влево (st = -1)
                 sdvigx += horiz_speed
 
-            # Вертикаль: ТОГДА ЖЕ траектория (дуга подъём-спуск), без инверсии!
-            vert_amp = 3 * (0.95 ** player.swing_cycle)  # Затухание амплитуды
+            # Вертикаль: одинаковая траектория для обоих направлений
+            vert_amp = 3 * (0.95 ** player.swing_cycle)
             if player.coords_increase < 310:
                 phase = player.coords_increase / 310
                 angle = phase * math.pi
-                vertical_movement = -math.sin(angle) * vert_amp  # Всегда подъём в первой половине
+                vertical_movement = -math.sin(angle) * vert_amp
             else:
                 phase = (player.coords_increase - 310) / 310
                 angle = math.pi + phase * math.pi
-                vertical_movement = -math.sin(angle) * vert_amp  # Спуск во второй
+                vertical_movement = -math.sin(angle) * vert_amp
 
-            sdvigy += vertical_movement  # БЕЗ инверсии для not facing_right!
-
+            sdvigy += vertical_movement
             player.continue_web_swing()
-
-        elif player.st == -1 and keys[pygame.K_LSHIFT]:
-            player.st = 1  # Вернуть в ст=1 для продолжения
-            player.facing_right = not player.facing_right  # Разворот
-            player.coords_increase = 0
-            player.SMRt = -50
 
         # Движение при ходьбе
         elif player.st == 0 and player.on_ground:
@@ -1165,12 +1158,19 @@ def main_game():
 
         # Движение при отпускании паутины
         elif player.st == 2:
-            sdvigx -= 4
+            if player.facing_right:  # Двигаем вправо если смотрит вправо
+                sdvigx -= 4
+            else:  # Двигаем влево если смотрит влево
+                sdvigx += 4
             sdvigy += 2
 
         # Движение при свободном падении
         elif player.st == 3:
-            if player.revst == 0:  # Смотрит вправо
+            if keys[pygame.K_LSHIFT]:  # Добавляем возможность вернуться к полёту на паутине
+                player.start_web_swing(ticks)
+                player.coords_increase = 0
+                player.SMRt = -50
+            elif player.facing_right:  # Смотрит вправо
                 sdvigx -= 1
                 sdvigy -= 5
             else:  # Смотрит влево
@@ -1179,17 +1179,6 @@ def main_game():
 
         # Обновление игрока
         player.update(keys, ticks, sdvigy)
-
-        # if player.st == -100 and sdvigy <= -415:
-        #     player.st = 0
-        #     sdvigy = -420
-        #     player.on_ground = True
-        #     try:
-        #         land_sound = pygame.mixer.Sound(SOUND_FILES['punch'])
-        #         land_sound.play()
-        #     except:
-        #         print("NO")
-        #     print("NOOOO")
 
         # Синхронизация переменных
         st = player.st

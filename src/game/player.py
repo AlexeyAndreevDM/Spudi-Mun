@@ -7,24 +7,6 @@ import random
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 from src.config import *
 
-# Импортируем load_image_safe из основного файла
-# Добавим эту строку чтобы использовать вашу функцию
-try:
-    from main import load_image_safe  # Или откуда у вас эта функция
-except ImportError:
-    # Если не можем импортировать, создадим простую версию
-    def load_image_safe(path, default_image=PLACEHOLDER_IMAGE, convert_alpha=True):
-        try:
-            if convert_alpha:
-                return pygame.image.load(path).convert_alpha()
-            else:
-                return pygame.image.load(path).convert()
-        except:
-            print(f"Error loading: {path}")
-            surf = pygame.Surface((50, 50))
-            surf.fill((255, 0, 255))
-            return surf
-
 
 class Player:
     def __init__(self):
@@ -64,7 +46,7 @@ class Player:
         """Загрузка всех спрайтов для классического костюма с использованием вашей функции"""
         try:
             # Основные позы
-            self.sprites = {
+            self.sprites = { # если не отображается, но работает - надо дописать
                 # Поза приземления
                 'pose_land': self.load_and_scale_image('Тема 40.png', self.width, self.height),
                 'pose_land_rev': self.load_and_scale_image('Тема 40_rev.png', self.width, self.height),
@@ -77,6 +59,7 @@ class Player:
                 'swing_1': self.load_and_scale_image('fly_pose1_cs.png', self.width, self.height),
                 'swing_1_rev': self.load_and_scale_image('fly_pose1_cs_rev.png', self.width, self.height),
                 'swing_7': self.load_and_scale_image('fly_pose7_cs.png', self.width, self.height),
+                'swing_7_rev': self.load_and_scale_image('fly_pose7_cs_rev.png', self.width, self.height),
                 'swing_8': self.load_and_scale_image('fly_pose8_cs.png', self.width, self.height),
                 'swing_8_rev': self.load_and_scale_image('fly_pose8_cs_rev.png', self.width, self.height),
                 'swing_9': self.load_and_scale_image('fly_pose9_cs.png', self.width, self.height),
@@ -106,7 +89,9 @@ class Player:
             print(f"Ошибка загрузки спрайтов: {e}")
 
     def load_and_scale_image(self, filename, width, height):
-        """Загрузка и масштабирование изображения с использованием вашей функции"""
+        """Загрузка и масштабирование изображения с использованием ЕДИНОЙ функции из config"""
+        # print(f"[DEBUG] Загрузка спрайта: {filename}")
+
         try:
             # Пробуем разные пути
             paths_to_try = [
@@ -115,18 +100,22 @@ class Player:
                 os.path.join(IMAGES_DIR, filename),
                 filename  # Прямой путь
             ]
+
             for image_path in paths_to_try:
                 if os.path.exists(image_path):
+                    print(f"[DEBUG] Файл найден: {image_path}")
+                    # Используем ЕДИНУЮ функцию из config
                     image = load_image_safe(image_path, convert_alpha=True)
                     return pygame.transform.scale(image, (int(width), int(height)))
-            # Если файл не найден ни по одному пути
-            print(f"Файл не найден: {filename}")
-            # МАСШТАБИРУЕМ заглушку до нужного размера
+
+            # Если файл не найден - используем функцию из config с заглушкой
+            print(f"[DEBUG] Файл не найден, используем заглушку: {filename}")
             placeholder = load_image_safe(PLACEHOLDER_IMAGE, convert_alpha=True)
             return pygame.transform.scale(placeholder, (int(width), int(height)))
+
         except Exception as e:
-            print(f"Ошибка загрузки {filename}: {e}")
-            # МАСШТАБИРУЕМ заглушку до нужного размера
+            print(f"[DEBUG] Ошибка загрузки {filename}: {e}")
+            # Используем ЕДИНУЮ функцию для заглушки
             placeholder = load_image_safe(PLACEHOLDER_IMAGE, convert_alpha=True)
             return pygame.transform.scale(placeholder, (int(width), int(height)))
 
@@ -137,9 +126,8 @@ class Player:
             self.st = 4
             self.coords_increase = 0
         # Бросок паутины
-        # Проверяем возможность начать полёт из состояния 0 или -100
         if (self.st == 4 or self.st == -100) and keys[pygame.K_LSHIFT]:
-            print(f"[DEBUG] handle_input: LSHIFT pressed, current st = {self.st}")  # <-- НОВОЕ
+            print(f"[DEBUG] handle_input: LSHIFT pressed, current st = {self.st}")
             self.start_web_swing(ticks)
         # Движение влево/вправо
         if self.st == 0 and self.on_ground:
@@ -151,21 +139,26 @@ class Player:
                 self.move_left(ticks)
                 self.facing_right = False
                 self.revst = 1
-        # Управление во время полета на паутине
-        if self.st == 1 and keys[pygame.K_LSHIFT]:
+        # Управление во время полета на паутине - ОБНОВЛЕНО ДЛЯ st=-1
+        if (self.st == 1 or self.st == -1) and keys[pygame.K_LSHIFT]:
             self.continue_web_swing()
-        # Отпускание паутины
-        if self.st == 1 and not keys[pygame.K_LSHIFT]:
+        # Отпускание паутины - ОБНОВЛЕНО ДЛЯ st=-1
+        if (self.st == 1 or self.st == -1) and not keys[pygame.K_LSHIFT]:
             self.release_web_swing(ticks)
 
     def start_web_swing(self, ticks):
         """Начало полета на паутине"""
-        print(f"[DEBUG] start_web_swing: called, changing st from {self.st} to 1")  # <-- НОВОЕ
-        self.st = 1
+        print(f"[DEBUG] start_web_swing: called, changing st from {self.st} to 1")
+        # ДОБАВЛЕНО: Учитываем текущее направление при начале полета
+        if self.facing_right:
+            self.st = 1  # Полет вправо
+        else:
+            self.st = -1  # Полет влево
+
         self.coords_increase = 0
         self.SMRt = -50
         self.web_swinging = True
-        print(f"[DEBUG] start_web_swing: new st = {self.st}, web_swinging = {self.web_swinging}")  # <-- НОВОЕ
+        print(f"[DEBUG] start_web_swing: new st = {self.st}, web_swinging = {self.web_swinging}")
         self.play_web_sound()
 
     def continue_web_swing(self):
@@ -177,21 +170,29 @@ class Player:
 
         if self.coords_increase >= 620:
             self.coords_increase = 0
-            self.facing_right = not self.facing_right  # Разворот для обратной стороны
-            self.swing_cycle += 1  # Увеличить цикл для затухания
-            self.SMRt = -50  # Сброс фазы
-            # НЕ меняем st! Остается 1 для продолжения раскачки
+            self.facing_right = not self.facing_right
+
+            # ДОБАВЛЕНО: Переключение между st=1 и st=-1 при развороте
+            if self.st == 1:
+                self.st = -1  # Переход в обратное направление
+            else:
+                self.st = 1  # Возврат в прямое направление
+
+            self.swing_cycle += 1
+            self.SMRt = -50
 
     def release_web_swing(self, ticks):
         """Отпускание паутины"""
-        self.web_swinging = False  # Сброс флага полета
-        if self.coords_increase > 400:
+        self.web_swinging = False
+        if self.coords_increase > 500:
             self.play_swing_sound()
             self.st = 2
             self.coords_increase = 0
-            self.SMRt = 20
+            self.SMRt = 20  # Начальное значение для st=2
+            print(f"[RELEASE_WEB] Переход в st=2, SMRt={self.SMRt}")
         else:
             self.st = 3
+            print(f"[RELEASE_WEB] Переход в st=3 (короткий бросок)")
 
     def move_right(self, ticks):
         """Движение вправо"""
@@ -205,13 +206,31 @@ class Player:
 
     def update(self, keys, ticks, sdvigy):
         """Обновление состояния игрока"""
-        print(f"[DEBUG] update: st = {self.st}, sdvigy = {sdvigy}, web_swinging = {self.web_swinging}")  # <-- НОВОЕ
+        old_st = self.st
+
         self.handle_input(keys, ticks)
+
+        # Логируем изменение состояния
+        if old_st != self.st:
+            print(f"[STATE_CHANGE] st: {old_st} -> {self.st}")
+
+        # ОБНОВЛЕНИЕ ДЛЯ ST=2: ограниченный полет после отпускания паутины
+        if self.st == 2:
+            self.coords_increase += 1
+
+            # Уменьшаем угол (как в старом коде)
+            if self.coords_increase % 5 == 0:
+                self.SMRt -= 1
+
+            # Переход в падение после достижения предела
+            if self.coords_increase >= 175:  # Как в старом коде
+                self.st = 3
+                self.coords_increase = 0
+                print(f"[ST2_TO_ST3] Переход из st=2 в st=3")
+
         # Проверка на землю
-        # Убираем условие self.st != -100, чтобы позволить игроку "приземлиться" из состояния -100
-        # Но при этом не выставляем on_ground, если он в полёте (web_swinging)
         if sdvigy <= -415 and not self.web_swinging:
-            if self.st == -100:  # <-- Добавить -100 для начального падения
+            if self.st == -100:
                 self.st = 0
                 try:
                     land_sound = pygame.mixer.Sound(SOUND_FILES['punch'])
@@ -219,13 +238,11 @@ class Player:
                 except:
                     print("NO")
             self.on_ground = True
-            if self.st in [2, 3]:  # <-- Добавить -100 для начального падения
+            if self.st in [2, 3]:
                 self.st = 0
             self.on_ground = True
-            print(f"[DEBUG] update: on_ground = True, st = {self.st}")  # <-- НОВОЕ
         else:
             self.on_ground = False
-            print(f"[DEBUG] update: on_ground = False")  # <-- НОВОЕ
 
     def draw(self, screen, sdvigx, sdvigy):
         """Отрисовка игрока"""
@@ -250,35 +267,46 @@ class Player:
     def get_render_info(self):
         """Определение текущего спрайта"""
         direction = "" if self.facing_right else "_rev"
+
         if self.health <= 0:
             return "death", (27, 140), 0
         if self.st == -100:
             return "swing_7", (27, 0), -65
         elif self.st == 0:
             if self.on_ground:
-                # Проверяем движение для анимации ходьбы
                 if hasattr(self, 'walking') and self.walking:
-                    walk_cycle = int(pygame.time.get_ticks() / 100) % 5 + 1  # Пример
+                    walk_cycle = int(pygame.time.get_ticks() / 100) % 5 + 1
                     return f"walk_{walk_cycle}{direction}", (20, 140), 0
                 else:
                     return "idle_1", (20, 140), 0
             else:
                 return f"swing_8{direction}", (0, 150), 0
-        elif self.st == 1:
+        elif self.st == 1 or self.st == -1:  # ОБЪЕДИНЕНО ДЛЯ ОБОИХ НАПРАВЛЕНИЙ
             if self.coords_increase < 310:
                 rotation = -40 + (self.coords_increase / 310) * 40
             else:
                 rotation = (self.coords_increase - 310) / 310 * 45
             rotation = max(-40, min(45, rotation))
             if not self.facing_right:
-                rotation = -rotation  # Инвертировать вращение для обратного направления
+                rotation = -rotation
             return f"swing_1{direction}", (20, 100), rotation
+        elif self.st == 2:
+            # Полет после отпускания паутины (как в старом коде)
+            rotation = self.SMRt
 
-        elif self.st == 2:  # <-- Отпускание паутины
-            return f"swing_8{direction}", (0, 150), 0
-        elif self.st == 3:  # <-- Свободное падение
-            return f"swing_7{direction}", (27, 0), -65
-        elif self.st == 4:  # <-- Прыжок
+            # Инвертируем угол для направления влево
+            if not self.facing_right:
+                rotation = -rotation
+
+            return f"swing_7{direction}", (60, 40), rotation  # Позиция как в старом коде: (60, 40)
+        elif self.st == 3:  # Свободное падение - ВСЕГДА ОТОБРАЖАЕМ
+            # ИСПРАВЛЕНИЕ: Инвертируем угол для направления влево
+            rotation = -65  # Базовый угол
+            # Если смотрим влево, инвертируем угол
+            if not self.facing_right:
+                rotation = -rotation
+            return f"swing_7{direction}", (27, 0), rotation
+        elif self.st == 4:
             return f"jump{direction}", (40, 40), 0
         return "idle_1", (20, 140), 0
 
@@ -293,7 +321,7 @@ class Player:
 
         # Создаём Rect
         sprite_rect = pygame.Rect(sprite_screen_x, sprite_screen_y, self.width, self.height)
-        print("Позиции", sprite_rect.topright, sprite_screen_x, sprite_screen_y)
+        # print("Позиции", sprite_rect.topright, sprite_screen_x, sprite_screen_y)
 
         # Выбираем стартовую точку в зависимости от направления
         if self.facing_right:

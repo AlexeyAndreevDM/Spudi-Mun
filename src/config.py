@@ -259,21 +259,26 @@ def get_font_path(font_name):
 
 def load_image_safe(path, default_image=PLACEHOLDER_IMAGE, convert_alpha=True):
     """Безопасно загружает изображение. Если файл не найден, использует изображение-заглушку."""
+    print(f"[CONFIG] Загрузка: {path}")
+    print(f"[CONFIG] Заглушка: {default_image}")
+    print(f"[CONFIG] Заглушка существует: {os.path.exists(default_image)}")
+
     try:
         if convert_alpha:
             image = pygame.image.load(path).convert_alpha()
         else:
             image = pygame.image.load(path).convert()
+        print(f"[CONFIG] Успешно загружено: {path}")
         return image
-    except (pygame.error, FileNotFoundError):
-        print(f"Warning: File {path} not found, using default: {default_image}")
+    except (pygame.error, FileNotFoundError) as e:
+        print(f"[CONFIG] Ошибка {path}: {e}, используем заглушку")
         try:
             if convert_alpha:
                 return pygame.image.load(default_image).convert_alpha()
             else:
                 return pygame.image.load(default_image).convert()
-        except:
-            print(f"Emergency: Creating colored square for {path}")
+        except Exception as e2:
+            print(f"[CONFIG] Критическая ошибка заглушки: {e2}")
             surf = pygame.Surface((50, 50))
             surf.fill((255, 0, 255))
             return surf
