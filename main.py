@@ -1222,14 +1222,32 @@ def main_game():
         SCREEN.fill(BLACK)
 
         # Отрисовка фона
-        i = 0
+        # Отрисовка фона бесконечно в обе стороны
+        bg_width = bg.get_width()
+        road_width = road.get_width()
+
+        # Вычисляем offset для seamless
+        bg_offset = sdvigx % bg_width
+        if bg_offset > 0:
+            bg_offset -= bg_width
+
+        road_offset = sdvigx % road_width
+        if road_offset > 0:
+            road_offset -= road_width
+
+        # Количество тайлов: достаточно, чтобы покрыть экран + запас
+        tiles = math.ceil(SCREEN_WIDTH / bg_width) + 2  # Для bg
+        i = -1  # Начинать с -1 для левой стороны
         while i < tiles:
-            SCREEN.blit(bg, (bg.get_width() * i + sdvigx, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
-            SCREEN.blit(road, (road.get_width() * i + sdvigx, 800 + sdvigy))
+            SCREEN.blit(bg, (bg_width * i + bg_offset, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
             i += 1
 
-        if abs(sdvigx) > bg.get_width():
-            sdvigx = 0
+        # Аналогично для road
+        tiles = math.ceil(SCREEN_WIDTH / road_width) + 2
+        i = -1
+        while i < tiles:
+            SCREEN.blit(road, (road_width * i + road_offset, 800 + sdvigy))
+            i += 1
 
         # Отрисовка здоровья игрока
         pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
