@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="Scratched version">
-      <change beforePath="$PROJECT_DIR$/src/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config.py" afterDir="false" />
+    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="movements controller not fixed">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,20 +83,38 @@
       <option name="project" value="LOCAL" />
       <updated>1763196935681</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="cube size fixed">
+      <option name="closed" value="true" />
+      <created>1763368437901</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1763368437901</updated>
+    </task>
+    <task id="LOCAL-00003" summary="movements controller not fixed">
+      <option name="closed" value="true" />
+      <created>1763388212297</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1763388212297</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="Scratched version" />
-    <option name="LAST_COMMIT_MESSAGE" value="Scratched version" />
+    <MESSAGE value="cube size fixed" />
+    <MESSAGE value="movements controller not fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="movements controller not fixed" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>916</line>
+          <line>1002</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>

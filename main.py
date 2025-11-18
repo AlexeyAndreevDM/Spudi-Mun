@@ -1122,25 +1122,37 @@ def main_game():
             pygame.mixer.music.play()
             pygame.mixer.music.set_volume(MUSIC_VOLUME)
 
-        # ОБРАБОТКА ДВИЖЕНИЯ ФОНА - ИСПРАВЛЕННАЯ ВЕРСИЯ
+        # ОБРАБОТКА ДВИЖЕНИЯ ФОНА - ИСПРАВЛЕННАЯ ВЕРСИЯ ДЛЯ РАСКАЧКИ
         if player.st == -100:  # Начальное падение
             if sdvigy > -330:
                 sdvigy -= 6  # Двигаем фон вниз (игрок "падает")
 
         elif player.st == 1 and keys[pygame.K_LSHIFT]:
-            # Первая фаза полета (вверх)
-            if player.coords_increase < 220:
+            # ФИЗИКА РАСКАЧКИ НА ПАУТИНЕ - как маятник
+            # coords_increase идет от 0 до 620
+            if player.coords_increase < 620:
+                # Движение по горизонтали всегда вперед
                 sdvigx -= 4
-                sdvigy -= 3  # <-- Пусть двигается вверх, даже если ниже -330
-                # УБРАТЬ: if sdvigy < -330: sdvigy = -330
-            # Вторая фаза полета (вниз) - ЗАМЕДЛЕННАЯ СКОРОСТЬ
-            elif 220 <= player.coords_increase <= 395:
-                sdvigx -= 4
-                sdvigy += 1
-            # Третья фаза полета (выравнивание)
-            elif 395 <= player.coords_increase <= 430:
-                sdvigx -= 4
-                sdvigy += 2
+
+                # Движение по вертикали - синусоида для раскачки
+                # coords_increase 0-310: подъем по дуге (от 0 до π)
+                # coords_increase 310-620: спуск по дуге (от π до 2π)
+
+                if player.coords_increase < 310:
+                    # Первая половина - подъем по дуге
+                    phase = player.coords_increase / 310  # от 0 до 1
+                    angle = phase * math.pi  # от 0 до π
+                    # Синус от 0 до π дает значения от 0 до 1 и обратно к 0
+                    # Но нам нужно движение вверх, поэтому инвертируем
+                    vertical_movement = -math.sin(angle) * 5  # амплитуда 8 пикселей
+                else:
+                    # Вторая половина - спуск по дуге
+                    phase = (player.coords_increase - 310) / 310  # от 0 до 1
+                    angle = math.pi + phase * math.pi  # от π до 2π
+                    # Синус от π до 2π дает значения от 0 до -1 и обратно к 0
+                    vertical_movement = -math.sin(angle) * 5  # амплитуда 8 пикселей
+
+                sdvigy += vertical_movement
 
             # Управление во время полета на паутине
             player.continue_web_swing()
@@ -1175,7 +1187,7 @@ def main_game():
 
         # Проверка: если игрок перешёл в состояние 0 из -100, установить sdvigy на "землю"
         if st == 0 and player.on_ground:
-            sdvigy = -330  # <-- Убедиться, что sdvigy на уровне земли
+            sdvigy = -330
 
         # Обработка смерти игрока
         if hp <= 0:
