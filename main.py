@@ -1124,7 +1124,7 @@ def main_game():
 
         # ОБРАБОТКА ДВИЖЕНИЯ ФОНА - ИСПРАВЛЕННАЯ ВЕРСИЯ ДЛЯ РАСКАЧКИ
         if player.st == -100:  # Начальное падение
-            if sdvigy > -330:
+            if sdvigy > -415:
                 sdvigy -= 6  # Двигаем фон вниз (игрок "падает")
 
         elif player.st == 1 and keys[pygame.K_LSHIFT]:
@@ -1180,13 +1180,24 @@ def main_game():
         # Обновление игрока
         player.update(keys, ticks, sdvigy)
 
+        # if player.st == -100 and sdvigy <= -415:
+        #     player.st = 0
+        #     sdvigy = -420
+        #     player.on_ground = True
+        #     try:
+        #         land_sound = pygame.mixer.Sound(SOUND_FILES['punch'])
+        #         land_sound.play()
+        #     except:
+        #         print("NO")
+        #     print("NOOOO")
+
         # Синхронизация переменных
         st = player.st
         hp = player.health
 
         # Проверка: если игрок перешёл в состояние 0 из -100, установить sdvigy на "землю"
         if st == 0 and player.on_ground:
-            sdvigy = -330
+            sdvigy = -420
 
         # Обработка смерти игрока
         if hp <= 0:
@@ -1285,7 +1296,7 @@ def main_game():
                 elif ev.key == pygame.K_TAB:
                     pygame.mixer.music.unload()
                     # menu()  # Раскомментируйте когда будет готова функция menu
-            if ev.type == pygame.MOUSEBUTTONDOWN and sdvigy <= -330:
+            if ev.type == pygame.MOUSEBUTTONDOWN and sdvigy <= -415:
                 player.st = 0
 
         pygame.display.update()

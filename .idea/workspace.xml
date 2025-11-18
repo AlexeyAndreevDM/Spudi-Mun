@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="movements controller not fixed">
+    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="background fixed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/game/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/player.py" afterDir="false" />
@@ -100,7 +100,23 @@
       <option name="project" value="LOCAL" />
       <updated>1763388212297</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="flight both directions">
+      <option name="closed" value="true" />
+      <created>1763457784436</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1763457784436</updated>
+    </task>
+    <task id="LOCAL-00005" summary="background fixed">
+      <option name="closed" value="true" />
+      <created>1763457861750</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1763457861750</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -108,7 +124,9 @@
     <MESSAGE value="Scratched version" />
     <MESSAGE value="cube size fixed" />
     <MESSAGE value="movements controller not fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="movements controller not fixed" />
+    <MESSAGE value="flight both directions" />
+    <MESSAGE value="background fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="background fixed" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

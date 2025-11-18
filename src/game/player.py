@@ -184,6 +184,7 @@ class Player:
 
     def release_web_swing(self, ticks):
         """Отпускание паутины"""
+        self.web_swinging = False  # Сброс флага полета
         if self.coords_increase > 400:
             self.play_swing_sound()
             self.st = 2
@@ -209,8 +210,16 @@ class Player:
         # Проверка на землю
         # Убираем условие self.st != -100, чтобы позволить игроку "приземлиться" из состояния -100
         # Но при этом не выставляем on_ground, если он в полёте (web_swinging)
-        if sdvigy <= -330 and not self.web_swinging:
-            if self.st in [2, 3]:  # <-- Если был в падении или отпущен
+        if sdvigy <= -415 and not self.web_swinging:
+            if self.st == -100:  # <-- Добавить -100 для начального падения
+                self.st = 0
+                try:
+                    land_sound = pygame.mixer.Sound(SOUND_FILES['punch'])
+                    land_sound.play()
+                except:
+                    print("NO")
+            self.on_ground = True
+            if self.st in [2, 3]:  # <-- Добавить -100 для начального падения
                 self.st = 0
             self.on_ground = True
             print(f"[DEBUG] update: on_ground = True, st = {self.st}")  # <-- НОВОЕ
