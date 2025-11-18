@@ -4,278 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="landing fixed">
-      <change afterPath="$PROJECT_DIR$/classic/spider_lower_pose_rev.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/spider_run1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/spider_run1_rev.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/spider_run2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/spider_run2_rev.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/spider_run3_rev.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/spider_stay1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/spider_stay1_rev.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/spider_stay2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/spider_stay2_rev.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/spider_stay3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/spider_stay3_rev.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 100.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 101.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 102.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 103.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 104.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 105.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 106.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 107.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 190.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 21.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 22.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 23.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 24.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 248.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 25.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 26.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 27.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 28.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 283.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 287.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 29.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 30.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 31.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 310.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 32.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 322.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 323.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 328.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 33.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 34.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 345.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 346.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 35.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 36.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 369.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 37.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 370.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 38.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 39.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 40.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 400.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 401.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 402.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 403.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 404.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 405.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 406.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 41.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 42.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 43.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 44.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 448.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 449.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 45.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 450.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 451.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 452.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 453.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 454.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 455.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 456.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 457.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 458.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 459.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 46.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 460.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 461.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 462.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 47.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 479.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 48.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 49.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 50.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 51.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 52.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 53.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 54.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 55.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 56.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 57.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 58.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 59.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 60.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 61.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 62.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 63.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 64.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 65.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 66.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 67.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 68.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 69.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 70.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 71.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 72.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 73.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 74.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 75.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 76.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 77.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 78.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 79.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 80.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 81.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 82.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 83.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 84.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 85.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 86.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 87.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 88.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 89.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 90.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 91.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 92.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 93.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 94.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 95.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 96.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 97.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 98.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classic/Тема 99.png" afterDir="false" />
+    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="web swinging fixed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/spider_lower_pose_rev.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/spider_run1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/spider_run1_rev.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/spider_run2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/spider_run2_rev.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/spider_run3_rev.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/spider_stay1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/spider_stay1_rev.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/spider_stay2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/spider_stay2_rev.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/spider_stay3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/spider_stay3_rev.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 100.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 101.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 102.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 103.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 104.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 105.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 106.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 107.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 190.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 21.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 22.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 23.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 24.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 248.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 25.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 26.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 27.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 28.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 283.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 287.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 29.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 30.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 31.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 310.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 32.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 322.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 323.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 328.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 33.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 34.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 345.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 346.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 35.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 36.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 369.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 37.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 370.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 38.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 39.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 40.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 400.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 401.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 402.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 403.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 404.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 405.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 406.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 41.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 42.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 43.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 44.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 448.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 449.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 45.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 450.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 451.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 452.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 453.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 454.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 455.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 456.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 457.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 458.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 459.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 46.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 460.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 461.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 462.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 47.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 479.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 48.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 49.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 50.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 51.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 52.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 53.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 54.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 55.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 56.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 57.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 58.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 59.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 60.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 61.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 62.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 63.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 64.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 65.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 66.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 67.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 68.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 69.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 70.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 71.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 72.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 73.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 74.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 75.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 76.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 77.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 78.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 79.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 80.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 81.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 82.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 83.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 84.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 85.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 86.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 87.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 88.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 89.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 90.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 91.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 92.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 93.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 94.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 95.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 96.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 97.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 98.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/characters/spider_man/classic/Тема 99.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/game/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/player.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -393,7 +124,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763459976151</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="web swinging fixed">
+      <option name="closed" value="true" />
+      <created>1763495777649</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1763495777649</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -404,7 +143,8 @@
     <MESSAGE value="flight both directions" />
     <MESSAGE value="background fixed" />
     <MESSAGE value="landing fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="landing fixed" />
+    <MESSAGE value="web swinging fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="web swinging fixed" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

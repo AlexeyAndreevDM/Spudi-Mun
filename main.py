@@ -1150,11 +1150,8 @@ def main_game():
             player.continue_web_swing()
 
         # Движение при ходьбе
-        elif player.st == 0 and player.on_ground:
-            if keys[pygame.K_d]:  # Вправо
-                sdvigx -= SCROLL_SPEED
-            elif keys[pygame.K_a]:  # Влево
-                sdvigx += SCROLL_SPEED
+        elif player.st == 0 and player.on_ground and (keys[pygame.K_a] or keys[pygame.K_d]):
+            sdvigx = player.apply_movement(sdvigx)
 
         # Движение при отпускании паутины
         elif player.st == 2:

@@ -30,6 +30,11 @@ class Player:
         self.sp_ticks = 0
         self.dif_image = 0
 
+        # Переменные для движения
+        self.moving_right = False
+        self.moving_left = False
+        self.walking = False  # Для анимации ходьбы
+
         # Паутина
         self.web_swinging = False
 
@@ -48,14 +53,14 @@ class Player:
             # Основные позы
             self.sprites = { # если не отображается, но работает - надо дописать
                 # Поза приземления
-                'pose_land': self.load_and_scale_image('Тема 40.png', self.width, self.height),
-                'pose_land_rev': self.load_and_scale_image('Тема 40_rev.png', self.width, self.height),
+                'pose_land': self.load_and_scale_image('TEMA 40.png', self.width, self.height),
+                'pose_land_rev': self.load_and_scale_image('TEMA 40_rev.png', self.width, self.height),
                 # Прыжок
-                'jump': self.load_and_scale_image('Тема 206.png', self.width, self.height),
-                'jump_rev': self.load_and_scale_image('Тема 206_rev.png', self.width, self.height),
+                'jump': self.load_and_scale_image('TEMA 206.png', self.width, self.height),
+                'jump_rev': self.load_and_scale_image('TEMA 206_rev.png', self.width, self.height),
                 # Паутина
-                'web_throw': self.load_and_scale_image('Тема 143.png', self.width, self.height),
-                'web_throw_rev': self.load_and_scale_image('Тема 143_rev.png', self.width, self.height),
+                'web_throw': self.load_and_scale_image('TEMA 143.png', self.width, self.height),
+                'web_throw_rev': self.load_and_scale_image('TEMA 143_rev.png', self.width, self.height),
                 'swing_1': self.load_and_scale_image('fly_pose1_cs.png', self.width, self.height),
                 'swing_1_rev': self.load_and_scale_image('fly_pose1_cs_rev.png', self.width, self.height),
                 'swing_7': self.load_and_scale_image('fly_pose7_cs.png', self.width, self.height),
@@ -64,25 +69,25 @@ class Player:
                 'swing_8_rev': self.load_and_scale_image('fly_pose8_cs_rev.png', self.width, self.height),
                 'swing_9': self.load_and_scale_image('fly_pose9_cs.png', self.width, self.height),
                 # Стояние
-                'idle_1': self.load_and_scale_image('Тема 2.png', self.width, self.height),
+                'idle_1': self.load_and_scale_image('TEMA 2.png', self.width, self.height),
                 'idle_2': self.load_and_scale_image('spider_stay5_cs.png', self.width, self.height),
-                'idle_1_rev': self.load_and_scale_image('Тема 2_rev.png', self.width, self.height),
+                'idle_1_rev': self.load_and_scale_image('TEMA 2_rev.png', self.width, self.height),
                 'idle_2_rev': self.load_and_scale_image('spider_stay5_cs_rev.png', self.width, self.height),
                 # Ходьба
-                'walk_1': self.load_and_scale_image('Тема 100.png', self.width, self.height),
-                'walk_2': self.load_and_scale_image('Тема 82.png', self.width, self.height),
-                'walk_3': self.load_and_scale_image('Тема 84.png', self.width, self.height),
-                'walk_4': self.load_and_scale_image('Тема 108.png', self.width, self.height),
-                'walk_5': self.load_and_scale_image('Тема 116.png', self.width, self.height),
-                'walk_1_rev': self.load_and_scale_image('Тема 100_rev.png', self.width, self.height),
-                'walk_2_rev': self.load_and_scale_image('Тема 82_rev.png', self.width, self.height),
-                'walk_3_rev': self.load_and_scale_image('Тема 84_rev.png', self.width, self.height),
-                'walk_4_rev': self.load_and_scale_image('Тема 108_rev.png', self.width, self.height),
-                'walk_5_rev': self.load_and_scale_image('Тема 116_rev.png', self.width, self.height),
+                'walk_1': self.load_and_scale_image('TEMA 100.png', self.width, self.height),
+                'walk_2': self.load_and_scale_image('TEMA 82.png', self.width, self.height),
+                'walk_3': self.load_and_scale_image('TEMA 84.png', self.width, self.height),
+                'walk_4': self.load_and_scale_image('TEMA 108.png', self.width, self.height),
+                'walk_5': self.load_and_scale_image('TEMA 116.png', self.width, self.height),
+                'walk_1_rev': self.load_and_scale_image('TEMA 100_rev.png', self.width, self.height),
+                'walk_2_rev': self.load_and_scale_image('TEMA 82_rev.png', self.width, self.height),
+                'walk_3_rev': self.load_and_scale_image('TEMA 84_rev.png', self.width, self.height),
+                'walk_4_rev': self.load_and_scale_image('TEMA 108_rev.png', self.width, self.height),
+                'walk_5_rev': self.load_and_scale_image('TEMA 116_rev.png', self.width, self.height),
                 # Смерть
                 'death': self.load_and_scale_image('spider_pose-1_cs.png', self.width, self.height),
                 # Удар
-                'punch': self.load_and_scale_image('Тема 70.png', self.width, self.height),
+                'punch': self.load_and_scale_image('TEMA 70.png', self.width, self.height),
             }
             print("Спрайты игрока загружены успешно")
         except Exception as e:
@@ -129,16 +134,12 @@ class Player:
         if (self.st == 4 or self.st == -100) and keys[pygame.K_LSHIFT]:
             print(f"[DEBUG] handle_input: LSHIFT pressed, current st = {self.st}")
             self.start_web_swing(ticks)
-        # Движение влево/вправо
+        # Движение влево/вправо - ОБНОВЛЕНО
         if self.st == 0 and self.on_ground:
             if keys[pygame.K_d]:
                 self.move_right(ticks)
-                self.facing_right = True
-                self.revst = 0
             elif keys[pygame.K_a]:
                 self.move_left(ticks)
-                self.facing_right = False
-                self.revst = 1
         # Управление во время полета на паутине - ОБНОВЛЕНО ДЛЯ st=-1
         if (self.st == 1 or self.st == -1) and keys[pygame.K_LSHIFT]:
             self.continue_web_swing()
@@ -189,30 +190,59 @@ class Player:
             self.st = 2
             self.coords_increase = 0
             self.SMRt = 20  # Начальное значение для st=2
-            print(f"[RELEASE_WEB] Переход в st=2, SMRt={self.SMRt}")
+            # print(f"[RELEASE_WEB] Переход в st=2, SMRt={self.SMRt}")
         else:
             self.st = 3
-            print(f"[RELEASE_WEB] Переход в st=3 (короткий бросок)")
+            # print(f"[RELEASE_WEB] Переход в st=3 (короткий бросок)")
 
     def move_right(self, ticks):
         """Движение вправо"""
-        if self.sp_ticks == 0:
-            self.sp_ticks = ticks
+        self.moving_right = True
+        self.moving_left = False
+        self.walking = True
+        self.facing_right = True
+        self.revst = 0
+
+        # Здесь будет логика изменения sdvigx (как в старом коде)
+        # Пока просто устанавливаем флаги
 
     def move_left(self, ticks):
         """Движение влево"""
-        if self.sp_ticks == 0:
-            self.sp_ticks = ticks
+        self.moving_left = True
+        self.moving_right = False
+        self.walking = True
+        self.facing_right = False
+        self.revst = 1
+
+        # Здесь будет логика изменения sdvigx
+
+    def apply_movement(self, sdvigx):
+        """Применяет движение и возвращает новый sdvigx"""
+        if self.st == 0 and self.on_ground:  # Только на земле
+            if self.moving_right:
+                sdvigx -= PLAYER_SPEED  # Движение вправо (как в старом коде)
+            elif self.moving_left:
+                sdvigx += PLAYER_SPEED  # Движение влево
+
+        # Сбрасываем флаги движения
+        self.moving_right = False
+        self.moving_left = False
+
+        return sdvigx
 
     def update(self, keys, ticks, sdvigy):
         """Обновление состояния игрока"""
-        old_st = self.st
+        # old_st = self.st
 
         self.handle_input(keys, ticks)
 
-        # Логируем изменение состояния
-        if old_st != self.st:
-            print(f"[STATE_CHANGE] st: {old_st} -> {self.st}")
+        # Сбрасываем анимацию ходьбы если не двигаемся
+        if self.on_ground and not keys[pygame.K_d] and not keys[pygame.K_a]:
+            self.walking = False
+
+        # # Логируем изменение состояния
+        # if old_st != self.st:
+        #     print(f"[STATE_CHANGE] st: {old_st} -> {self.st}")
 
         # ОБНОВЛЕНИЕ ДЛЯ ST=2: ограниченный полет после отпускания паутины
         if self.st == 2:
