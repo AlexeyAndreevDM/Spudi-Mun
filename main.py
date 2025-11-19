@@ -1083,6 +1083,7 @@ def menu():
 
 def main_game():
     from src.game.player import Player
+    from src.game.enemy import Enemy
 
     # Объявляем глобальные переменные
     global sdvigy, DIFFICULTY, MUSIC_STATUS, CURRENT_SUIT, st, CURRENT_CUTSCENE, SUBTITLES
@@ -1109,6 +1110,12 @@ def main_game():
     player = Player()
     player.st = st
     player.health = hp
+
+    # Создаем врагов
+    enemies = [
+        Enemy(300),  # Враг на позиции X=300, на дороге
+        Enemy(800),  # Враг на позиции X=800, на дороге
+    ]
 
     # Основной игровой цикл
     clock = pygame.time.Clock()
@@ -1193,6 +1200,10 @@ def main_game():
         # Обновление игрока
         player.update(keys, ticks, sdvigy)
 
+        # Обновление врагов (передаем sdvigy для корректировки позиции)
+        for enemy in enemies:
+            enemy.update(player)
+
         # Синхронизация переменных
         st = player.st
         hp = player.health
@@ -1202,8 +1213,8 @@ def main_game():
             sdvigy = -420
 
         # Обработка смерти игрока
-        if hp <= 0:
-            if player.x + 27 - player.coords_increase > 300:
+        if player.health <= 0:
+            if player.screen_x + 27 - player.coords_increase > 300:
                 # Анимация смерти в воздухе
                 if 'zvukst' not in locals() or zvukst != 2:
                     zvukst = 2
@@ -1225,9 +1236,9 @@ def main_game():
                 pygame.draw.line(SCREEN, RED, [400, 380], [1080, 380], 2)
                 font = pygame.font.Font(get_font_path('monospace_bold'), 55)
                 text = font.render("YOU'RE FAILED, BUDDY", True, RED)
-                SCREEN.blit(text, (430, 300))
+                SCREEN.blit(text, (400, 300))
                 pygame.display.update()
-                pygame.time.wait(8000)
+                pygame.time.wait(800)
                 st, sdvigy, hp, MUSIC_STATUS = 0, -330, 100, -1
                 player.reset()
 
@@ -1271,6 +1282,10 @@ def main_game():
 
         # Отрисовка игрока
         player.draw(SCREEN, sdvigx, sdvigy)
+
+        # Отрисовка врагов
+        for enemy in enemies:
+            enemy.draw(SCREEN, 800 + sdvigy)
 
         # Обработка субтитров
         if SUBTITLES == 'ON':
