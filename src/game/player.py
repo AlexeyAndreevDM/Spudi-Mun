@@ -251,6 +251,13 @@ class Player:
 
         return sdvigx
 
+    def take_damage(self, amount):
+        """Получение урона"""
+        if self.on_ground:
+            self.health -= amount
+            print(f"[PLAYER] Получен урон: {amount}, HP: {self.health}")
+        # Можно добавить мигание или звук
+
     def update(self, keys, ticks, sdvigy):
         """Обновление состояния игрока"""
         # old_st = self.st

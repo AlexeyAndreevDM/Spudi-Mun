@@ -1113,8 +1113,8 @@ def main_game():
 
     # Создаем врагов
     enemies = [
-        Enemy(300),  # Враг на позиции X=300, на дороге
-        Enemy(800),  # Враг на позиции X=800, на дороге
+        Enemy(world_x=1500),  # Враг на позиции X=300, на дороге
+        Enemy(world_x=1800),  # Враг на позиции X=800, на дороге
     ]
 
     # Основной игровой цикл
@@ -1202,7 +1202,7 @@ def main_game():
 
         # Обновление врагов (передаем sdvigy для корректировки позиции)
         for enemy in enemies:
-            enemy.update(player)
+            enemy.update(player, sdvigx)
 
         # Синхронизация переменных
         st = player.st
@@ -1285,7 +1285,7 @@ def main_game():
 
         # Отрисовка врагов
         for enemy in enemies:
-            enemy.draw(SCREEN, 800 + sdvigy)
+            enemy.draw(SCREEN, sdvigx, 930 + sdvigy)
 
         # Обработка субтитров
         if SUBTITLES == 'ON':
