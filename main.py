@@ -1150,7 +1150,7 @@ def main_game():
             player.continue_web_swing()
 
         # Движение при ходьбе
-        elif player.st == 0 and player.on_ground and (keys[pygame.K_a] or keys[pygame.K_d]):
+        if player.st == 0 and player.on_ground and (keys[pygame.K_a] or keys[pygame.K_d]):
             sdvigx = player.apply_movement(sdvigx)
 
         # Движение при отпускании паутины
@@ -1163,7 +1163,7 @@ def main_game():
 
         # Движение при свободном падении
         elif player.st == 3:
-            if keys[pygame.K_LSHIFT]:  # Добавляем возможность вернуться к полёту на паутине
+            if keys[pygame.K_LSHIFT] and sdvigy > 150:  # Добавляем возможность вернуться к полёту на паутине
                 player.start_web_swing(ticks)
                 player.coords_increase = 0
                 player.SMRt = -50
@@ -1173,6 +1173,22 @@ def main_game():
             else:  # Смотрит влево
                 sdvigx += 1
                 sdvigy -= 5
+
+        # Движение при прыжке
+        elif player.st == 4:
+            # Логика прыжка - движение вверх
+            if player.facing_right:
+                sdvigx -= 2  # Небольшое движение вперед при прыжке
+            else:
+                sdvigx += 2
+
+            sdvigy += 12  # Движение вверх (отрицательное значение для прыжка)
+
+            # Переход в свободное падение после достижения высшей точки
+            player.coords_increase += 1
+            if player.coords_increase >= 55:  # Через 30 кадров переходим в падение
+                player.st = 3
+                player.coords_increase = 0
 
         # Обновление игрока
         player.update(keys, ticks, sdvigy)
@@ -1282,6 +1298,8 @@ def main_game():
                 elif ev.key == pygame.K_TAB:
                     pygame.mixer.music.unload()
                     # menu()  # Раскомментируйте когда будет готова функция menu
+                elif ev.key in [pygame.K_a, pygame.K_d, pygame.K_SPACE] and player.st in [0, 3, 4]:
+                    player.handle_event(ev)
             if ev.type == pygame.MOUSEBUTTONDOWN and sdvigy <= -415:
                 player.st = 0
 

@@ -124,15 +124,10 @@ class Player:
             placeholder = load_image_safe(PLACEHOLDER_IMAGE, convert_alpha=True)
             return pygame.transform.scale(placeholder, (int(width), int(height)))
 
-    def handle_input(self, keys, ticks):
+    def handle_input(self, keys, ticks, sdvigy):
         """Обработка ввода пользователя"""
-        # Прыжок
-        if self.st == 0 and keys[pygame.K_SPACE] and self.st != 4:
-            self.st = 4
-            self.coords_increase = 0
         # Бросок паутины
-        if (self.st == 4 or self.st == -100) and keys[pygame.K_LSHIFT]:
-            print(f"[DEBUG] handle_input: LSHIFT pressed, current st = {self.st}")
+        if (self.st == 4 or self.st == -100) and keys[pygame.K_LSHIFT] and sdvigy > 150:
             self.start_web_swing(ticks)
         # Движение влево/вправо - ОБНОВЛЕНО
         if self.st == 0 and self.on_ground:
@@ -141,11 +136,37 @@ class Player:
             elif keys[pygame.K_a]:
                 self.move_left(ticks)
         # Управление во время полета на паутине - ОБНОВЛЕНО ДЛЯ st=-1
-        if (self.st == 1 or self.st == -1) and keys[pygame.K_LSHIFT]:
+        if (self.st == 1 or self.st == -1) and keys[pygame.K_LSHIFT] and sdvigy > 150:
             self.continue_web_swing()
         # Отпускание паутины - ОБНОВЛЕНО ДЛЯ st=-1
         if (self.st == 1 or self.st == -1) and not keys[pygame.K_LSHIFT]:
             self.release_web_swing(ticks)
+
+    def handle_event(self, event):
+        """Обработка отдельных событий клавиатуры - ТОЛЬКО нажатия"""
+        if event.type == pygame.KEYDOWN:
+            old_facing = self.facing_right
+
+            if self.st in [3, 4]:
+                if event.key == pygame.K_d and event.key != pygame.K_a and self.st in [3, 4]:
+                    self.facing_right = True
+                    self.revst = 0
+                    print(f"[FACING_KEYDOWN] Changed to RIGHT, st={self.st}")
+                elif event.key == pygame.K_a and event.key != pygame.K_d:
+                    self.facing_right = False
+                    self.revst = 1
+                    print(f"[FACING_KEYDOWN] Changed to LEFT, st={self.st}")
+
+                # Логируем только если направление действительно изменилось
+                if old_facing != self.facing_right:
+                    print(f"[FACING_CHANGED] {old_facing} -> {self.facing_right}")
+            elif self.st == 0 and self.st != 4:
+                # Прыжок
+                if event.key == pygame.K_SPACE:
+                    self.st = 4
+                    self.coords_increase = 0
+                    print(f"[JUMP] Starting jump, st={self.st}")  # Для отладки
+
 
     def start_web_swing(self, ticks):
         """Начало полета на паутине"""
@@ -234,7 +255,7 @@ class Player:
         """Обновление состояния игрока"""
         # old_st = self.st
 
-        self.handle_input(keys, ticks)
+        self.handle_input(keys, ticks, sdvigy)
 
         # Сбрасываем анимацию ходьбы если не двигаемся
         if self.on_ground and not keys[pygame.K_d] and not keys[pygame.K_a]:
