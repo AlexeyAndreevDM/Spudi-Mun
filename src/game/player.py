@@ -47,6 +47,13 @@ class Player:
         self.sprites = {}
         self.load_sprites()
 
+        # Эффекты повреждения
+        self.damage_flash_timer = 0
+        self.death_flash_timer = 0
+
+        # Флаги состояния
+        self.is_dead = False  # Добавьте этот флаг
+
     def load_sprites(self):
         """Загрузка всех спрайтов для классического костюма с использованием вашей функции"""
         try:
@@ -252,11 +259,42 @@ class Player:
         return sdvigx
 
     def take_damage(self, amount):
-        """Получение урона"""
-        if self.on_ground:
-            self.health -= amount
-            print(f"[PLAYER] Получен урон: {amount}, HP: {self.health}")
-        # Можно добавить мигание или звук
+        """Получение урона с проверкой на смерть"""
+        if self.is_dead or not self.on_ground:
+            return
+
+        self.health -= amount
+        if self.health <= 0:
+            self.health = 0
+            self.die()  # Вызываем метод смерти
+
+        # Запускаем эффект красной рамки
+        self.damage_flash_timer = DAMAGE_FLASH_DURATION
+        print(f"[PLAYER] Получен урон: {amount}, HP: {self.health}")
+
+    def die(self):
+        """Обработка смерти игрока"""
+        self.is_dead = True
+        self.start_death_effect()
+
+    def reset(self):
+        """Полный сброс игрока"""
+        self.__init__()
+
+    def update_effects(self):
+        """Обновление таймеров эффектов"""
+        if self.damage_flash_timer > 0:
+            self.damage_flash_timer -= 1
+        if self.death_flash_timer > 0:
+            self.death_flash_timer -= 1
+
+    def is_flashing(self):
+        """Проверка, нужно ли показывать эффект"""
+        return self.damage_flash_timer > 0 or self.death_flash_timer > 0
+
+    def start_death_effect(self):
+        """Запуск эффекта смерти"""
+        self.death_flash_timer = DEATH_FLASH_DURATION
 
     def attack(self, enemies, sdvigx):
         """Атака врагов вблизи"""
@@ -278,32 +316,28 @@ class Player:
                 print(f"[PLAYER] Атаковал врага! HP врага: {enemy.health}")
 
     def update(self, keys, ticks, sdvigy):
-        """Обновление состояния игрока"""
-        # old_st = self.st
+        """Обновление состояния игрока с проверкой на смерть"""
+        if self.is_dead:
+            self.update_effects()  # Обновляем только эффекты
+            return
 
+        # Старая логика обновления...
         self.handle_input(keys, ticks, sdvigy)
 
         # Сбрасываем анимацию ходьбы если не двигаемся
         if self.on_ground and not keys[pygame.K_d] and not keys[pygame.K_a]:
             self.walking = False
 
-        # # Логируем изменение состояния
-        # if old_st != self.st:
-        #     print(f"[STATE_CHANGE] st: {old_st} -> {self.st}")
-
-        # ОБНОВЛЕНИЕ ДЛЯ ST=2: ограниченный полет после отпускания паутины
+        # ОБНОВЛЕНИЕ ДЛЯ ST=2...
         if self.st == 2:
             self.coords_increase += 1
 
-            # Уменьшаем угол (как в старом коде)
             if self.coords_increase % 5 == 0:
                 self.SMRt -= 1
 
-            # Переход в падение после достижения предела
-            if self.coords_increase >= 175:  # Как в старом коде
+            if self.coords_increase >= 175:
                 self.st = 3
                 self.coords_increase = 0
-                print(f"[ST2_TO_ST3] Переход из st=2 в st=3")
 
         # Проверка на землю
         if sdvigy <= -415 and not self.web_swinging:
@@ -320,6 +354,9 @@ class Player:
             self.on_ground = True
         else:
             self.on_ground = False
+
+        # Обновляем эффекты
+        self.update_effects()
 
     def draw(self, screen, sdvigx, sdvigy):
         """Отрисовка игрока"""
