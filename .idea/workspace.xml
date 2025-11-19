@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="fighting added">
+    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="player damage+death fixed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/game/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/player.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -180,7 +178,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763582221345</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="player damage+death fixed">
+      <option name="closed" value="true" />
+      <created>1763583828643</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1763583828644</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -197,7 +203,8 @@
     <MESSAGE value="enemy added" />
     <MESSAGE value="enemy fixed" />
     <MESSAGE value="fighting added" />
-    <option name="LAST_COMMIT_MESSAGE" value="fighting added" />
+    <MESSAGE value="player damage+death fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="player damage+death fixed" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

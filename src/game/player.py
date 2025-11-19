@@ -54,6 +54,11 @@ class Player:
         # Флаги состояния
         self.is_dead = False  # Добавьте этот флаг
 
+        # Атака и кулдаун
+        self.attack_cooldown = 0
+        self.attack_range = 100
+        self.attack_damage = 25
+
     def load_sprites(self):
         """Загрузка всех спрайтов для классического костюма с использованием вашей функции"""
         try:
@@ -296,30 +301,55 @@ class Player:
         """Запуск эффекта смерти"""
         self.death_flash_timer = DEATH_FLASH_DURATION
 
+    def can_attack(self):
+        """Может ли игрок атаковать?"""
+        return self.attack_cooldown == 0 and self.on_ground
+
     def attack(self, enemies, sdvigx):
-        """Атака врагов вблизи"""
-        attack_range = 130  # радиус атаки
+        """Атака только одного ближайшего врага"""
+        attack_range = 100  # радиус атаки
         damage = 25
 
         player_center_x = self.screen_x + self.width // 2
+        closest_enemy = None
+        min_distance = float('inf')
 
         for enemy in enemies:
             if enemy.state == "dead":
                 continue
 
-            # Проверяем расстояние до врага
-            enemy_screen_x = enemy.world_x + sdvigx # нужно передать sdvigx
+            # Вычисляем экранную позицию врага
+            enemy_screen_x = enemy.world_x + sdvigx
             distance = abs(enemy_screen_x - player_center_x)
 
+            # Проверяем находится ли враг в радиусе атаки
             if distance < attack_range:
-                enemy.take_damage(damage)
-                print(f"[PLAYER] Атаковал врага! HP врага: {enemy.health}")
+                # Проверяем направление атаки
+                if (self.facing_right and enemy_screen_x > player_center_x) or \
+                        (not self.facing_right and enemy_screen_x < player_center_x):
+
+                    # Ищем ближайшего врага
+                    if distance < min_distance:
+                        min_distance = distance
+                        closest_enemy = enemy
+
+        # Атакуем только ближайшего врага
+        if closest_enemy:
+            closest_enemy.take_damage(damage)
+            print(f"[PLAYER] Атаковал врага! HP врага: {closest_enemy.health}")
+            return True  # Успешная атака
+
+        return False  # Промах
 
     def update(self, keys, ticks, sdvigy):
         """Обновление состояния игрока с проверкой на смерть"""
         if self.is_dead:
             self.update_effects()  # Обновляем только эффекты
             return
+
+        # Обновляем кулдаун атаки
+        if self.attack_cooldown > 0:
+            self.attack_cooldown -= 1
 
         # Старая логика обновления...
         self.handle_input(keys, ticks, sdvigy)
