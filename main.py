@@ -1214,33 +1214,28 @@ def main_game():
 
         # Обработка смерти игрока
         if player.health <= 0:
-            if player.screen_x + 27 - player.coords_increase > 300:
-                # Анимация смерти в воздухе
-                if 'zvukst' not in locals() or zvukst != 2:
-                    zvukst = 2
-                    st, MUSIC_STATUS = -101, 0
-                    try:
-                        ss = pygame.mixer.Sound(SOUND_FILES['death'])
-                        ss.play()
-                        pygame.mixer.music.unload()
-                    except:
-                        pass
-                player.coords_increase += 2
-            else:
-                # Экраны поражения
-                SCREEN.fill(BLACK)
-                font = pygame.font.Font(get_font_path('gulag'), 25)
-                text = font.render('!HELP!', True, RED)
-                SCREEN.blit(text, (420, 250))
-                pygame.draw.line(SCREEN, RED, [400, 280], [1080, 280], 2)
-                pygame.draw.line(SCREEN, RED, [400, 380], [1080, 380], 2)
-                font = pygame.font.Font(get_font_path('monospace_bold'), 55)
-                text = font.render("YOU'RE FAILED, BUDDY", True, RED)
-                SCREEN.blit(text, (400, 300))
-                pygame.display.update()
-                pygame.time.wait(800)
-                st, sdvigy, hp, MUSIC_STATUS = 0, -330, 100, -1
-                player.reset()
+            st, MUSIC_STATUS = -101, 0
+            pygame.mixer.music.unload()
+            try:
+                ss = pygame.mixer.Sound(SOUND_FILES['death'])
+                ss.play()
+            except:
+                pass
+            pygame.time.wait(800)
+            # Экран поражения
+            SCREEN.fill(BLACK)
+            font = pygame.font.Font(get_font_path('gulag'), 25)
+            text = font.render('!HELP!', True, RED)
+            SCREEN.blit(text, (420, 250))
+            pygame.draw.line(SCREEN, RED, [400, 280], [1080, 280], 2)
+            pygame.draw.line(SCREEN, RED, [400, 380], [1080, 380], 2)
+            font = pygame.font.Font(get_font_path('monospace_bold'), 55)
+            text = font.render("YOU'RE FAILED, BUDDY", True, RED)
+            SCREEN.blit(text, (405, 300))
+            pygame.display.update()
+            pygame.time.wait(800)
+            st, sdvigy, hp, MUSIC_STATUS = 0, -330, 100, -1
+            player.reset()
 
         # Отрисовка
         SCREEN.fill(BLACK)
@@ -1275,7 +1270,11 @@ def main_game():
 
         # Отрисовка здоровья игрока
         pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
-        pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, 390, 35))
+        # ИСПРАВЛЕНИЕ: ширина зависит от здоровья
+        health_width = (hp / PLAYER_MAX_HEALTH) * 390
+        if health_width < 0:
+            health_width = 0
+        pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, health_width, 35))
         font = pygame.font.Font(get_font_path('monospace_bold'), 30)
         text = font.render(str(hp), True, WHITE)
         SCREEN.blit(text, (460, 53))
@@ -1316,7 +1315,7 @@ def main_game():
                 elif ev.key in [pygame.K_a, pygame.K_d, pygame.K_SPACE] and player.st in [0, 3, 4]:
                     player.handle_event(ev)
             if ev.type == pygame.MOUSEBUTTONDOWN and sdvigy <= -415:
-                player.st = 0
+                player.attack(enemies, sdvigx)
 
         pygame.display.update()
         clock.tick(FPS)

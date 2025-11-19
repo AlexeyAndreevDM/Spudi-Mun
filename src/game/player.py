@@ -258,6 +258,25 @@ class Player:
             print(f"[PLAYER] Получен урон: {amount}, HP: {self.health}")
         # Можно добавить мигание или звук
 
+    def attack(self, enemies, sdvigx):
+        """Атака врагов вблизи"""
+        attack_range = 130  # радиус атаки
+        damage = 25
+
+        player_center_x = self.screen_x + self.width // 2
+
+        for enemy in enemies:
+            if enemy.state == "dead":
+                continue
+
+            # Проверяем расстояние до врага
+            enemy_screen_x = enemy.world_x + sdvigx # нужно передать sdvigx
+            distance = abs(enemy_screen_x - player_center_x)
+
+            if distance < attack_range:
+                enemy.take_damage(damage)
+                print(f"[PLAYER] Атаковал врага! HP врага: {enemy.health}")
+
     def update(self, keys, ticks, sdvigy):
         """Обновление состояния игрока"""
         # old_st = self.st

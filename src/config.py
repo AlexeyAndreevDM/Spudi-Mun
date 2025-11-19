@@ -163,7 +163,7 @@ SOUND_FILES = {
     ],
     'swing': os.path.join(SOUNDS_SWING_DIR, "Swing_sound.mp3"),
     'punch': os.path.join(SOUNDS_PUNCHES_DIR, "spider_punch_ground.mp3"),
-    'death': os.path.join(SOUNDS_PUNCHES_DIR, "Spider_death.mp3")
+    'death': os.path.join(SOUNDS_DIR, "Spider_death.mp3")
 }
 
 # =============================================

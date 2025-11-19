@@ -75,9 +75,29 @@ class Enemy:
             'dying': surf,
         }
 
-    def update(self, player, sdvigx):
-        """Обновление врага - теперь с sdvigx для расчета world позиции игрока"""
+    def take_damage(self, amount):
+        """Получение урона врагом"""
         if self.state == "dead":
+            return
+
+        self.health -= amount
+        if self.health <= 0:
+            self.health = 0
+            self.state = "dying"
+            # Через некоторое время переходим в dead
+            self.hurt_timer = 30  # 30 кадров для анимации смерти
+        else:
+            self.state = "hurt"
+            self.hurt_timer = 20  # 20 кадров для анимации получения урона
+
+    def update(self, player, sdvigx):
+        """Добавьте обработку смерти в update"""
+        if self.state == "dead":
+            return
+        elif self.state == "dying":
+            self.hurt_timer -= 1
+            if self.hurt_timer <= 0:
+                self.state = "dead"
             return
 
         # Таймеры
