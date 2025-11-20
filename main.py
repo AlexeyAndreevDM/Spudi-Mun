@@ -1083,43 +1083,49 @@ def menu():
 
 
 def draw_damage_flash(screen, player):
-    """Отрисовка красной полупрозрачной рамки при получении урона"""
-    if player.damage_flash_timer > 0:
-        # Для обычного урона - красная рамка
-        flash_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    """Отрисовка эффектов повреждения и лечения с приоритетами"""
+    flash_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
 
-        # Вычисляем интенсивность мигания (пульсация)
+    # Приоритет: смерть > урон > лечение
+    if player.death_flash_timer > 0:
+        # Эффект смерти (полный красный экран)
+        progress = 1 - (player.death_flash_timer / DEATH_FLASH_DURATION)
+        pulse = (math.sin(pygame.time.get_ticks() * 0.02) * 0.5 + 0.5) * 200 * progress
+        alpha = min(200, pulse)
+        flash_surface.fill((255, 0, 0, int(alpha)))
+
+    elif player.damage_flash_timer > 0:
+        # Эффект урона (красная рамка)
         pulse = abs(math.sin(pygame.time.get_ticks() * 0.01)) * 128
-
-        # Рисуем красную рамку по краям экрана
         border_width = 20
         alpha = min(FLASH_ALPHA, pulse)
 
-        # Верхняя граница
         pygame.draw.rect(flash_surface, (255, 0, 0, int(alpha)),
                          (0, 0, SCREEN_WIDTH, border_width))
-        # Нижняя граница
         pygame.draw.rect(flash_surface, (255, 0, 0, int(alpha)),
                          (0, SCREEN_HEIGHT - border_width, SCREEN_WIDTH, border_width))
-        # Левая граница
         pygame.draw.rect(flash_surface, (255, 0, 0, int(alpha)),
                          (0, 0, border_width, SCREEN_HEIGHT))
-        # Правая граница
         pygame.draw.rect(flash_surface, (255, 0, 0, int(alpha)),
                          (SCREEN_WIDTH - border_width, 0, border_width, SCREEN_HEIGHT))
 
-        screen.blit(flash_surface, (0, 0))
+    elif player.heal_flash_timer > 0:
+        # Эффект лечения (зеленая рамка)
+        pulse = abs(math.sin(pygame.time.get_ticks() * 0.01)) * 128
+        border_width = 20
+        alpha = min(FLASH_ALPHA, pulse)
 
-    elif player.death_flash_timer > 0:
-        # Для смерти - полный красный экран с пульсацией
-        flash_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        pygame.draw.rect(flash_surface, (0, 255, 0, int(alpha)),
+                         (0, 0, SCREEN_WIDTH, border_width))
+        pygame.draw.rect(flash_surface, (0, 255, 0, int(alpha)),
+                         (0, SCREEN_HEIGHT - border_width, SCREEN_WIDTH, border_width))
+        pygame.draw.rect(flash_surface, (0, 255, 0, int(alpha)),
+                         (0, 0, border_width, SCREEN_HEIGHT))
+        pygame.draw.rect(flash_surface, (0, 255, 0, int(alpha)),
+                         (SCREEN_WIDTH - border_width, 0, border_width, SCREEN_HEIGHT))
 
-        # Интенсивность увеличивается к концу эффекта
-        progress = 1 - (player.death_flash_timer / DEATH_FLASH_DURATION)
-        pulse = (math.sin(pygame.time.get_ticks() * 0.02) * 0.5 + 0.5) * 200 * progress
-
-        alpha = min(200, pulse)
-        flash_surface.fill((255, 0, 0, int(alpha)))
+    # Отображаем поверхность с эффектом
+    if player.is_flashing():
         screen.blit(flash_surface, (0, 0))
 
 def main_game():

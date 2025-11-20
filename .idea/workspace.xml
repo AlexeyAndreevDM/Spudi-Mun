@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="hints fixed">
-      <change afterPath="$PROJECT_DIR$/assets/audio/sounds/ui/heal1.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/audio/sounds/ui/heal2.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/audio/sounds/ui/heal3.wav" afterDir="false" />
+    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="concentration added">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/game/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/player.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -207,7 +203,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763630992838</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="concentration added">
+      <option name="closed" value="true" />
+      <created>1763635920369</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1763635920369</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -227,7 +231,8 @@
     <MESSAGE value="player damage+death fixed" />
     <MESSAGE value="player attack fixed" />
     <MESSAGE value="hints fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="hints fixed" />
+    <MESSAGE value="concentration added" />
+    <option name="LAST_COMMIT_MESSAGE" value="concentration added" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

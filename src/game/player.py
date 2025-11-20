@@ -51,6 +51,9 @@ class Player:
         self.damage_flash_timer = 0
         self.death_flash_timer = 0
 
+        # Эффекты лечения
+        self.heal_flash_timer = 0  # Таймер для зеленой рамки лечения
+
         # Флаги состояния
         self.is_dead = False  # Добавьте этот флаг
 
@@ -305,10 +308,15 @@ class Player:
             self.damage_flash_timer -= 1
         if self.death_flash_timer > 0:
             self.death_flash_timer -= 1
+        if self.heal_flash_timer > 0:  # Добавляем обновление таймера лечения
+            self.heal_flash_timer -= 1
 
     def is_flashing(self):
         """Проверка, нужно ли показывать эффект"""
-        return self.damage_flash_timer > 0 or self.death_flash_timer > 0
+        return (self.damage_flash_timer > 0 or
+                self.death_flash_timer > 0 or
+                self.heal_flash_timer > 0)  # Добавляем проверку лечения
+
 
     def start_death_effect(self):
         """Запуск эффекта смерти"""
@@ -401,6 +409,9 @@ class Player:
 
         # Эффект лечения
         self.heal_effect_timer = 30
+
+        # Эффект лечения - зеленая рамка
+        self.heal_flash_timer = 40
 
         print(f"[CONCENTRATION] Использовано {concentration_used}% концентрации! +{health_gained:.1f} HP")
         print(f"[CONCENTRATION] Осталось концентрации: {self.concentration}%")
