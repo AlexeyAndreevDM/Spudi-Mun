@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="healing added">
+    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="enemy overlay fixed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/game/enemy.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/enemy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/game/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/player.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -221,8 +220,33 @@
       <option name="project" value="LOCAL" />
       <updated>1763638338689</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="enemy overlay fixed">
+      <option name="closed" value="true" />
+      <created>1763640261322</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1763640261322</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="false" />
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
@@ -243,7 +267,8 @@
     <MESSAGE value="hints fixed" />
     <MESSAGE value="concentration added" />
     <MESSAGE value="healing added" />
-    <option name="LAST_COMMIT_MESSAGE" value="healing added" />
+    <MESSAGE value="enemy overlay fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="enemy overlay fixed" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

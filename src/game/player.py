@@ -51,6 +51,12 @@ class Player:
         self.damage_flash_timer = 0
         self.death_flash_timer = 0
 
+        # Эффекты смерти
+        self.death_flash_timer = 0
+        self.death_delay_timer = 0  # Таймер задержки перед экраном смерти
+        self.death_sound_played = False  # Флаг для отслеживания воспроизведения звука
+        self.death_screen_shown = False  # Добавляем явный флаг
+
         # Эффекты лечения
         self.heal_flash_timer = 0  # Таймер для зеленой рамки лечения
 
@@ -76,6 +82,10 @@ class Player:
         self.max_concentration = 100.0
         self.concentration_gain_per_hit = 5.0  # +5% за удар
         self.healing_per_full_concentration = 50  # 100% концентрации = 50 здоровья
+
+    def reset(self):
+        """Полный сброс игрока"""
+        self.__init__()
 
     def load_sprites(self):
         """Загрузка всех спрайтов для классического костюма с использованием вашей функции"""
@@ -300,29 +310,29 @@ class Player:
         self.is_dead = True
         self.start_death_effect()
 
-    def reset(self):
-        """Полный сброс игрока"""
-        self.__init__()
+    def start_death_effect(self):
+        """Запуск эффекта смерти"""
+        self.death_flash_timer = DEATH_FLASH_DURATION  # 45 кадров при 60 FPS (750 мс)
+        self.death_delay_timer = 90  # 90 кадров при 60 FPS (1500 мс)
+        self.death_sound_played = False  # Сбрасываем флаг звука
+        self.death_screen_shown = False  # Сбрасываем при новой смерти
 
     def update_effects(self):
         """Обновление таймеров эффектов"""
         if self.damage_flash_timer > 0:
             self.damage_flash_timer -= 1
+        if self.heal_flash_timer > 0:
+            self.heal_flash_timer -= 1
         if self.death_flash_timer > 0:
             self.death_flash_timer -= 1
-        if self.heal_flash_timer > 0:  # Добавляем обновление таймера лечения
-            self.heal_flash_timer -= 1
+        if self.death_delay_timer > 0:
+            self.death_delay_timer -= 1
 
     def is_flashing(self):
         """Проверка, нужно ли показывать эффект"""
         return (self.damage_flash_timer > 0 or
                 self.death_flash_timer > 0 or
                 self.heal_flash_timer > 0)  # Добавляем проверку лечения
-
-
-    def start_death_effect(self):
-        """Запуск эффекта смерти"""
-        self.death_flash_timer = DEATH_FLASH_DURATION
 
     def can_attack(self):
         """Может ли игрок атаковать?"""

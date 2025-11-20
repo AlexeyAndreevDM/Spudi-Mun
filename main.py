@@ -1083,19 +1083,32 @@ def menu():
 
 
 def draw_damage_flash(screen, player):
-    """Отрисовка эффектов повреждения и лечения с приоритетами"""
+    """Отрисовка эффектов повреждения, лечения и смерти"""
     flash_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
 
     # Приоритет: смерть > урон > лечение
     if player.death_flash_timer > 0:
-        # Эффект смерти (полный красный экран)
-        progress = 1 - (player.death_flash_timer / DEATH_FLASH_DURATION)
-        pulse = (math.sin(pygame.time.get_ticks() * 0.02) * 0.5 + 0.5) * 200 * progress
-        alpha = min(200, pulse)
-        flash_surface.fill((255, 0, 0, int(alpha)))
+        # Эффект смерти - красная рамка в 2 раза больше
+        pulse = abs(math.sin(pygame.time.get_ticks() * 0.015)) * 180  # Более интенсивная пульсация
+        border_width = 40  # В 2 раза больше чем обычная рамка (20)
+        alpha = min(200, pulse)  # Более непрозрачная
+
+        # Рисуем толстую красную рамку по краям экрана
+        pygame.draw.rect(flash_surface, (255, 0, 0, int(alpha)),
+                         (0, 0, SCREEN_WIDTH, border_width))
+        pygame.draw.rect(flash_surface, (255, 0, 0, int(alpha)),
+                         (0, SCREEN_HEIGHT - border_width, SCREEN_WIDTH, border_width))
+        pygame.draw.rect(flash_surface, (255, 0, 0, int(alpha)),
+                         (0, 0, border_width, SCREEN_HEIGHT))
+        pygame.draw.rect(flash_surface, (255, 0, 0, int(alpha)),
+                         (SCREEN_WIDTH - border_width, 0, border_width, SCREEN_HEIGHT))
+
+        # Дополнительно: легкое красное затемнение всего экрана
+        overlay_alpha = min(80, pulse * 0.4)
+        flash_surface.fill((255, 0, 0, int(overlay_alpha)))
 
     elif player.damage_flash_timer > 0:
-        # Эффект урона (красная рамка)
+        # Эффект урона (красная рамка) - обычный размер
         pulse = abs(math.sin(pygame.time.get_ticks() * 0.01)) * 128
         border_width = 20
         alpha = min(FLASH_ALPHA, pulse)
@@ -1156,7 +1169,7 @@ def main_game():
     # Создаем игрока
     player = Player()
     player.st = st
-    player.health = hp
+    player.health = hp - 90
 
     # Создаем врагов
     enemies = [
@@ -1301,29 +1314,67 @@ def main_game():
             sdvigy = -420
 
         # Обработка смерти игрока
-        if player.health <= 0:
-            st, MUSIC_STATUS = -101, 0
+        if player.health <= 0 and not player.is_dead:
+            # Первый раз когда здоровье достигает 0
+            player.die()
+            MUSIC_STATUS = 0
             pygame.mixer.music.unload()
-            try:
-                ss = pygame.mixer.Sound(SOUND_FILES['death'])
-                ss.play()
-            except:
-                pass
-            pygame.time.wait(800)
-            # Экран поражения
-            SCREEN.fill(BLACK)
-            font = pygame.font.Font(get_font_path('gulag'), 25)
-            text = font.render('!HELP!', True, RED)
-            SCREEN.blit(text, (420, 250))
-            pygame.draw.line(SCREEN, RED, [400, 280], [1080, 280], 2)
-            pygame.draw.line(SCREEN, RED, [400, 380], [1080, 380], 2)
-            font = pygame.font.Font(get_font_path('monospace_bold'), 55)
-            text = font.render("YOU'RE FAILED, BUDDY", True, RED)
-            SCREEN.blit(text, (405, 300))
-            pygame.display.update()
-            pygame.time.wait(800)
-            st, sdvigy, hp, MUSIC_STATUS = 0, -330, 100, -1
-            player.reset()
+
+        # Если игрок мертв, обрабатываем эффекты смерти
+        if player.is_dead:
+            # Воспроизводим звук смерти один раз при начале смерти
+            if not player.death_sound_played:
+                try:
+                    death_sound_path = SOUND_FILES['death']
+                    if os.path.exists(death_sound_path):
+                        ss = pygame.mixer.Sound(death_sound_path)
+                        ss.set_volume(SOUND_VOLUME)
+                        ss.play()
+                        player.death_sound_played = True
+                        print("Звук смерти воспроизведен")
+                except Exception as e:
+                    print(f"Ошибка звука смерти: {e}")
+
+            # Ждем пока завершится задержка перед показом экрана смерти
+            if player.death_delay_timer <= 0 and not player.death_screen_shown:
+                # Устанавливаем флаг, что экран смерти показан
+                player.death_screen_shown = True
+
+                # Отрисовываем экран смерти
+                SCREEN.fill(BLACK)
+                font = pygame.font.Font(get_font_path('gulag'), 25)
+                text = font.render('!HELP!', True, RED)
+                SCREEN.blit(text, (420, 250))
+                pygame.draw.line(SCREEN, RED, [400, 280], [1080, 280], 2)
+                pygame.draw.line(SCREEN, RED, [400, 380], [1080, 380], 2)
+                font = pygame.font.Font(get_font_path('monospace_bold'), 55)
+                text = font.render("YOU'RE FAILED, BUDDY", True, RED)
+                SCREEN.blit(text, (405, 300))
+                pygame.display.update()
+
+                # Ждем 1.5 секунды (1500 мс) перед сбросом
+                pygame.time.wait(1500)
+
+                # ПОЛНЫЙ СБРОС ИГРЫ
+                st = 0
+                sdvigy = -330
+                hp = 100
+                MUSIC_STATUS = -1
+
+                # Полный сброс игрока
+                player.reset()
+
+                # Сброс врагов
+                enemies = [
+                    Enemy(world_x=1500),
+                    Enemy(world_x=1800),
+                ]
+
+                # Сброс камеры и других переменных
+                sdvigx = -500
+                player.coords_increase = 0
+
+                print("Игра перезапущена после смерти")
 
         # Отрисовка
         SCREEN.fill(BLACK)
