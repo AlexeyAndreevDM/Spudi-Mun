@@ -176,7 +176,8 @@ SOUND_FILES = {
         os.path.join(SOUNDS_SWING_DIR, "Thwip_sound3.mp3")
     ],
     'swing': os.path.join(SOUNDS_SWING_DIR, "Swing_sound.mp3"),
-    'punch': os.path.join(SOUNDS_PUNCHES_DIR, "spider_punch_ground.mp3"),
+    'punch_ground': os.path.join(SOUNDS_PUNCHES_DIR, "spider_punch_ground.mp3"),
+    'punch': os.path.join(SOUNDS_PUNCHES_DIR, "spider_punch.mp3"),
     'death': os.path.join(SOUNDS_DIR, "Spider_death.mp3"),
     'air_sound': os.path.join(SOUNDS_DIR, "air_sound.mp3"),
     'heal': [  # Добавляем звуки лечения

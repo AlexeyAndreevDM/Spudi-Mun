@@ -1367,7 +1367,10 @@ def main_game():
                 # Сброс врагов
                 enemies = [
                     Enemy(world_x=1500),
-                    Enemy(world_x=1800),
+                    Enemy(world_x=2200),
+                    Enemy(world_x=2900),
+                    Enemy(world_x=3300),
+                    Enemy(world_x=3500),
                 ]
 
                 # Сброс камеры и других переменных

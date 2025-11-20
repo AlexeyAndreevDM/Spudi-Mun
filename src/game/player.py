@@ -339,47 +339,45 @@ class Player:
         return self.attack_cooldown == 0 and self.on_ground
 
     def attack(self, enemies, sdvigx):
-        """Атака только одного ближайшего врага"""
-        attack_range = 100  # радиус атаки
-        damage = 25
+        """Атака с возвратом атакованного врага"""
+        if not self.can_attack():
+            return None
 
-        # Отмечаем, что игрок атаковал (даже если промах)
-        if not self.has_attacked:
-            self.has_attacked = True
-            self.show_attack_hint = False  # Скрываем подсказку после первой атаки
-
-        player_center_x = self.screen_x + self.width // 2
         closest_enemy = None
         min_distance = float('inf')
+
+        player_center_x = self.screen_x + self.width // 2
 
         for enemy in enemies:
             if enemy.state == "dead":
                 continue
 
-            # Вычисляем экранную позицию врага
             enemy_screen_x = enemy.world_x + sdvigx
             distance = abs(enemy_screen_x - player_center_x)
 
-            # Проверяем находится ли враг в радиусе атаки
-            if distance < attack_range:
-                # Проверяем направление атаки
+            if distance < self.attack_range:
                 if (self.facing_right and enemy_screen_x > player_center_x) or \
                         (not self.facing_right and enemy_screen_x < player_center_x):
 
-                    # Ищем ближайшего врага
                     if distance < min_distance:
                         min_distance = distance
                         closest_enemy = enemy
 
-        # Атакуем только ближайшего врага
         if closest_enemy:
-            closest_enemy.take_damage(damage)
-            # УВЕЛИЧИВАЕМ КОНЦЕНТРАЦИЮ ПРИ УСПЕШНОЙ АТАКЕ
+            closest_enemy.take_damage(self.attack_damage)
+            self.attack_cooldown = 30
             self.increase_concentration()
-            print(f"[PLAYER] Атаковал врага! Концентрация: {self.concentration}%")
-            return True  # Успешная атака
 
-        return False  # Промах
+            try:
+                punch_sound = pygame.mixer.Sound(SOUND_FILES['punch'])
+                punch_sound.set_volume(SOUND_VOLUME)
+                punch_sound.play()
+            except:
+                pass
+
+            return closest_enemy  # Возвращаем атакованного врага
+
+        return None
 
     def increase_concentration(self, amount=None):
         """Увеличение концентрации после удара"""
@@ -480,7 +478,7 @@ class Player:
             if self.st == -100:
                 self.st = 0
                 try:
-                    land_sound = pygame.mixer.Sound(SOUND_FILES['punch'])
+                    land_sound = pygame.mixer.Sound(SOUND_FILES['punch_ground'])
                     land_sound.play()
                 except:
                     print("NO")
