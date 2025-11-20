@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 from random import randint
 import math
 from src.config import *
@@ -1348,15 +1349,40 @@ def main_game():
             i += 1
 
         # Отрисовка здоровья игрока
-        pygame.draw.rect(SCREEN, WHITE, (50, 50, 400, 45), 5)
-        # ИСПРАВЛЕНИЕ: ширина зависит от здоровья
-        health_width = (hp / PLAYER_MAX_HEALTH) * 390
+        health_bar_width = 400
+        health_bar_height = 45
+        pygame.draw.rect(SCREEN, WHITE, (50, 50, health_bar_width, health_bar_height), 5)
+
+        # Расчет ширины здоровья
+        health_width = (player.health / PLAYER_MAX_HEALTH) * 390
         if health_width < 0:
             health_width = 0
+
         pygame.draw.rect(SCREEN, HEALTH_GREEN, (55, 55, health_width, 35))
+
+        # Отрисовка шкалы концентрации (под здоровьем)
+        concentration_bar_width = health_bar_width // 2  # В 2 раза короче
+        concentration_bar_height = health_bar_height // 2  # В 2 раза меньше по высоте
+        concentration_y = 50 + health_bar_height + 10  # Отступ от здоровья
+
+        # Рамка концентрации (белая как у здоровья)
+        pygame.draw.rect(SCREEN, WHITE, (50, concentration_y, concentration_bar_width, concentration_bar_height), 3)
+
+        # Расчет ширины заполнения концентрации
+        concentration_fill_width = (player.concentration / 100) * (concentration_bar_width - 6)
+        if concentration_fill_width < 0:
+            concentration_fill_width = 0
+
+        # Заполнение концентрации (полупрозрачный белый)
+        concentration_surface = pygame.Surface((concentration_fill_width, concentration_bar_height - 6),
+                                               pygame.SRCALPHA)
+        concentration_surface.fill((255, 255, 255, 180))  # Белый с альфой 180
+        SCREEN.blit(concentration_surface, (53, concentration_y + 3))
+
+        # Текст здоровья
         font = pygame.font.Font(get_font_path('monospace_bold'), 30)
-        text = font.render(str(hp), True, WHITE)
-        SCREEN.blit(text, (460, 53))
+        health_text = font.render(f"{int(player.health)}", True, WHITE)
+        SCREEN.blit(health_text, (460, 53))
 
         # Отрисовка игрока
         player.draw(SCREEN, sdvigx, sdvigy)
@@ -1496,6 +1522,28 @@ def main_game():
                     # menu()  # Раскомментируйте когда будет готова функция menu
                 elif ev.key in [pygame.K_a, pygame.K_d, pygame.K_SPACE] and player.st in [0, 3, 4]:
                     player.handle_event(ev)
+                elif ev.key == pygame.K_1:  # Использование концентрации для лечения
+                    if player.use_concentration_for_healing():
+                        # Воспроизведение случайного звука лечения
+                        try:
+                            heal_sounds = SOUND_FILES['heal']
+                            if isinstance(heal_sounds, list) and len(heal_sounds) > 0:
+                                # Выбираем случайный звук лечения
+                                heal_sound_path = random.choice(heal_sounds)
+                                if os.path.exists(heal_sound_path):
+                                    heal_sound = pygame.mixer.Sound(heal_sound_path)
+                                    heal_sound.set_volume(SOUND_VOLUME)
+                                    heal_sound.play()
+                                    print(f"[HEAL] Воспроизведен звук лечения: {os.path.basename(heal_sound_path)}")
+                                else:
+                                    print(f"[HEAL] Файл не найден: {heal_sound_path}")
+                            else:
+                                print("[HEAL] Список звуков лечения пуст")
+                        except Exception as e:
+                            print(f"[HEAL] Ошибка воспроизведения звука лечения: {e}")
+                    else:
+                        # Сообщения об ошибках уже выводятся в методе use_concentration_for_healing
+                        pass
             if ev.type == pygame.MOUSEBUTTONDOWN and sdvigy <= -415:
                 player.attack(enemies, sdvigx)
 

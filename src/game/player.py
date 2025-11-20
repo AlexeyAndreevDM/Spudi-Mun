@@ -66,6 +66,12 @@ class Player:
         self.show_attack_hint = True  # Показывать подсказку про атаку
         self.has_attacked = False  # Игрок хотя бы раз атаковал
 
+        # Система концентрации
+        self.concentration = 50.0  # Изначально заполнена наполовину (50%)
+        self.max_concentration = 100.0
+        self.concentration_gain_per_hit = 5.0  # +5% за удар
+        self.healing_per_full_concentration = 50  # 100% концентрации = 50 здоровья
+
     def load_sprites(self):
         """Загрузка всех спрайтов для классического костюма с использованием вашей функции"""
         try:
@@ -348,10 +354,58 @@ class Player:
         # Атакуем только ближайшего врага
         if closest_enemy:
             closest_enemy.take_damage(damage)
-            print(f"[PLAYER] Атаковал врага! HP врага: {closest_enemy.health}")
+            # УВЕЛИЧИВАЕМ КОНЦЕНТРАЦИЮ ПРИ УСПЕШНОЙ АТАКЕ
+            self.increase_concentration()
+            print(f"[PLAYER] Атаковал врага! Концентрация: {self.concentration}%")
             return True  # Успешная атака
 
         return False  # Промах
+
+    def increase_concentration(self, amount=None):
+        """Увеличение концентрации после удара"""
+        if amount is None:
+            amount = self.concentration_gain_per_hit
+
+        self.concentration = min(self.max_concentration, self.concentration + amount)
+
+    def use_concentration_for_healing(self):
+        """Использование концентрации для лечения - тратится только необходимое количество"""
+        # Если здоровье уже полное, не тратим концентрацию
+        if self.health >= PLAYER_MAX_HEALTH:
+            print("[CONCENTRATION] Здоровье уже полное!")
+            return False
+
+        # Если концентрация пуста, не можем лечиться
+        if self.concentration <= 0:
+            return False
+
+        # Вычисляем сколько здоровья не хватает до максимума
+        health_needed = PLAYER_MAX_HEALTH - self.health
+
+        # Вычисляем сколько концентрации нужно для этого лечения (2:1)
+        concentration_needed = health_needed * 2  # 1 HP = 2% концентрации
+
+        # Определяем сколько концентрации мы фактически потратим
+        if self.concentration >= concentration_needed:
+            # Если концентрации хватает на полное лечение
+            concentration_used = concentration_needed
+            health_gained = health_needed
+        else:
+            # Если концентрации не хватает, используем всю
+            concentration_used = self.concentration
+            health_gained = self.concentration / 2  # 2% концентрации = 1 HP
+
+        # Применяем лечение
+        self.health += health_gained
+        self.concentration -= concentration_used
+
+        # Эффект лечения
+        self.heal_effect_timer = 30
+
+        print(f"[CONCENTRATION] Использовано {concentration_used}% концентрации! +{health_gained:.1f} HP")
+        print(f"[CONCENTRATION] Осталось концентрации: {self.concentration}%")
+
+        return True
 
     def update(self, keys, ticks, sdvigy):
         """Обновление состояния игрока с проверкой на смерть"""

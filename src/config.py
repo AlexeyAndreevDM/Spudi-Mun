@@ -97,6 +97,11 @@ INITIAL_SCROLL_Y = -330
 PLAYER_MAX_HEALTH = 100
 ENEMY_DAMAGE = 10
 
+# Концентрация
+MAX_CONCENTRATION = 100
+CONCENTRATION_GAIN_PER_HIT = 5
+HEALING_PER_FULL_CONCENTRATION = 50  # 100% концентрации = 50 здоровья
+
 # Эффекты повреждений
 DAMAGE_FLASH_DURATION = 15  # кадров для мигания при уроне
 DEATH_FLASH_DURATION = 30   # кадров для мигания при смерти
@@ -168,7 +173,12 @@ SOUND_FILES = {
     'swing': os.path.join(SOUNDS_SWING_DIR, "Swing_sound.mp3"),
     'punch': os.path.join(SOUNDS_PUNCHES_DIR, "spider_punch_ground.mp3"),
     'death': os.path.join(SOUNDS_DIR, "Spider_death.mp3"),
-    'air_sound': os.path.join(SOUNDS_DIR, "air_sound.mp3")
+    'air_sound': os.path.join(SOUNDS_DIR, "air_sound.mp3"),
+    'heal': [  # Добавляем звуки лечения
+        os.path.join(SOUNDS_UI_DIR, "heal1.wav"),
+        os.path.join(SOUNDS_UI_DIR, "heal2.wav"),
+        os.path.join(SOUNDS_UI_DIR, "heal3.wav")
+    ]
 }
 
 # =============================================

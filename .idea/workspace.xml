@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="player attack fixed">
+    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="hints fixed">
+      <change afterPath="$PROJECT_DIR$/assets/audio/sounds/ui/heal1.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/audio/sounds/ui/heal2.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/audio/sounds/ui/heal3.wav" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config.py" afterDir="false" />
@@ -196,7 +199,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763584300760</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="hints fixed">
+      <option name="closed" value="true" />
+      <created>1763630992838</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1763630992838</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -215,14 +226,15 @@
     <MESSAGE value="fighting added" />
     <MESSAGE value="player damage+death fixed" />
     <MESSAGE value="player attack fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="player attack fixed" />
+    <MESSAGE value="hints fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="hints fixed" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>1002</line>
+          <line>1003</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
