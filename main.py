@@ -1142,7 +1142,7 @@ def main_game():
 
     # Инициализация переменных
     sdvigx = -500
-    sdvigy = 1000  # Начальное положение для падения
+    sdvigy = 1400  # Начальное положение для падения
     tiles = math.ceil(SCREEN_WIDTH / bg.get_width()) + 1
     hp = 100
 
@@ -1153,8 +1153,9 @@ def main_game():
 
     # Создаем врагов
     enemies = [
-        Enemy(world_x=1500),  # Враг на позиции X=300, на дороге
-        Enemy(world_x=1800),  # Враг на позиции X=800, на дороге
+        Enemy(world_x=1500),  # Враг на позиции X, на дороге
+        Enemy(world_x=2200),
+        Enemy(world_x=2900),
     ]
 
     # Основной игровой цикл
@@ -1169,10 +1170,48 @@ def main_game():
             # pygame.mixer.music.play()
             pygame.mixer.music.set_volume(MUSIC_VOLUME)
 
-        # ОБРАБОТКА ДВИЖЕНИЯ ФОНА - ИСПРАВЛЕННАЯ ВЕРСИЯ ДЛЯ РАСКАЧКИ
+        # Обработка состояний движения
         if player.st == -100:  # Начальное падение
-            if sdvigy > -415:
-                sdvigy -= 6  # Двигаем фон вниз (игрок "падает")
+            # Разделяем на два диапазона высоты как в старом коде
+
+            # В блоке быстрого падения замените музыку на звук:
+            if 900 <= sdvigy:
+                # Быстрое падение: sdvigy -= 6
+                if player.coords_increase % 3 == 0:
+                    sdvigx -= 1
+                sdvigy -= 6
+                player.coords_increase += 1
+
+                # Воспроизводим звук воздуха как Sound (а не Music)
+                if not hasattr(player, 'air_sound_played') or not player.air_sound_played:
+                    try:
+                        # Используем SOUND_FILES, а не MUSIC_FILES
+                        air_sound_path = SOUND_FILES.get('air_sound') or os.path.join(SOUNDS_DIR, "air_sound.mp3")
+                        if os.path.exists(air_sound_path):
+                            air_sound = pygame.mixer.Sound(air_sound_path)
+                            air_sound.set_volume(SOUND_VOLUME)
+                            air_sound.play()
+                            player.air_sound_played = True
+                            print("[SOUND] Запущен звук воздуха")
+                        else:
+                            print(f"[SOUND] Файл не найден: {air_sound_path}")
+                    except Exception as e:
+                        print(f"[SOUND] Ошибка воспроизведения звука воздуха: {e}")
+
+            # В блоке замедленного падения (-330 <= sdvigy <= 600) оставьте только движение:
+            elif -330 <= sdvigy <= 1000:
+                # Замедленное падение: sdvigy -= 2
+                if player.coords_increase % 3 == 0:
+                    sdvigx -= 1
+                sdvigy -= 2
+                player.coords_increase += 1
+
+            # Если вышли за нижний предел, продолжаем обычное падение без подсказки
+            else:
+                if player.coords_increase % 3 == 0:
+                    sdvigx -= 1
+                sdvigy -= 2
+                player.coords_increase += 1
 
         elif (player.st == 1 or player.st == -1) and keys[pygame.K_LSHIFT]:
             # Горизонталь: вправо для st=1, влево для st=-1
@@ -1325,6 +1364,102 @@ def main_game():
         # Отрисовка врагов
         for enemy in enemies:
             enemy.draw(SCREEN, sdvigx, 930 + sdvigy)
+
+        # Отрисовка подсказки управления (ПОСЛЕ всех объектов)
+        if player.st == -100 and -330 <= sdvigy <= 900:
+            # Размеры подсказки
+            hint_width = 900
+            hint_height = 100
+
+            # Центрируем по горизонтали и сдвигаем на 50px ниже
+            hint_x = (SCREEN_WIDTH - hint_width) // 2
+            hint_y = 150  # Было 100, теперь 150 (на 50px ниже)
+
+            # Фон для подсказки (серый с прозрачностью)
+            hint_bg = pygame.Surface((hint_width, hint_height), pygame.SRCALPHA)
+            hint_bg.fill((145, 145, 145, 100))  # Серый с прозрачностью
+            SCREEN.blit(hint_bg, (hint_x, hint_y))
+
+            # Заголовок подсказки (белый)
+            font = pygame.font.Font(get_font_path('gulag'), 25)
+            text = font.render('!HELP!', True, WHITE)
+
+            # Центрируем заголовок внутри подсказки
+            title_x = hint_x + (hint_width - text.get_width()) // 2
+            title_y = hint_y + 15
+            SCREEN.blit(text, (title_x, title_y))
+
+            # Декоративные линии (также центрируем)
+            line_y = hint_y + 39
+            line_start_x = hint_x + (hint_width - 80) // 2
+            pygame.draw.rect(SCREEN, WHITE, (line_start_x, line_y, 80, 2))
+
+            line_y2 = hint_y + 47
+            line_start_x2 = hint_x + (hint_width - 820) // 2
+            pygame.draw.rect(SCREEN, WHITE, (line_start_x2, line_y2, 820, 2))
+
+            # Текст подсказки
+            font = pygame.font.Font(get_font_path('podkova'), 20)
+            lines = [
+                'Чтобы зацепиться паутиной - зажмите и держите L_SHIFT',
+                'Отпустите L_SHIFT для резкого выпрямления и полета вперед'
+            ]
+
+            # Центрируем каждую строку текста
+            for i, line in enumerate(lines):
+                text = font.render(line, True, WHITE)
+                line_x = hint_x + (hint_width - text.get_width()) // 2
+                line_y = hint_y + 50 + 25 * i
+                SCREEN.blit(text, (line_x, line_y))
+
+        # Отрисовка подсказки про атаку (после приземления и до первой атаки)
+        if player.st == 0 and player.on_ground and player.show_attack_hint:
+            # Размеры подсказки
+            hint_width = 900
+            hint_height = 100
+
+            # Центрируем по горизонтали и сдвигаем на 50px ниже
+            hint_x = (SCREEN_WIDTH - hint_width) // 2
+            hint_y = 150  # Такая же позиция как у предыдущей подсказки
+
+            # Фон для подсказки (серый с прозрачностью)
+            hint_bg = pygame.Surface((hint_width, hint_height), pygame.SRCALPHA)
+            hint_bg.fill((145, 145, 145, 100))
+            SCREEN.blit(hint_bg, (hint_x, hint_y))
+
+            # Заголовок подсказки (белый)
+            font = pygame.font.Font(get_font_path('gulag'), 25)
+            text = font.render('!HELP!', True, WHITE)
+
+            # Центрируем заголовок внутри подсказки
+            title_x = hint_x + (hint_width - text.get_width()) // 2
+            title_y = hint_y + 15
+            SCREEN.blit(text, (title_x, title_y))
+
+            # Декоративные линии (также центрируем)
+            line_y = hint_y + 39
+            line_start_x = hint_x + (hint_width - 80) // 2
+            pygame.draw.rect(SCREEN, WHITE, (line_start_x, line_y, 80, 2))
+
+            line_y2 = hint_y + 47
+            line_start_x2 = hint_x + (hint_width - 820) // 2
+            pygame.draw.rect(SCREEN, WHITE, (line_start_x2, line_y2, 820, 2))
+
+            # Текст подсказки про атаку
+            font = pygame.font.Font(get_font_path('podkova'), 20)
+            lines = [
+                'Для атаки врага нажмите ЛКМ.',
+                'Ваши атаки будут заполнять шкалу концентрации, которую можно тратить на лечение.'
+            ]
+
+            # Центрируем каждую строку текста
+            for i, line in enumerate(lines):
+                text = font.render(line, True, WHITE)
+                line_x = hint_x + (hint_width - text.get_width()) // 2
+                line_y = hint_y + 50 + 25 * i
+                SCREEN.blit(text, (line_x, line_y))
+
+            print("Подсказка про атаку отображена")
 
         # Обработка субтитров
         if SUBTITLES == 'ON':

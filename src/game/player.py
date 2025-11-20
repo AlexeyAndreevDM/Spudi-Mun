@@ -59,6 +59,13 @@ class Player:
         self.attack_range = 100
         self.attack_damage = 25
 
+        # Флаги звуков
+        self.air_sound_played = False
+
+        # Флаги подсказок
+        self.show_attack_hint = True  # Показывать подсказку про атаку
+        self.has_attacked = False  # Игрок хотя бы раз атаковал
+
     def load_sprites(self):
         """Загрузка всех спрайтов для классического костюма с использованием вашей функции"""
         try:
@@ -309,6 +316,11 @@ class Player:
         """Атака только одного ближайшего врага"""
         attack_range = 100  # радиус атаки
         damage = 25
+
+        # Отмечаем, что игрок атаковал (даже если промах)
+        if not self.has_attacked:
+            self.has_attacked = True
+            self.show_attack_hint = False  # Скрываем подсказку после первой атаки
 
         player_center_x = self.screen_x + self.width // 2
         closest_enemy = None

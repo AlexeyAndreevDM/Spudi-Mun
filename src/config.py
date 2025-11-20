@@ -155,8 +155,7 @@ SOUND_VOLUME = 0.7
 MUSIC_FILES = {
     'main_menu': os.path.join(MUSIC_DIR, "Web Launch.mp3"),
     'pause_menu': os.path.join(MUSIC_DIR, "Pause Menu.mp3"),
-    'gameplay': os.path.join(MUSIC_DIR, "The Golden Age.mp3"),
-    'air_sound': os.path.join(SOUNDS_DIR, "air_sound.mp3")
+    'gameplay': os.path.join(MUSIC_DIR, "The Golden Age.mp3")
 }
 
 SOUND_FILES = {
@@ -168,7 +167,8 @@ SOUND_FILES = {
     ],
     'swing': os.path.join(SOUNDS_SWING_DIR, "Swing_sound.mp3"),
     'punch': os.path.join(SOUNDS_PUNCHES_DIR, "spider_punch_ground.mp3"),
-    'death': os.path.join(SOUNDS_DIR, "Spider_death.mp3")
+    'death': os.path.join(SOUNDS_DIR, "Spider_death.mp3"),
+    'air_sound': os.path.join(SOUNDS_DIR, "air_sound.mp3")
 }
 
 # =============================================
