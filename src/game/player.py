@@ -68,6 +68,8 @@ class Player:
         # Флаги подсказок
         self.show_attack_hint = True  # Показывать подсказку про атаку
         self.has_attacked = False  # Игрок хотя бы раз атаковал
+        self.show_heal_hint = False
+        self.heal_hint_shown = False  # Чтобы показывать только один раз за сессию низкого здоровья
 
         # Система концентрации
         self.concentration = 50.0  # Изначально заполнена наполовину (50%)
@@ -423,6 +425,23 @@ class Player:
         if self.is_dead:
             self.update_effects()  # Обновляем только эффекты
             return
+
+        # Умная проверка для показа подсказки лечения
+        if (self.health <= 30 and
+                self.concentration > 0 and  # Есть что тратить
+                not self.heal_hint_shown and
+                not self.show_attack_hint):  # Не показывать одновременно с подсказкой атаки
+
+            self.show_heal_hint = True
+            self.heal_hint_shown = True
+
+        # Сбрасываем флаг когда здоровье восстанавливается достаточно
+        elif self.health >= 50 or self.concentration == 0:
+            self.show_heal_hint = False
+
+        # Полный сброс при полном здоровье
+        if self.health >= 80:
+            self.heal_hint_shown = False
 
         # Обновляем кулдаун атаки
         if self.attack_cooldown > 0:

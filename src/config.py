@@ -102,6 +102,9 @@ MAX_CONCENTRATION = 100
 CONCENTRATION_GAIN_PER_HIT = 5
 HEALING_PER_FULL_CONCENTRATION = 50  # 100% концентрации = 50 здоровья
 
+# Дистанции между врагами
+MIN_DISTANCE_BETWEEN_ENEMIES = 100  # минимальная дистанция между врагами в мировых координатах
+
 # Эффекты повреждений
 DAMAGE_FLASH_DURATION = 15  # кадров для мигания при уроне
 DEATH_FLASH_DURATION = 30   # кадров для мигания при смерти

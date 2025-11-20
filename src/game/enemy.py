@@ -24,8 +24,11 @@ class Enemy:
         self.patrol_speed = self.base_speed / 2  # 1.0 - медленное патрулирование
         self.chase_speed = self.base_speed * 1.2  # 2.4 - в 1.2 раза быстрее базовой для преследования
 
-        # Минимальное расстояние до игрока (чтобы не накладываться, +50px запас)
+        # Минимальное расстояние до игрока
         self.min_approach_distance = 110
+
+        # Для предотвращения наложения
+        self.avoidance_force = 0
 
         # Анимация и таймеры
         self.walk_counter = 0
@@ -90,7 +93,34 @@ class Enemy:
             self.state = "hurt"
             self.hurt_timer = 20  # 20 кадров для анимации получения урона
 
-    def update(self, player, sdvigx):
+    def avoid_other_enemies(self, enemies):
+        """Оптимизированное избегание других врагов"""
+        avoidance_radius = MIN_DISTANCE_BETWEEN_ENEMIES
+        separation_force = 0
+        nearby_count = 0
+
+        for other in enemies:
+            if other is self or other.state == "dead":
+                continue
+
+            distance = abs(other.world_x - self.world_x)
+            if distance < avoidance_radius:
+                nearby_count += 1
+                # Вычисляем силу отталкивания
+                force = (avoidance_radius - distance) / avoidance_radius
+
+                if self.world_x < other.world_x:
+                    separation_force -= force
+                else:
+                    separation_force += force
+
+        # Усредняем силу, если врагов несколько
+        if nearby_count > 0:
+            separation_force /= nearby_count
+
+        self.avoidance_force = separation_force * 3  # Множитель для усиления эффекта
+
+    def update(self, player, sdvigx, enemies):
         """Добавьте обработку смерти в update"""
         if self.state == "dead":
             return
@@ -110,8 +140,18 @@ class Enemy:
         # Вычисляем world_x игрока: player.screen_x фиксирован, sdvigx - сдвиг камеры
         player_world_x = player.screen_x - sdvigx
 
+        # Избегание других врагов (если передан список)
+        if enemies is not None:
+            self.avoid_other_enemies(enemies)
+
         # Логика поведения
         self.handle_behavior(player, player_world_x)
+
+        # Применяем силу отталкивания от других врагов
+        if abs(self.avoidance_force) > 0.1:
+            self.world_x += self.avoidance_force
+            # Плавное затухание силы
+            self.avoidance_force *= 0.8
 
     def handle_behavior(self, player, player_world_x):
         """Логика поведения"""
@@ -119,6 +159,11 @@ class Enemy:
         self.facing_right = player_world_x > self.world_x
 
         if self.state in ["hurt", "dying"]:
+            return
+
+        # Если есть сильное отталкивание, временно приостанавливаем обычное поведение
+        if abs(self.avoidance_force) > 1.5:
+            self.state = "idle"
             return
 
         if distance_to_player <= self.attack_range and self.attack_cooldown == 0:

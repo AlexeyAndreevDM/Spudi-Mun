@@ -1163,6 +1163,8 @@ def main_game():
         Enemy(world_x=1500),  # Враг на позиции X, на дороге
         Enemy(world_x=2200),
         Enemy(world_x=2900),
+        Enemy(world_x=3300),
+        Enemy(world_x=3500),
     ]
 
     # Основной игровой цикл
@@ -1288,7 +1290,7 @@ def main_game():
 
         # Обновление врагов (передаем sdvigy для корректировки позиции)
         for enemy in enemies:
-            enemy.update(player, sdvigx)
+            enemy.update(player, sdvigx, enemies)
 
         # Синхронизация переменных
         st = player.st
@@ -1492,6 +1494,54 @@ def main_game():
                 SCREEN.blit(text, (line_x, line_y))
 
             print("Подсказка про атаку отображена")
+
+        # Отрисовка подсказки про лечение (при низком здоровье)
+        if player.show_heal_hint:
+            # Размеры подсказки
+            hint_width = 900
+            hint_height = 100
+
+            # Центрируем по горизонтали и сдвигаем на 50px ниже
+            hint_x = (SCREEN_WIDTH - hint_width) // 2
+            hint_y = 150  # Такая же позиция как у предыдущих подсказок
+
+            # Фон для подсказки (серый с прозрачностью)
+            hint_bg = pygame.Surface((hint_width, hint_height), pygame.SRCALPHA)
+            hint_bg.fill((145, 145, 145, 100))
+            SCREEN.blit(hint_bg, (hint_x, hint_y))
+
+            # Заголовок подсказки (белый)
+            font = pygame.font.Font(get_font_path('gulag'), 25)
+            text = font.render('!HELP!', True, WHITE)
+
+            # Центрируем заголовок внутри подсказки
+            title_x = hint_x + (hint_width - text.get_width()) // 2
+            title_y = hint_y + 15
+            SCREEN.blit(text, (title_x, title_y))
+
+            # Декоративные линии (также центрируем)
+            line_y = hint_y + 39
+            line_start_x = hint_x + (hint_width - 80) // 2
+            pygame.draw.rect(SCREEN, WHITE, (line_start_x, line_y, 80, 2))
+
+            line_y2 = hint_y + 47
+            line_start_x2 = hint_x + (hint_width - 820) // 2
+            pygame.draw.rect(SCREEN, WHITE, (line_start_x2, line_y2, 820, 2))
+
+            # Текст подсказки про лечение
+            font = pygame.font.Font(get_font_path('podkova'), 20)
+            lines = [
+                'Нажмите 1 для лечения'
+            ]
+
+            # Центрируем каждую строку текста
+            for i, line in enumerate(lines):
+                text = font.render(line, True, WHITE)
+                line_x = hint_x + (hint_width - text.get_width()) // 2
+                line_y = hint_y + 50 + 25 * i
+                SCREEN.blit(text, (line_x, line_y))
+
+            print("Подсказка про лечение отображена")
 
         # Обработка субтитров
         if SUBTITLES == 'ON':
