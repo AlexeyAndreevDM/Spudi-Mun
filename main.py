@@ -686,7 +686,7 @@ def menu():
             intro_image = pygame.transform.scale(intro_image, (display_w, display_h))
             SCREEN.blit(intro_image, (0, 0))
 
-            font = pygame.font.Font(get_font_path('monospace_bold'), 17 * kx)
+            font = pygame.font.Font(get_font_path('monospace_bold'), 17 * math.ceil(kx))
             for i in red_icons_weight:
                 if red_icons_weight.index(i) == mst + 1:
                     pygame.draw.rect(SCREEN, (161, 3, 34), (qx, 0, i * kx, red_icons_height))
@@ -728,7 +728,7 @@ def menu():
             pygame.draw.rect(SCREEN, WHITE, (qx, red_icons_height, display_w - qx, 50))
             pygame.draw.ellipse(SCREEN, WHITE, (qx, red_icons_height, 1, display_h - red_icons_height), 1)
 
-            font = pygame.font.Font(get_font_path('monospace_bold'), 27 * kx)
+            font = pygame.font.Font(get_font_path('monospace_bold'), 27 * math.ceil(kx))
             text = font.render('EQUIPPED', True, UI_ACCENT)
             tx, ty = qx + 8, red_icons_height + 10
             SCREEN.blit(text, (tx, ty))
@@ -739,7 +739,7 @@ def menu():
             equipped_suit_icon = pygame.transform.scale(equipped_suit_icon, (110, 63))
             SCREEN.blit(equipped_suit_icon, (qx + 10, red_icons_height + 66))
 
-            font = pygame.font.Font(get_font_path('monospace_regular'), 18 * kx)
+            font = pygame.font.Font(get_font_path('monospace_regular'), 18 * math.ceil(kx))
             suit_name = SUITS.get(config.CURRENT_SUIT, 'Classic Suit')
             text = font.render(suit_name, True, WHITE)
             tx, ty = qx + 125, red_icons_height + 71
@@ -784,7 +784,7 @@ def menu():
             intro_image = pygame.transform.scale(intro_image, (display_w, display_h))
             SCREEN.blit(intro_image, (0, 0))
 
-            font = pygame.font.Font(get_font_path('monospace_bold'), 17 * kx)
+            font = pygame.font.Font(get_font_path('monospace_bold'), 17 * math.ceil(kx))
             for i in red_icons_weight:
                 if red_icons_weight.index(i) == mst + 0.9:
                     pygame.draw.rect(SCREEN, (161, 3, 34), (qx, 0, i * kx, red_icons_height))
@@ -830,7 +830,7 @@ def menu():
             pygame.draw.lines(SCREEN, WHITE, False, [[380, red_icons_height + 97],
                                                      [810, red_icons_height + 97]])
 
-            font = pygame.font.Font(get_font_path('monospace_bold'), 22 * kx)
+            font = pygame.font.Font(get_font_path('monospace_bold'), 22 * math.ceil(kx))
             text = font.render('SUIT', True, WHITE)
             SCREEN.blit(text, (290, red_icons_height + 65))
 
@@ -846,7 +846,7 @@ def menu():
             pygame.draw.rect(SCREEN, WHITE, (qx, red_icons_height, display_w - qx, 50))
             pygame.draw.ellipse(SCREEN, WHITE, (qx, red_icons_height, 1, display_h - red_icons_height), 1)
 
-            font = pygame.font.Font(get_font_path('monospace_bold'), 27 * kx)
+            font = pygame.font.Font(get_font_path('monospace_bold'), 27 * math.ceil(kx))
             text = font.render('EQUIPPED', True, UI_ACCENT)
             tx, ty = qx + 8, red_icons_height + 10
             SCREEN.blit(text, (tx, ty))
@@ -857,7 +857,7 @@ def menu():
                 selected_suit_icon = pygame.transform.scale(selected_suit_icon, (110, 63))
                 SCREEN.blit(selected_suit_icon, (qx + 10, red_icons_height + 66))
 
-                font = pygame.font.Font(get_font_path('monospace_regular'), 18 * kx)
+                font = pygame.font.Font(get_font_path('monospace_regular'), 18 * math.ceil(kx))
                 suit_code = choose_sst.split('_icon.png')[0]
                 suit_name = SUITS.get(suit_code, 'Unknown Suit')
                 text = font.render(suit_name, True, WHITE)
@@ -871,7 +871,7 @@ def menu():
                 current_suit_icon = pygame.transform.scale(current_suit_icon, (110, 63))
                 SCREEN.blit(current_suit_icon, (qx + 10, red_icons_height + 66))
 
-                font = pygame.font.Font(get_font_path('monospace_regular'), 18 * kx)
+                font = pygame.font.Font(get_font_path('monospace_regular'), 18 * math.ceil(kx))
                 suit_name = SUITS.get(config.CURRENT_SUIT, 'Classic Suit')
                 text = font.render(suit_name, True, WHITE)
                 tx, ty = qx + 125, red_icons_height + 71
@@ -915,14 +915,14 @@ def menu():
                 selected_icon = pygame.transform.scale(selected_icon, (110, 63))
                 SCREEN.blit(selected_icon, (qx + 10, red_icons_height + 66))
 
-                font = pygame.font.Font(get_font_path('monospace_regular'), 18 * kx)
+                font = pygame.font.Font(get_font_path('monospace_regular'), 18 * math.ceil(kx))
                 suit_display_name = SUITS.get(choose_sst.split('_icon.png')[0], 'Unknown Suit')
                 text = font.render(suit_display_name, True, WHITE)
                 tx, ty = qx + 125, red_icons_height + 71
                 SCREEN.blit(text, (tx, ty))
                 pygame.draw.aaline(SCREEN, WHITE, [qx + 125, ty + 23], [display_w, ty + 23])
 
-            font = pygame.font.Font(get_font_path('monospace_bold'), 22 * kx)
+            font = pygame.font.Font(get_font_path('monospace_bold'), 22 * math.ceil(kx))
 
             # Кнопка USE/USED
             if choose_sst and config.CURRENT_SUIT != choose_sst.split('_icon.png')[0]:

@@ -60,61 +60,112 @@ PLACEHOLDER_IMAGE = os.path.join(BASE_DIR, "white_cube.png")
 # НАСТРОЙКИ ЭКРАНА И ОТОБРАЖЕНИЯ
 # =============================================
 
-# Размеры экрана
-SCREEN_WIDTH = 1470
-SCREEN_HEIGHT = 900
-SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT + 20)  # +20 для заголовка
+# Базовые размеры экрана (оригинальные)
+BASE_SCREEN_WIDTH = 1470
+BASE_SCREEN_HEIGHT = 900
 
-# Масштабирование (для разных разрешений)
-SCALE_X = 1
-SCALE_Y = 1
+# Автоматическое масштабирование
+def get_screen_scale():
+    """Автоматически определяет масштаб для текущего экрана"""
+    try:
+        # Получаем разрешение основного монитора
+        import pygame.display
+        info = pygame.display.Info()
+        screen_width, screen_height = info.current_w, info.current_h
+
+        # Базовое разрешение для которого делали игру
+        BASE_WIDTH = 1470
+        BASE_HEIGHT = 900
+
+        # Вычисляем масштаб (минимум 0.8, чтобы не было слишком мелко)
+        scale_x = max(0.8, screen_width / BASE_WIDTH)
+        scale_y = max(0.8, screen_height / BASE_HEIGHT)
+
+        # Используем меньший масштаб из двух, чтобы все помещалось
+        return min(scale_x, scale_y)
+    except:
+        return 1.0  # Fallback
+
+# Глобальный масштаб
+SCALE = get_screen_scale()
+SCALE_X = SCALE
+SCALE_Y = SCALE
+
+# Функции масштабирования
+def scale_value(value):
+    """Масштабирует любое числовое значение"""
+    return int(value * SCALE)
+
+def scale_rect(rect):
+    """Масштабирует pygame.Rect"""
+    return pygame.Rect(
+        scale_value(rect.x),
+        scale_value(rect.y),
+        scale_value(rect.width),
+        scale_value(rect.height)
+    )
+
+def scale_font_size(size):
+    """Масштабирует размер шрифта"""
+    return max(12, int(size * SCALE))  # Минимальный размер 12
+
+def scale_surface(surface):
+    """Масштабирует поверхность pygame"""
+    new_width = scale_value(surface.get_width())
+    new_height = scale_value(surface.get_height())
+    return pygame.transform.scale(surface, (new_width, new_height))
+
+# Масштабированные размеры экрана
+SCREEN_WIDTH = scale_value(BASE_SCREEN_WIDTH)
+SCREEN_HEIGHT = scale_value(BASE_SCREEN_HEIGHT)
+SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT + scale_value(20))  # +20 для заголовка
 
 # Частота кадров
 FPS = 60
 
 # =============================================
-# ИГРОВЫЕ КОНСТАНТЫ
+# ИГРОВЫЕ КОНСТАНТЫ (МАСШТАБИРОВАННЫЕ)
 # =============================================
 
-# Физика
+# Физика (не масштабируется)
 GRAVITY = 0.5
 TERMINAL_VELOCITY = 20
 
-# Игрок
-PLAYER_WIDTH = 150
-PLAYER_HEIGHT = 150
-PLAYER_START_X = SCREEN_WIDTH // 2 - 150 + 15
-PLAYER_START_Y = SCREEN_HEIGHT // 2 - 200 + 7
-PLAYER_SPEED = 5
-JUMP_STRENGTH = -10
-SWING_STRENGTH = 4
+# Игрок (масштабируется)
+PLAYER_WIDTH = scale_value(150)
+PLAYER_HEIGHT = scale_value(150)
+PLAYER_START_X = scale_value(BASE_SCREEN_WIDTH // 2 - 150 + 15)
+PLAYER_START_Y = scale_value(BASE_SCREEN_HEIGHT // 2 - 200 + 7)
+PLAYER_SPEED = scale_value(5)
+JUMP_STRENGTH = -10  # не масштабируется
+SWING_STRENGTH = 4   # не масштабируется
 
-# Сдвиг камеры
-SCROLL_SPEED = 2
-INITIAL_SCROLL_Y = -330
+# Сдвиг камеры (масштабируется)
+SCROLL_SPEED = scale_value(2)
+INITIAL_SCROLL_Y = scale_value(-330)
 
-# Для тряски камеры
+# Для тряски камеры (не масштабируется)
 SHAKE_TIMER = 0
 SHAKE_INTENSITY = 0.0
 
-# Здоровье
+# Здоровье (не масштабируется)
 PLAYER_MAX_HEALTH = 100
 ENEMY_DAMAGE = 10
 
-# Концентрация
+# Концентрация (не масштабируется)
 MAX_CONCENTRATION = 100
 CONCENTRATION_GAIN_PER_HIT = 5
 HEALING_PER_FULL_CONCENTRATION = 50  # 100% концентрации = 50 здоровья
 
-# Дистанции между врагами
-MIN_DISTANCE_BETWEEN_ENEMIES = 100  # минимальная дистанция между врагами в мировых координатах
+# Дистанции между врагами (масштабируется)
+MIN_DISTANCE_BETWEEN_ENEMIES = scale_value(100)
 
-# Эффекты повреждений и смерти
-DAMAGE_FLASH_DURATION = 15    # кадров для мигания при уроне
-HEAL_FLASH_DURATION = 20      # кадров для мигания при лечении
-DEATH_FLASH_DURATION = 45     # кадров для мигания при смерти (750 мс)
-DEATH_DELAY_DURATION = 90     # кадров задержки перед экраном смерти (1500 мс)
-FLASH_ALPHA = 128             # прозрачность эффектов
+# Эффекты повреждений и смерти (не масштабируются)
+DAMAGE_FLASH_DURATION = 15
+HEAL_FLASH_DURATION = 20
+DEATH_FLASH_DURATION = 45
+DEATH_DELAY_DURATION = 90
+FLASH_ALPHA = 128
 
 # =============================================
 # НАСТРОЙКИ СЛОЖНОСТИ
@@ -184,7 +235,7 @@ SOUND_FILES = {
     'punch': os.path.join(SOUNDS_PUNCHES_DIR, "spider_punch.mp3"),
     'death': os.path.join(SOUNDS_DIR, "Spider_death.mp3"),
     'air_sound': os.path.join(SOUNDS_DIR, "air_sound.mp3"),
-    'heal': [  # Добавляем звуки лечения
+    'heal': [
         os.path.join(SOUNDS_UI_DIR, "heal1.wav"),
         os.path.join(SOUNDS_UI_DIR, "heal2.wav"),
         os.path.join(SOUNDS_UI_DIR, "heal3.wav")
@@ -192,7 +243,7 @@ SOUND_FILES = {
 }
 
 # =============================================
-# НАСТРОЙКИ ШРИФТОВ
+# НАСТРОЙКИ ШРИФТОВ (МАСШТАБИРОВАННЫЕ)
 # =============================================
 
 FONT_FILES = {
@@ -204,7 +255,8 @@ FONT_FILES = {
     'podkova': os.path.join(FONTS_DIR, "Podkova.ttf")
 }
 
-FONT_SIZES = {
+# Базовые размеры шрифтов
+BASE_FONT_SIZES = {
     'title': 120,
     'large': 40,
     'medium': 30,
@@ -212,6 +264,9 @@ FONT_SIZES = {
     'small': 20,
     'tiny': 17
 }
+
+# Масштабированные размеры шрифтов
+FONT_SIZES = {key: scale_font_size(value) for key, value in BASE_FONT_SIZES.items()}
 
 # =============================================
 # НАСТРОЙКИ ТЕКСТА И СУБТИТРОВ
@@ -257,6 +312,31 @@ SUIT_ICONS = [
     'ss_icon.png', 'as_icon.png', 'is_icon.png', 'ads_icon.png'
 ]
 
+# =============================================
+# UI КОНСТАНТЫ (МАСШТАБИРОВАННЫЕ)
+# =============================================
+
+# Здоровье
+HEALTH_BAR_WIDTH = scale_value(400)
+HEALTH_BAR_HEIGHT = scale_value(45)
+HEALTH_BAR_X = scale_value(50)
+HEALTH_BAR_Y = scale_value(50)
+
+# Концентрация
+CONCENTRATION_BAR_WIDTH = scale_value(200)  # В 2 раза короче здоровья
+CONCENTRATION_BAR_HEIGHT = scale_value(22)  # В 2 раза меньше по высоте
+CONCENTRATION_BAR_X = scale_value(50)
+CONCENTRATION_BAR_Y = scale_value(105)  # Под здоровьем
+
+# Опыт
+EXP_TEXT_X = SCREEN_WIDTH - scale_value(250)
+EXP_TEXT_Y = scale_value(53)
+
+# Подсказки
+HINT_WIDTH = scale_value(900)
+HINT_HEIGHT = scale_value(100)
+HINT_X = (SCREEN_WIDTH - scale_value(900)) // 2
+HINT_Y = scale_value(150)
 
 # =============================================
 # ФУНКЦИИ ДЛЯ РАБОТЫ С ПУТЯМИ
@@ -266,34 +346,25 @@ def get_image_path(*path_parts):
     """Безопасно создает путь к изображению"""
     return os.path.join(IMAGES_DIR, *path_parts)
 
-
 def get_sound_path(*path_parts):
     """Безопасно создает путь к звуку"""
     return os.path.join(SOUNDS_DIR, *path_parts)
-
 
 def get_music_path(*path_parts):
     """Безопасно создает путь к музыке"""
     return os.path.join(MUSIC_DIR, *path_parts)
 
-
 def get_font_path(font_name):
     """Возвращает путь к шрифту"""
     return FONT_FILES.get(font_name, FONT_FILES['monospace_bold'])
 
-
 def load_image_safe(path, default_image=PLACEHOLDER_IMAGE, convert_alpha=True):
     """Безопасно загружает изображение. Если файл не найден, использует изображение-заглушку."""
-    print(f"[CONFIG] Загрузка: {path}")
-    print(f"[CONFIG] Заглушка: {default_image}")
-    print(f"[CONFIG] Заглушка существует: {os.path.exists(default_image)}")
-
     try:
         if convert_alpha:
             image = pygame.image.load(path).convert_alpha()
         else:
             image = pygame.image.load(path).convert()
-        print(f"[CONFIG] Успешно загружено: {path}")
         return image
     except (pygame.error, FileNotFoundError) as e:
         print(f"[CONFIG] Ошибка {path}: {e}, используем заглушку")
@@ -304,10 +375,9 @@ def load_image_safe(path, default_image=PLACEHOLDER_IMAGE, convert_alpha=True):
                 return pygame.image.load(default_image).convert()
         except Exception as e2:
             print(f"[CONFIG] Критическая ошибка заглушки: {e2}")
-            surf = pygame.Surface((50, 50))
+            surf = pygame.Surface((scale_value(50), scale_value(50)))
             surf.fill((255, 0, 255))
             return surf
-
 
 # =============================================
 # ПРОВЕРКА СУЩЕСТВОВАНИЯ ДИРЕКТОРИЙ
@@ -325,7 +395,6 @@ def ensure_directories():
 
     for directory in directories:
         os.makedirs(directory, exist_ok=True)
-
 
 # Автоматически создаем директории при импорте
 ensure_directories()
