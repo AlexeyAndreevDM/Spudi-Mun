@@ -249,12 +249,12 @@ SUITS = {
     'ss': 'Night Monkey',
     'as': 'Amazing Suit',
     'is': 'Integrated Suit',
-    'ios': 'Black and Gold Suit'
+    'ads': 'Advanced Suit'
 }
 
 SUIT_ICONS = [
     'cs_icon.png', 'iss_icon.png', 'ws_icon.png', 'us_icon.png',
-    'ss_icon.png', 'as_icon.png', 'is_icon.png', 'ios_icon.png'
+    'ss_icon.png', 'as_icon.png', 'is_icon.png', 'ads_icon.png'
 ]
 
 

@@ -625,26 +625,33 @@ def main_menu():
 
 
 def menu():
-    global im
-    global diff
-    global musst
-    global suit
-    global st
-    global dif_k
+    global im, diff, musst, suit, st, dif_k
+    import src.config as config  # Импортируем config как модуль
+
     mst, choose_sst, st = 1, '', 0
     expectation = randint(1000, 2000)
-    # randint(1500, 2500)
-    pygame.mixer.music.load("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Music/Pause Menu.mp3")
+
+    # Использование путей из config
+    pygame.mixer.music.load(MUSIC_FILES['pause_menu'])
     pygame.mixer.music.play()
-    pygame.mixer.music.set_volume(0.4)
-    # 144  9 7 7 9 8 10 12 12 12 11 17 30
+    pygame.mixer.music.set_volume(MUSIC_VOLUME)
+
     red_icons_text = ['', ' MAP', 'SUITS', 'GADGETS', 'SKILLS', 'MISSIONS', 'COLLECTIONS      ', 'BENCHMARKS',
-                      'CHARACTERS',
-                      'MOVES LIST           ', '']
+                      'CHARACTERS', 'MOVES LIST           ', '']
     equipments_icon = ['SUIT', 'SUIT POWER', 'SUIT MODS']
-    suits = ['cs_icon.png', 'iss_icon.png', 'ws_icon.png', 'us_icon.png', 'ss_icon.png', 'as_icon.png',
-             'is_icon.png', 'ios_icon.png']
+
+    # Используем иконки из папки pause_menu/Suit's Icons
+    suits = [
+        'cs_icon.png', 'iss_icon.png', 'ws_icon.png', 'us_icon.png',
+        'ss_icon.png', 'as_icon.png', 'is_icon.png', 'ads_icon.png'
+    ]
+
     qx, qy, mdx, mdy, ix, iy = 0, 0, 0, 0, 0, 0
+
+    # Используем SCREEN_WIDTH и SCREEN_HEIGHT из конфига
+    display_w, display_h = SCREEN_WIDTH, SCREEN_HEIGHT
+    kx, ky = SCALE_X, SCALE_Y
+
     red_icons_weight = [round(6.2 / 100 * display_w, 0), round(4.87 / 100 * display_w, 0),
                         round(4.86 / 100 * display_w, 0), round(6.3 / 100 * display_w, 0),
                         round(5.5 / 100 * display_w, 0), round(6.95 / 100 * display_w, 0),
@@ -652,6 +659,7 @@ def menu():
                         round(8.4 / 100 * display_w, 0), round(7.6 / 100 * display_w, 0),
                         round(11.8 / 100 * display_w, 0)]
     red_icons_height = round(9.75 / 100 * display_h, 0) * ky
+
     while True:
         for ev in pygame.event.get():
             if ev.type == pygame.KEYDOWN:
@@ -672,14 +680,15 @@ def menu():
                     if ev.button == 1 and ix + 1 < mdx < ix + 109 and iy + 1 < mdy < iy + 62:
                         choose_sst = i
                 if ev.button == 1 and 1349 < mdx < 1420 and 226 < mdy < 256:
-                    suit = choose_sst.split('_icon.png')[0]
+                    config.CURRENT_SUIT = choose_sst.split('_icon.png')[0]
+
         if mst == 1:
-            intro_image = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                          "/Pictures/Base Menu/IMG_4305.JPG")
+            # Используем фон из pause_menu
+            intro_image = load_image_safe(get_image_path("pause_menu", "IMG_4305.JPG"))
             intro_image = pygame.transform.scale(intro_image, (display_w, display_h))
             SCREEN.blit(intro_image, (0, 0))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 17 * kx)
+
+            font = pygame.font.Font(get_font_path('monospace_bold'), 17 * kx)
             for i in red_icons_weight:
                 if red_icons_weight.index(i) == mst + 1:
                     pygame.draw.rect(SCREEN, (161, 3, 34), (qx, 0, i * kx, red_icons_height))
@@ -695,309 +704,197 @@ def menu():
                 qx += 2
 
             for i in equipments_icon:
-                text = font.render(i, True, pygame.Color('White'))
+                text = font.render(i, True, WHITE)
                 tx, ty = ((red_icons_weight[0] // 2) + 15) * kx, \
                          (red_icons_height + 15 * ky + 0.17 * display_h * equipments_icon.index(i)) * ky
                 SCREEN.blit(text, (tx, ty))
-                pygame.draw.rect(SCREEN, pygame.Color('White'), (tx, ty + 23 * ky, 0.02 * display_w * kx, 1))
-                pygame.draw.rect(SCREEN, pygame.Color('White'), (tx, ty + 27 * ky, 0.11 * display_w * kx, 3))
-                pygame.draw.rect(SCREEN, pygame.Color('White'), (tx, ty + 35 * ky, 0.11 * display_w * kx, 1))
-                pygame.draw.rect(SCREEN, pygame.Color('White'), (tx, ty + 135 * ky, 0.11 * display_w * kx, 1))
-                pygame.draw.rect(SCREEN, pygame.Color('White'), (tx, ty + 35 * ky, 1 * kx, 100 * ky))
-                pygame.draw.rect(SCREEN, pygame.Color('White'),
+                pygame.draw.rect(SCREEN, WHITE, (tx, ty + 23 * ky, 0.02 * display_w * kx, 1))
+                pygame.draw.rect(SCREEN, WHITE, (tx, ty + 27 * ky, 0.11 * display_w * kx, 3))
+                pygame.draw.rect(SCREEN, WHITE, (tx, ty + 35 * ky, 0.11 * display_w * kx, 1))
+                pygame.draw.rect(SCREEN, WHITE, (tx, ty + 135 * ky, 0.11 * display_w * kx, 1))
+                pygame.draw.rect(SCREEN, WHITE, (tx, ty + 35 * ky, 1 * kx, 100 * ky))
+                pygame.draw.rect(SCREEN, WHITE,
                                  (tx + 0.11 * display_w * kx, ty + 35 * ky, 1 * kx, 100 * ky))
-                pygame.draw.rect(SCREEN, pygame.Color('White'), (tx - 5, ty + 27 * ky, 1, 30))
+                pygame.draw.rect(SCREEN, WHITE, (tx - 5, ty + 27 * ky, 1, 30))
 
             tx, ty = ((red_icons_weight[0] // 2) + 16) * kx, (red_icons_height + 51) * ky
-            if suit == 'cs':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/cs_icon.png")
 
-            elif suit == 'iss':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/iss_icon.png")
-            elif suit == 'ws':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/ws_icon.png")
-            elif suit == 'us':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/us_icon.png")
-            elif suit == 'ss':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/ss_icon.png")
-            elif suit == 'as':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/as_icon.png")
-            elif suit == 'is':
-                ssuit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                             "/Pictures/Base Menu/Suit's Icons/is_icon.png")
-            elif suit == 'ios':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/ios_icon.png")
-            suit_icon = pygame.transform.scale(suit_icon, (0.11 * display_w * kx - 3, 98))
-            SCREEN.blit(suit_icon, (tx + 1, ty + 1))
+            # Загрузка иконки текущего костюма из pause_menu/Suit's Icons
+            current_suit_icon = load_image_safe(
+                os.path.join(MENU_PAUSE_DIR, "Suit's Icons", f"{config.CURRENT_SUIT}_icon.png"))
+            current_suit_icon = pygame.transform.scale(current_suit_icon, (0.11 * display_w * kx - 3, 98))
+            SCREEN.blit(current_suit_icon, (tx + 1, ty + 1))
 
-            pygame.draw.rect(SCREEN, (29, 31, 36), (qx, 0, display_w - qx, display_h))
-            pygame.draw.rect(SCREEN, (28, 6, 46), (qx - 8, 0, 3, red_icons_height))
-            pygame.draw.rect(SCREEN, (255, 255, 255), (qx, red_icons_height, display_w - qx, 50))
-            pygame.draw.ellipse(SCREEN, (255, 255, 255), (qx, red_icons_height, 1, display_h - red_icons_height), 1)
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 27 * kx)
-            text = font.render('EQUIPPED', True, (28, 6, 46))
+            pygame.draw.rect(SCREEN, UI_BACKGROUND, (qx, 0, display_w - qx, display_h))
+            pygame.draw.rect(SCREEN, UI_ACCENT, (qx - 8, 0, 3, red_icons_height))
+            pygame.draw.rect(SCREEN, WHITE, (qx, red_icons_height, display_w - qx, 50))
+            pygame.draw.ellipse(SCREEN, WHITE, (qx, red_icons_height, 1, display_h - red_icons_height), 1)
+
+            font = pygame.font.Font(get_font_path('monospace_bold'), 27 * kx)
+            text = font.render('EQUIPPED', True, UI_ACCENT)
             tx, ty = qx + 8, red_icons_height + 10
             SCREEN.blit(text, (tx, ty))
-            if suit == 'cs':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/cs_icon.png")
-            elif suit == 'iss':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/iss_icon.png")
-            elif suit == 'ws':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/ws_icon.png")
-            elif suit == 'us':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/us_icon.png")
-            elif suit == 'ss':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/ss_icon.png")
-            elif suit == 'as':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/as_icon.png")
-            elif suit == 'is':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/is_icon.png")
-            elif suit == 'ios':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/ios_icon.png")
-            suit_icon = pygame.transform.scale(suit_icon, (110, 63))
-            SCREEN.blit(suit_icon, (qx + 10, red_icons_height + 66))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceRegular.ttf", 18 * kx)
-            if suit == 'cs':
-                text = font.render('Classic Suit', True, (255, 255, 255))
-            elif suit == 'iss':
-                text = font.render('Iron Spider', True, (255, 255, 255))
-            elif suit == 'ws':
-                text = font.render('Webbed Suit', True, (255, 255, 255))
-            elif suit == 'us':
-                text = font.render('Upgraded Suit', True, (255, 255, 255))
-            elif suit == 'ss':
-                text = font.render('Night Monkey', True, (255, 255, 255))
-            elif suit == 'as':
-                text = font.render('Amazing Suit', True, (255, 255, 255))
-            elif suit == 'is':
-                text = font.render('Integrated Suit', True, (255, 255, 255))
-            if suit == 'ios':
-                text = font.render('Black and Gold', True, (255, 255, 255))
-                tx, ty = qx + 125, red_icons_height + 71
-                SCREEN.blit(text, (tx, ty))
-                text = font.render('Suit', True, (255, 255, 255))
-                tx, ty = qx + 175, red_icons_height + 90
-                SCREEN.blit(text, (tx, ty))
-                pygame.draw.aaline(SCREEN, (255, 255, 255), [qx + 125, ty + 23],
-                                   [display_w, ty + 23])
-            else:
-                tx, ty = qx + 125, red_icons_height + 71
-                SCREEN.blit(text, (tx, ty))
-                pygame.draw.aaline(SCREEN, (255, 255, 255), [qx + 125, ty + 23],
-                                   [display_w, ty + 23])
 
-            pygame.draw.ellipse(SCREEN, (255, 255, 255), (display_w // 3.5, 590, display_w // 2.3, 200), 3)
-            pygame.draw.ellipse(SCREEN, (255, 255, 255), (display_w // 3.5 + 65, 615, display_w // 2.3 - 130, 140), 1)
-            pygame.draw.ellipse(SCREEN, (255, 255, 255), (display_w // 3.5 + 228, 650, display_w // 2.3 - 460, 70), 1)
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [display_w // 3.5 + display_w // 4.6 - 5, 591],
-                               [display_w // 3.5 + 228 + (display_w // 2.3 - 460) // 2, 647])
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [display_w // 3.5 + 230 + (display_w // 2.3 - 460) // 2, 721],
-                               [display_w // 3.5 + display_w // 4.6 + 4, 787])
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [display_w // 3.5 + display_w // 9.2 - 22, 610],
-                               [display_w // 3.5 + 228 + (display_w // 2.3 - 460) // 4 - 13, 657])
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [display_w // 3.5 + 390, 707], [display_w // 3.5 + 530, 764])
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [display_w // 3.5 + 1, 683], [display_w // 3.5 + 228, 683])
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [display_w // 3.5 + 407, 683],
-                               [display_w // 3.5 + display_w // 2.3, 683])
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [display_w // 3.5 + display_w // 9.2 - 30, 769],
-                               [display_w // 3.5 + 228 + (display_w // 2.3 - 460) // 4 - 13, 711])
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [display_w // 3.5 + 500, 610], [display_w // 3.5 + 384, 660])
+            # Отображение текущего костюма
+            equipped_suit_icon = load_image_safe(
+                os.path.join(MENU_PAUSE_DIR, "Suit's Icons", f"{config.CURRENT_SUIT}_icon.png"))
+            equipped_suit_icon = pygame.transform.scale(equipped_suit_icon, (110, 63))
+            SCREEN.blit(equipped_suit_icon, (qx + 10, red_icons_height + 66))
 
-            if suit == 'cs':
-                suit_icon = load_image_safe('menu_cs.png')
-            elif suit == 'iss':
-                suit_icon = load_image_safe('menu_iss.png')
-            elif suit == 'ws':
-                suit_icon = load_image_safe('menu_ws.png')
-            elif suit == 'us':
-                suit_icon = load_image_safe('menu_us.png')
-            elif suit == 'ss':
-                suit_icon = load_image_safe('menu_ss.png')
-            elif suit == 'as':
-                suit_icon = load_image_safe('menu_as.png')
-            elif suit == 'is':
-                suit_icon = load_image_safe('menu_is.png')
-            elif suit == 'ios':
-                suit_icon = load_image_safe('menu_ios.png')
-            suit_icon = pygame.transform.scale(suit_icon, (545, 370))
-            SCREEN.blit(suit_icon, (display_w // 3.5 + 40, 410))
+            font = pygame.font.Font(get_font_path('monospace_regular'), 18 * kx)
+            suit_name = SUITS.get(config.CURRENT_SUIT, 'Classic Suit')
+            text = font.render(suit_name, True, WHITE)
+            tx, ty = qx + 125, red_icons_height + 71
+            SCREEN.blit(text, (tx, ty))
+            pygame.draw.aaline(SCREEN, WHITE, [qx + 125, ty + 23], [display_w, ty + 23])
+
+            # Декоративные элементы
+            pygame.draw.ellipse(SCREEN, WHITE, (display_w // 3.5, 590, display_w // 2.3, 200), 3)
+            pygame.draw.ellipse(SCREEN, WHITE, (display_w // 3.5 + 65, 615, display_w // 2.3 - 130, 140), 1)
+            pygame.draw.ellipse(SCREEN, WHITE, (display_w // 3.5 + 228, 650, display_w // 2.3 - 460, 70), 1)
+
+            # Линии декора
+            lines = [
+                [[display_w // 3.5 + display_w // 4.6 - 5, 591],
+                 [display_w // 3.5 + 228 + (display_w // 2.3 - 460) // 2, 647]],
+                [[display_w // 3.5 + 230 + (display_w // 2.3 - 460) // 2, 721],
+                 [display_w // 3.5 + display_w // 4.6 + 4, 787]],
+                [[display_w // 3.5 + display_w // 9.2 - 22, 610],
+                 [display_w // 3.5 + 228 + (display_w // 2.3 - 460) // 4 - 13, 657]],
+                [[display_w // 3.5 + 390, 707], [display_w // 3.5 + 530, 764]],
+                [[display_w // 3.5 + 1, 683], [display_w // 3.5 + 228, 683]],
+                [[display_w // 3.5 + 407, 683], [display_w // 3.5 + display_w // 2.3, 683]],
+                [[display_w // 3.5 + display_w // 9.2 - 30, 769],
+                 [display_w // 3.5 + 228 + (display_w // 2.3 - 460) // 4 - 13, 711]],
+                [[display_w // 3.5 + 500, 610], [display_w // 3.5 + 384, 660]]
+            ]
+
+            for line in lines:
+                pygame.draw.aaline(SCREEN, WHITE, line[0], line[1])
+
+            # Отображение костюма в центре из папки Suits for Base Menu
+            center_suit_path = os.path.join(MENU_PAUSE_DIR, "Suits for Base Menu", f"menu_{config.CURRENT_SUIT}.png")
+            center_suit = load_image_safe(center_suit_path)
+            center_suit = pygame.transform.scale(center_suit, (545, 370))
+            SCREEN.blit(center_suit, (display_w // 3.5 + 40, 410))
+
             qx, qy = 0, 0
 
         elif mst == 1.1:
-            intro_image = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                          "/Pictures/Base Menu/IMG_4305.JPG")
+            # Состояние выбора костюма
+            intro_image = load_image_safe(get_image_path("pause_menu", "IMG_4305.JPG"))
             intro_image = pygame.transform.scale(intro_image, (display_w, display_h))
             SCREEN.blit(intro_image, (0, 0))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 17 * kx)
+
+            font = pygame.font.Font(get_font_path('monospace_bold'), 17 * kx)
             for i in red_icons_weight:
                 if red_icons_weight.index(i) == mst + 0.9:
                     pygame.draw.rect(SCREEN, (161, 3, 34), (qx, 0, i * kx, red_icons_height))
-                    pygame.draw.rect(SCREEN, (255, 255, 255), (qx, 0, i * kx, 6))
+                    pygame.draw.rect(SCREEN, WHITE, (qx, 0, i * kx, 6))
                 else:
                     pygame.draw.rect(SCREEN, (255, 0, 59), (qx, 0, i * kx, red_icons_height))
-                text = font.render(red_icons_text[red_icons_weight.index(i)], True, (28, 6, 46))
+                text = font.render(red_icons_text[red_icons_weight.index(i)], True, UI_ACCENT)
                 tx, ty = (qx + i * kx // (len(red_icons_text[red_icons_weight.index(i)]) + 2)) * kx, \
                          (red_icons_height // 2 - 8 * ky) * ky
                 SCREEN.blit(text, (tx, ty))
                 qx += i
-                pygame.draw.rect(SCREEN, (28, 6, 46), (qx, 0, 2, red_icons_height))
+                pygame.draw.rect(SCREEN, UI_ACCENT, (qx, 0, 2, red_icons_height))
                 qx += 2
 
             for i in equipments_icon:
-                text = font.render(i, True, pygame.Color('White'))
+                text = font.render(i, True, WHITE)
                 tx, ty = ((red_icons_weight[0] // 2) + 15) * kx, \
                          (red_icons_height + 15 * ky + 0.17 * display_h * equipments_icon.index(i)) * ky
                 SCREEN.blit(text, (tx, ty))
-                pygame.draw.rect(SCREEN, pygame.Color('White'), (tx, ty + 23 * ky, 0.02 * display_w * kx, 1))
-                pygame.draw.rect(SCREEN, pygame.Color('White'), (tx, ty + 27 * ky, 0.11 * display_w * kx, 3))
-                pygame.draw.rect(SCREEN, pygame.Color('White'), (tx, ty + 35 * ky, 0.11 * display_w * kx, 1))
-                pygame.draw.rect(SCREEN, pygame.Color('White'), (tx, ty + 135 * ky, 0.11 * display_w * kx, 1))
-                pygame.draw.rect(SCREEN, pygame.Color('White'), (tx, ty + 35 * ky, 1 * kx, 100 * ky))
-                pygame.draw.rect(SCREEN, pygame.Color('White'),
+                pygame.draw.rect(SCREEN, WHITE, (tx, ty + 23 * ky, 0.02 * display_w * kx, 1))
+                pygame.draw.rect(SCREEN, WHITE, (tx, ty + 27 * ky, 0.11 * display_w * kx, 3))
+                pygame.draw.rect(SCREEN, WHITE, (tx, ty + 35 * ky, 0.11 * display_w * kx, 1))
+                pygame.draw.rect(SCREEN, WHITE, (tx, ty + 135 * ky, 0.11 * display_w * kx, 1))
+                pygame.draw.rect(SCREEN, WHITE, (tx, ty + 35 * ky, 1 * kx, 100 * ky))
+                pygame.draw.rect(SCREEN, WHITE,
                                  (tx + 0.11 * display_w * kx, ty + 35 * ky, 1 * kx, 100 * ky))
-                pygame.draw.rect(SCREEN, pygame.Color('White'), (tx - 5, ty + 27 * ky, 1, 30))
+                pygame.draw.rect(SCREEN, WHITE, (tx - 5, ty + 27 * ky, 1, 30))
 
             tx, ty = ((red_icons_weight[0] // 2) + 16) * kx, (red_icons_height + 51) * ky
-            if suit == 'cs':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/cs_icon.png")
-            elif suit == 'iss':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/iss_icon.png")
-            elif suit == 'ws':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/ws_icon.png")
-            elif suit == 'us':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/us_icon.png")
-            elif suit == 'ss':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/ss_icon.png")
-            elif suit == 'as':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/as_icon.png")
-            elif suit == 'is':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/is_icon.png")
-            elif suit == 'ios':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/ios_icon.png")
-            suit_icon = pygame.transform.scale(suit_icon, (0.11 * display_w * kx - 3, 98))
-            SCREEN.blit(suit_icon, (tx + 1, ty + 1))
-            pygame.draw.aalines(SCREEN, (255, 255, 255), False, [[tx + 0.11 * display_w * kx, red_icons_height + 97],
-                                                                 [270, red_icons_height + 97]])
-            pygame.draw.rect(SCREEN, (255, 255, 255), (243, red_icons_height + 95, 6, 6))
-            pygame.draw.lines(SCREEN, (255, 255, 255), False, [[290, red_icons_height + 97],
-                                                               [370, red_icons_height + 97]], 2)
-            pygame.draw.lines(SCREEN, (255, 255, 255), False, [[380, red_icons_height + 97],
-                                                               [810, red_icons_height + 97]])
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 22 * kx)
-            text = font.render('SUIT', True, (255, 255, 255))
+
+            # Текущая иконка костюма
+            current_suit_icon = load_image_safe(
+                os.path.join(MENU_PAUSE_DIR, "Suit's Icons", f"{config.CURRENT_SUIT}_icon.png"))
+            current_suit_icon = pygame.transform.scale(current_suit_icon, (0.11 * display_w * kx - 3, 98))
+            SCREEN.blit(current_suit_icon, (tx + 1, ty + 1))
+
+            # Декоративные линии
+            pygame.draw.aalines(SCREEN, WHITE, False, [[tx + 0.11 * display_w * kx, red_icons_height + 97],
+                                                       [270, red_icons_height + 97]])
+            pygame.draw.rect(SCREEN, WHITE, (243, red_icons_height + 95, 6, 6))
+            pygame.draw.lines(SCREEN, WHITE, False, [[290, red_icons_height + 97],
+                                                     [370, red_icons_height + 97]], 2)
+            pygame.draw.lines(SCREEN, WHITE, False, [[380, red_icons_height + 97],
+                                                     [810, red_icons_height + 97]])
+
+            font = pygame.font.Font(get_font_path('monospace_bold'), 22 * kx)
+            text = font.render('SUIT', True, WHITE)
             SCREEN.blit(text, (290, red_icons_height + 65))
+
             for ev in pygame.event.get():
                 if ev.type == pygame.MOUSEBUTTONDOWN:
                     mdx, mdy = ev.pos[0], ev.pos[1]
                     if ev.button == 1 and tx + 1 < mdx < tx + 0.11 * display_w * kx - 3 and ty + 1 < mdy < ty + 98:
                         mst = 1
 
-            pygame.draw.rect(SCREEN, (29, 31, 36), (qx, 0, display_w - qx, display_h))
-            pygame.draw.rect(SCREEN, (28, 6, 46), (qx - 8, 0, 3, red_icons_height))
-            pygame.draw.rect(SCREEN, (255, 255, 255), (qx, red_icons_height, display_w - qx, 50))
-            pygame.draw.ellipse(SCREEN, (255, 255, 255), (qx, red_icons_height, 1, display_h - red_icons_height), 1)
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 27 * kx)
-            text = font.render('EQUIPPED', True, (28, 6, 46))
+            # Правая панель
+            pygame.draw.rect(SCREEN, UI_BACKGROUND, (qx, 0, display_w - qx, display_h))
+            pygame.draw.rect(SCREEN, UI_ACCENT, (qx - 8, 0, 3, red_icons_height))
+            pygame.draw.rect(SCREEN, WHITE, (qx, red_icons_height, display_w - qx, 50))
+            pygame.draw.ellipse(SCREEN, WHITE, (qx, red_icons_height, 1, display_h - red_icons_height), 1)
+
+            font = pygame.font.Font(get_font_path('monospace_bold'), 27 * kx)
+            text = font.render('EQUIPPED', True, UI_ACCENT)
             tx, ty = qx + 8, red_icons_height + 10
             SCREEN.blit(text, (tx, ty))
-            if suit == 'cs':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/cs_icon.png")
-            elif suit == 'iss':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/iss_icon.png")
-            elif suit == 'ws':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/ws_icon.png")
-            elif suit == 'us':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/us_icon.png")
-            elif suit == 'ss':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/ss_icon.png")
-            elif suit == 'as':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/as_icon.png")
-            elif suit == 'is':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/is_icon.png")
-            elif suit == 'ios':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/ios_icon.png")
-            suit_icon = pygame.transform.scale(suit_icon, (110, 63))
-            SCREEN.blit(suit_icon, (qx + 10, red_icons_height + 66))
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceRegular.ttf", 18 * kx)
-            if choose_sst == '':
-                if suit == 'cs':
-                    text = font.render('Classic Suit', True, (255, 255, 255))
-                elif suit == 'iss':
-                    text = font.render('Iron Spider', True, (255, 255, 255))
-                elif suit == 'ws':
-                    text = font.render('Webbed Suit', True, (255, 255, 255))
-                elif suit == 'us':
-                    text = font.render('Upgraded Suit', True, (255, 255, 255))
-                elif suit == 'ss':
-                    text = font.render('Night Monkey', True, (255, 255, 255))
-                elif suit == 'as':
-                    text = font.render('Amazing Suit', True, (255, 255, 255))
-                elif suit == 'is':
-                    text = font.render('Integrated Suit', True, (255, 255, 255))
-                if suit == 'ios':
-                    text = font.render('Black and Gold', True, (255, 255, 255))
-                    tx, ty = qx + 125, red_icons_height + 71
-                    SCREEN.blit(text, (tx, ty))
-                    text = font.render('Suit', True, (255, 255, 255))
-                    tx, ty = qx + 175, red_icons_height + 90
-                    SCREEN.blit(text, (tx, ty))
-                    pygame.draw.aaline(SCREEN, (255, 255, 255), [qx + 125, ty + 23],
-                                       [display_w, ty + 23])
-                else:
-                    tx, ty = qx + 125, red_icons_height + 71
-                    SCREEN.blit(text, (tx, ty))
-                    pygame.draw.aaline(SCREEN, (255, 255, 255), [qx + 125, ty + 23],
-                                       [display_w, ty + 23])
 
-            pygame.draw.rect(SCREEN, (255, 255, 255), (270, 145, 560, 655), 1)
-            pygame.draw.aalines(SCREEN, (255, 255, 255), False, [[817, 136], [838, 136], [838, 155]])
-            pygame.draw.lines(SCREEN, (255, 255, 255), False, [[838, 159], [838, 179]], 3)
-            pygame.draw.aalines(SCREEN, (255, 255, 255), False, [[817, 809], [838, 809], [838, 790]])
-            pygame.draw.lines(SCREEN, (255, 255, 255), False, [[838, 786], [838, 766]], 3)
+            # Отображение выбранного костюма
+            if choose_sst:
+                selected_suit_icon = load_image_safe(os.path.join(MENU_PAUSE_DIR, "Suit's Icons", choose_sst))
+                selected_suit_icon = pygame.transform.scale(selected_suit_icon, (110, 63))
+                SCREEN.blit(selected_suit_icon, (qx + 10, red_icons_height + 66))
 
-            for i in suits:
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/" + i)
-                suit_icon = pygame.transform.scale(suit_icon, (110, 63))
-                ix, iy = 295 + 132 * (suits.index(i) % 4), 208 + (suits.index(i) // 4) * 85
-                SCREEN.blit(suit_icon, (ix, iy))
+                font = pygame.font.Font(get_font_path('monospace_regular'), 18 * kx)
+                suit_code = choose_sst.split('_icon.png')[0]
+                suit_name = SUITS.get(suit_code, 'Unknown Suit')
+                text = font.render(suit_name, True, WHITE)
+                tx, ty = qx + 125, red_icons_height + 71
+                SCREEN.blit(text, (tx, ty))
+                pygame.draw.aaline(SCREEN, WHITE, [qx + 125, ty + 23], [display_w, ty + 23])
+            else:
+                # Отображение текущего костюма если ничего не выбрано
+                current_suit_icon = load_image_safe(
+                    os.path.join(MENU_PAUSE_DIR, "Suit's Icons", f"{config.CURRENT_SUIT}_icon.png"))
+                current_suit_icon = pygame.transform.scale(current_suit_icon, (110, 63))
+                SCREEN.blit(current_suit_icon, (qx + 10, red_icons_height + 66))
+
+                font = pygame.font.Font(get_font_path('monospace_regular'), 18 * kx)
+                suit_name = SUITS.get(config.CURRENT_SUIT, 'Classic Suit')
+                text = font.render(suit_name, True, WHITE)
+                tx, ty = qx + 125, red_icons_height + 71
+                SCREEN.blit(text, (tx, ty))
+                pygame.draw.aaline(SCREEN, WHITE, [qx + 125, ty + 23], [display_w, ty + 23])
+
+            # Рамка для выбора костюмов
+            pygame.draw.rect(SCREEN, WHITE, (270, 145, 560, 655), 1)
+
+            # Декоративные элементы
+            pygame.draw.aalines(SCREEN, WHITE, False, [[817, 136], [838, 136], [838, 155]])
+            pygame.draw.lines(SCREEN, WHITE, False, [[838, 159], [838, 179]], 3)
+            pygame.draw.aalines(SCREEN, WHITE, False, [[817, 809], [838, 809], [838, 790]])
+            pygame.draw.lines(SCREEN, WHITE, False, [[838, 786], [838, 766]], 3)
+
+            # Отображение всех костюмов
+            for i, suit_icon_name in enumerate(suits):
+                suit_icon_img = load_image_safe(os.path.join(MENU_PAUSE_DIR, "Suit's Icons", suit_icon_name))
+                suit_icon_img = pygame.transform.scale(suit_icon_img, (110, 63))
+                ix, iy = 295 + 132 * (i % 4), 208 + (i // 4) * 85
+                SCREEN.blit(suit_icon_img, (ix, iy))
 
             for ev in pygame.event.get():
                 if ev.type == pygame.KEYDOWN:
@@ -1009,109 +906,85 @@ def menu():
                         main_game()
                 if ev.type == pygame.MOUSEBUTTONDOWN:
                     mdx, mdy = ev.pos[0], ev.pos[1]
-                    for i in suits:
-                        ix, iy = 295 + 132 * (suits.index(i) % 4), 208 + (suits.index(i) // 4) * 85
+                    for i, suit_icon_name in enumerate(suits):
+                        ix, iy = 295 + 132 * (i % 4), 208 + (i // 4) * 85
                         if ev.button == 1 and ix + 1 < mdx < ix + 109 and iy + 1 < mdy < iy + 62:
-                            choose_sst = i
+                            choose_sst = suit_icon_name
 
-            if choose_sst != '':
-                suit_icon = load_image_safe("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D"
-                                            "/Pictures/Base Menu/Suit's Icons/" + choose_sst)
-                suit_icon = pygame.transform.scale(suit_icon, (110, 63))
-                SCREEN.blit(suit_icon, (qx + 10, red_icons_height + 66))
-                font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                        "/MonospaceRegular.ttf", 18 * kx)
-                if choose_sst == 'cs_icon.png':
-                    text = font.render('Classic Suit', True, (255, 255, 255))
-                elif choose_sst == 'iss_icon.png':
-                    text = font.render('Iron Spider', True, (255, 255, 255))
-                elif choose_sst == 'ws_icon.png':
-                    text = font.render('Webbed Suit', True, (255, 255, 255))
-                elif choose_sst == 'us_icon.png':
-                    text = font.render('Upgraded Suit', True, (255, 255, 255))
-                elif choose_sst == 'ss_icon.png':
-                    text = font.render('Night Monkey', True, (255, 255, 255))
-                elif choose_sst == 'as_icon.png':
-                    text = font.render('Amazing Suit', True, (255, 255, 255))
-                elif choose_sst == 'is_icon.png':
-                    text = font.render('Integrated Suit', True, (255, 255, 255))
-                if choose_sst == 'ios_icon.png':
-                    text = font.render('Black and Gold', True, (255, 255, 255))
-                    tx, ty = qx + 125, red_icons_height + 71
-                    SCREEN.blit(text, (tx, ty))
-                    text = font.render('Suit', True, (255, 255, 255))
-                    tx, ty = qx + 175, red_icons_height + 90
-                    SCREEN.blit(text, (tx, ty))
-                    pygame.draw.aaline(SCREEN, (255, 255, 255), [qx + 125, ty + 23],
-                                       [display_w, ty + 23])
-                else:
-                    tx, ty = qx + 125, red_icons_height + 71
-                    SCREEN.blit(text, (tx, ty))
-                    pygame.draw.aaline(SCREEN, (255, 255, 255), [qx + 125, ty + 23],
-                                       [display_w, ty + 23])
-            font = pygame.font.Font("/Users/aleksej/PycharmProjects/pythonProject/Marvel's Spider-Man 2D/Fonts"
-                                    "/MonospaceBold.ttf", 22 * kx)
-            if suit not in choose_sst:
-                text = font.render('USE', True, (255, 255, 255))
+            # Обновление информации о выбранном костюме
+            if choose_sst:
+                selected_icon = load_image_safe(os.path.join(MENU_PAUSE_DIR, "Suit's Icons", choose_sst))
+                selected_icon = pygame.transform.scale(selected_icon, (110, 63))
+                SCREEN.blit(selected_icon, (qx + 10, red_icons_height + 66))
+
+                font = pygame.font.Font(get_font_path('monospace_regular'), 18 * kx)
+                suit_display_name = SUITS.get(choose_sst.split('_icon.png')[0], 'Unknown Suit')
+                text = font.render(suit_display_name, True, WHITE)
+                tx, ty = qx + 125, red_icons_height + 71
+                SCREEN.blit(text, (tx, ty))
+                pygame.draw.aaline(SCREEN, WHITE, [qx + 125, ty + 23], [display_w, ty + 23])
+
+            font = pygame.font.Font(get_font_path('monospace_bold'), 22 * kx)
+
+            # Кнопка USE/USED
+            if choose_sst and config.CURRENT_SUIT != choose_sst.split('_icon.png')[0]:
+                text = font.render('USE', True, WHITE)
                 tx, ty = qx + 175, red_icons_height + 140
                 SCREEN.blit(text, (tx, ty))
-                pygame.draw.rect(SCREEN, (255, 255, 255), (tx - 10, ty - 5, 63, 32), 2)
-                pygame.draw.aaline(SCREEN, (255, 255, 255), [tx - 175, ty + 13],
-                                   [tx - 11, ty + 13])
-                pygame.draw.aaline(SCREEN, (255, 255, 255), [tx + 53, ty + 13],
-                                   [display_w, ty + 13])
+                pygame.draw.rect(SCREEN, WHITE, (tx - 10, ty - 5, 63, 32), 2)
+                pygame.draw.aaline(SCREEN, WHITE, [tx - 175, ty + 13], [tx - 11, ty + 13])
+                pygame.draw.aaline(SCREEN, WHITE, [tx + 53, ty + 13], [display_w, ty + 13])
             else:
-                text = font.render('USED', True, (255, 255, 255))
+                text = font.render('USED', True, WHITE)
                 tx, ty = qx + 175, red_icons_height + 140
                 SCREEN.blit(text, (tx, ty))
-                pygame.draw.rect(SCREEN, (255, 255, 255), (tx - 10, ty - 5, 73, 32), 2)
-                pygame.draw.aaline(SCREEN, (255, 255, 255), [tx - 175, ty + 13],
-                                   [tx - 11, ty + 13])
-                pygame.draw.aaline(SCREEN, (255, 255, 255), [tx + 64, ty + 13],
-                                   [display_w, ty + 13])
+                pygame.draw.rect(SCREEN, WHITE, (tx - 10, ty - 5, 73, 32), 2)
+                pygame.draw.aaline(SCREEN, WHITE, [tx - 175, ty + 13], [tx - 11, ty + 13])
+                pygame.draw.aaline(SCREEN, WHITE, [tx + 64, ty + 13], [display_w, ty + 13])
 
-            pygame.draw.ellipse(SCREEN, (255, 255, 255), (865, 730, 290, 85), 2)
-            pygame.draw.ellipse(SCREEN, (255, 255, 255), (903, 740, 220, 55), 1)
-            pygame.draw.ellipse(SCREEN, (255, 255, 255), (963, 751, 90, 30), 1)
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [1012, 731], [1010, 750])
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [919, 741], [981, 753])
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [866, 765], [962, 765])
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [895, 796], [976, 776])
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [1008, 780], [1006, 810])
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [1035, 778], [1120, 800])
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [1053, 765], [1150, 765])
-            pygame.draw.aaline(SCREEN, (255, 255, 255), [1035, 754], [1105, 740])
-            if suit == 'cs':
-                suit_icon = load_image_safe('menu_cs_s.png')
-            elif suit == 'iss':
-                suit_icon = load_image_safe('menu_iss_s.png')
-            elif suit == 'ws':
-                suit_icon = load_image_safe('menu_ws_s.png')
-            elif suit == 'us':
-                suit_icon = load_image_safe('menu_us_s.png')
-            elif suit == 'ss':
-                suit_icon = load_image_safe('menu_ss_s.png')
-            elif suit == 'as':
-                suit_icon = load_image_safe('menu_as_s.png')
-            elif suit == 'is':
-                suit_icon = load_image_safe('menu_is_s.png')
-            elif suit == 'ios':
-                suit_icon = load_image_safe('menu_ios_s.png')
-            suit_icon = pygame.transform.scale(suit_icon, (310, 620))
-            SCREEN.blit(suit_icon, (860, 210))
+            # Декоративный элемент с костюмом справа
+            pygame.draw.ellipse(SCREEN, WHITE, (865, 730, 290, 85), 2)
+            pygame.draw.ellipse(SCREEN, WHITE, (903, 740, 220, 55), 1)
+            pygame.draw.ellipse(SCREEN, WHITE, (963, 751, 90, 30), 1)
+
+            # Линии декора
+            decor_lines = [
+                [[1012, 731], [1010, 750]],
+                [[919, 741], [981, 753]],
+                [[866, 765], [962, 765]],
+                [[895, 796], [976, 776]],
+                [[1008, 780], [1006, 810]],
+                [[1035, 778], [1120, 800]],
+                [[1053, 765], [1150, 765]],
+                [[1035, 754], [1105, 740]]
+            ]
+
+            for line in decor_lines:
+                pygame.draw.aaline(SCREEN, WHITE, line[0], line[1])
+
+            # Отображение большого изображения выбранного костюма справа
+            display_suit = choose_sst if choose_sst else f"{config.CURRENT_SUIT}_icon.png"
+            suit_code = display_suit.split('_icon.png')[0]
+            large_suit_path = os.path.join(MENU_PAUSE_DIR, "Suits for Base Menu", f"menu_{suit_code}_s.png")
+            large_suit = load_image_safe(large_suit_path)
+            large_suit = pygame.transform.scale(large_suit, (310, 620))
+            SCREEN.blit(large_suit, (860, 210))
 
             for ev in pygame.event.get():
                 if ev.type == pygame.MOUSEBUTTONDOWN:
                     mdx, mdy = ev.pos[0], ev.pos[1]
-                    for i in suits:
-                        ix, iy = 295 + 132 * (suits.index(i) % 4), 208 + (suits.index(i) // 4) * 85
+                    for i, suit_icon_name in enumerate(suits):
+                        ix, iy = 295 + 132 * (i % 4), 208 + (i // 4) * 85
                         if ev.button == 1 and ix + 1 < mdx < ix + 109 and iy + 1 < mdy < iy + 62:
-                            choose_sst = i
+                            choose_sst = suit_icon_name
                     if ev.button == 1 and 1349 < mdx < 1420 and 226 < mdy < 256:
-                        suit = choose_sst.split('_icon.png')[0]
+                        config.CURRENT_SUIT = choose_sst.split('_icon.png')[0]
                 if ev.type == pygame.QUIT:
-                    quit()
+                    pygame.quit()
+                    sys.exit()
+
             qx, qy = 0, 0
+
         pygame.display.update()
         pygame.time.wait(40)
 
@@ -1797,12 +1670,12 @@ def main_game():
                 pygame.quit()
                 sys.exit()
             if ev.type == pygame.KEYDOWN:
-                if ev.key == pygame.K_ESCAPE:
+                if ev.key == pygame.K_ESCAPE: # удобная кнопка выхода для разработчика
                     pygame.quit()
                     sys.exit()
                 elif ev.key == pygame.K_TAB:
                     pygame.mixer.music.unload()
-                    # menu()  # Раскомментируйте когда будет готова функция menu
+                    menu()
                 elif ev.key in [pygame.K_a, pygame.K_d, pygame.K_SPACE] and player.st in [0, 3, 4]:
                     player.handle_event(ev)
                 elif ev.key == pygame.K_1:  # Использование концентрации для лечения
@@ -1834,4 +1707,5 @@ def main_game():
         clock.tick(FPS)
 
 
-main_menu()
+# main_menu()
+menu()
