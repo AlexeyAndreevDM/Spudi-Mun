@@ -44,7 +44,7 @@ def load_image_safe(path, default_image=PLACEHOLDER_IMAGE, convert_alpha=True):
 
 
 def main_menu():
-    st = 5  # deafult st = 0
+    st = 0  # deafult st = 0
     global cut_scene
     global im
     global DIFFICULTY
@@ -60,7 +60,7 @@ def main_menu():
 
     # Загрузка музыки главного меню
     pygame.mixer.music.load(get_music_path("Web Launch.mp3"))
-    # pygame.mixer.music.play(-1) # разбанить
+    pygame.mixer.music.play(-1)  # разбанить
 
     clock = pygame.time.Clock()
 
@@ -77,11 +77,6 @@ def main_menu():
             tx = SCREEN_WIDTH // 2 - text.get_width() // 2
             ty = SCREEN_HEIGHT // 4 - 60 - 90
             SCREEN.blit(text, (tx, ty))
-            # pygame.display.update()
-
-            # ВАЖНО: Если это первый кадр st == 0, запоминаем время
-            # Проверяем, была ли уже установлена intro_start_time для этого состояния.
-            # Если intro_start_time == 0, значит, это первый кадр st=0.
             if intro_start_time == 0:
                 intro_start_time = pygame.time.get_ticks()
 
@@ -550,7 +545,7 @@ def main_menu():
             # pygame.display.update()
             pygame.time.wait(7)
             # time += 7
-            time += 100#
+            time += 100  #
 
             if time >= expectation:
                 if vp == 0:
@@ -633,7 +628,7 @@ def menu():
 
     # Использование путей из config
     pygame.mixer.music.load(MUSIC_FILES['pause_menu'])
-    pygame.mixer.music.play()
+    pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(MUSIC_VOLUME)
 
     red_icons_text = ['', ' MAP', 'SUITS', 'GADGETS', 'SKILLS', 'MISSIONS', 'COLLECTIONS      ', 'BENCHMARKS',
@@ -662,13 +657,16 @@ def menu():
 
     while True:
         for ev in pygame.event.get():
+            if ev.type == pygame.QUIT:  # Добавить эту проверку
+                pygame.quit()
+                sys.exit()
             if ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
                 elif ev.key == pygame.K_TAB:
                     pygame.mixer.music.unload()
-                    main_game()
+                    return  # Просто выходим из функции menu()
             if ev.type == pygame.MOUSEBUTTONDOWN and mst == 1:
                 mdx, mdy = ev.pos[0], ev.pos[1]
                 if ev.button == 1 and 62 < mdx < 220 and 142 < mdy < 239:
@@ -903,7 +901,7 @@ def menu():
                         sys.exit()
                     elif ev.key == pygame.K_TAB:
                         pygame.mixer.music.unload()
-                        main_game()
+                        return  # Просто выходим из функции menu()
                 if ev.type == pygame.MOUSEBUTTONDOWN:
                     mdx, mdy = ev.pos[0], ev.pos[1]
                     for i, suit_icon_name in enumerate(suits):
@@ -970,19 +968,6 @@ def menu():
             large_suit = pygame.transform.scale(large_suit, (310, 620))
             SCREEN.blit(large_suit, (860, 210))
 
-            for ev in pygame.event.get():
-                if ev.type == pygame.MOUSEBUTTONDOWN:
-                    mdx, mdy = ev.pos[0], ev.pos[1]
-                    for i, suit_icon_name in enumerate(suits):
-                        ix, iy = 295 + 132 * (i % 4), 208 + (i // 4) * 85
-                        if ev.button == 1 and ix + 1 < mdx < ix + 109 and iy + 1 < mdy < iy + 62:
-                            choose_sst = suit_icon_name
-                    if ev.button == 1 and 1349 < mdx < 1420 and 226 < mdy < 256:
-                        config.CURRENT_SUIT = choose_sst.split('_icon.png')[0]
-                if ev.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-
             qx, qy = 0, 0
 
         pygame.display.update()
@@ -1048,10 +1033,73 @@ def draw_damage_flash(screen, player):
     if player.is_flashing():
         screen.blit(flash_surface, (0, 0))
 
+
+def save_current_game_state(player, enemies, sdvigx, sdvigy):
+    """Сохраняет текущее состояние игры в словарь"""
+    state = {
+        'player_health': player.health,
+        'player_exp': player.exp,
+        'player_concentration': player.concentration,
+        'sdvigx': sdvigx,
+        'sdvigy': sdvigy,
+        'player_st': player.st,
+        'player_coords_increase': player.coords_increase,
+        'player_SMRt': player.SMRt,
+        'player_on_ground': player.on_ground,
+        'player_facing_right': player.facing_right,
+        'player_web_swinging': player.web_swinging,
+        'player_swing_cycle': player.swing_cycle,
+        'enemies': []
+    }
+
+    # Сохраняем каждого врага
+    for enemy in enemies:
+        state['enemies'].append({
+            'world_x': enemy.world_x,
+            'health': enemy.health,
+            'state': enemy.state,
+            'facing_right': enemy.facing_right
+        })
+
+    return state
+
+
+def restore_game_state(player, enemies, saved_state):
+    """Восстанавливает состояние игры из сохраненного словаря"""
+    # Восстанавливаем состояние игрока
+    player.health = saved_state['player_health']
+    player.exp = saved_state['player_exp']
+    player.concentration = saved_state['player_concentration']
+    player.st = saved_state['player_st']
+    player.coords_increase = saved_state['player_coords_increase']
+    player.SMRt = saved_state['player_SMRt']
+    player.on_ground = saved_state['player_on_ground']
+    player.facing_right = saved_state['player_facing_right']
+    player.web_swinging = saved_state['player_web_swinging']
+    player.swing_cycle = saved_state['player_swing_cycle']
+
+    # Восстанавливаем состояние врагов
+    for i, enemy_state in enumerate(saved_state['enemies']):
+        if i < len(enemies):
+            enemies[i].world_x = enemy_state['world_x']
+            enemies[i].health = enemy_state['health']
+            enemies[i].state = enemy_state['state']
+            enemies[i].facing_right = enemy_state['facing_right']
+
+    # Возвращаем сдвиги камеры
+    global sdvigx, sdvigy
+    sdvigx = saved_state['sdvigx']
+    sdvigy = saved_state['sdvigy']
+
+
 def main_game():
     from src.game.player import Player
     from src.game.enemy import Enemy
     from src import config
+
+    # Глобальная переменная для сохранения состояния игры
+    global game_state_before_menu
+    game_state_before_menu = None
 
     # Объявляем глобальные переменные
     global sdvigy, DIFFICULTY, MUSIC_STATUS, CURRENT_SUIT, st, CURRENT_CUTSCENE, SUBTITLES
@@ -1118,9 +1166,9 @@ def main_game():
             offset_y = 0
 
         # Обработка музыки
-        if MUSIC_STATUS == -1 and not pygame.mixer.music.get_busy():
+        if not pygame.mixer.music.get_busy():
             pygame.mixer.music.load(MUSIC_FILES['gameplay'])
-            # pygame.mixer.music.play()
+            pygame.mixer.music.play()
             pygame.mixer.music.set_volume(MUSIC_VOLUME)
 
         # Обработка состояний движения
@@ -1670,12 +1718,24 @@ def main_game():
                 pygame.quit()
                 sys.exit()
             if ev.type == pygame.KEYDOWN:
-                if ev.key == pygame.K_ESCAPE: # удобная кнопка выхода для разработчика
+                if ev.key == pygame.K_ESCAPE:  # удобная кнопка выхода для разработчика
                     pygame.quit()
                     sys.exit()
                 elif ev.key == pygame.K_TAB:
+                    # Сохраняем состояние перед открытием меню
+                    game_state_before_menu = save_current_game_state(player, enemies, sdvigx, sdvigy)
+
+                    # Пауза музыки
+                    # current_music_pos = pygame.mixer.music.get_pos()
                     pygame.mixer.music.unload()
+
+                    # Открываем меню паузы
                     menu()
+
+                    # Восстанавливаем состояние после закрытия меню
+                    if game_state_before_menu:
+                        restore_game_state(player, enemies, game_state_before_menu)
+                        # pygame.mixer.music.play(start=current_music_pos / 1000.0)
                 elif ev.key in [pygame.K_a, pygame.K_d, pygame.K_SPACE] and player.st in [0, 3, 4]:
                     player.handle_event(ev)
                 elif ev.key == pygame.K_1:  # Использование концентрации для лечения
@@ -1707,5 +1767,4 @@ def main_game():
         clock.tick(FPS)
 
 
-# main_menu()
-menu()
+main_menu()
