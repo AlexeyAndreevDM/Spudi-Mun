@@ -1454,9 +1454,23 @@ def main_game():
         health_text = font.render(f"{int(player.health)}", True, WHITE)
         SCREEN.blit(health_text, (460, 53))
 
-        # Отрисовка опыта (справа от здоровья)
+        # Отрисовка опыта с фоном (справа от здоровья)
         font = pygame.font.Font(get_font_path('monospace_bold'), 30)
         exp_text = font.render(f"Опыт: {player.exp}", True, WHITE)
+        # Получаем размеры текста
+        text_width = exp_text.get_width()
+        text_height = exp_text.get_height()
+        # Создаем фон для опыта (такой же, как у подсказок)
+        exp_bg_width = text_width + 20  # Отступы по 10px с каждой стороны
+        exp_bg_height = text_height + 10  # Отступы по 5px сверху и снизу
+        exp_bg = pygame.Surface((exp_bg_width, exp_bg_height), pygame.SRCALPHA)
+        exp_bg.fill((145, 145, 145, 100))  # Тот же серый с прозрачностью
+        # Позиция фона (выровнена с текстом)
+        exp_bg_x = SCREEN_WIDTH - 250 - 10  # Смещаем на 10px левее текста
+        exp_bg_y = 53 - 5  # Смещаем на 5px выше текста
+
+        # Отрисовываем фон и текст
+        SCREEN.blit(exp_bg, (exp_bg_x, exp_bg_y))
         SCREEN.blit(exp_text, (SCREEN_WIDTH - 250, 53))
 
         # Отрисовка игрока
@@ -1612,13 +1626,52 @@ def main_game():
 
         # Подсказка опыта при первом убийстве
         if player.exp_hint_timer > 0:
-            player.exp_hint_timer -= 1
-            font = pygame.font.Font(get_font_path('monospace_bold'), 22)
-            hint_text = "За победу над врагами вы получаете опыт, дающий вам привилегии (впоследствии)"
-            text = font.render(hint_text, True, WHITE)
-            tx = SCREEN_WIDTH // 2 - text.get_width() // 2
-            ty = SCREEN_HEIGHT - 200
-            SCREEN.blit(text, (tx, ty))
+            # Размеры подсказки
+            hint_width = 900
+            hint_height = 100
+
+            # Центрируем по горизонтали
+            hint_x = (SCREEN_WIDTH - hint_width) // 2
+            hint_y = 150  # Такая же позиция как у предыдущих подсказок
+
+            # Фон для подсказки (серый с прозрачностью)
+            hint_bg = pygame.Surface((hint_width, hint_height), pygame.SRCALPHA)
+            hint_bg.fill((145, 145, 145, 100))
+            SCREEN.blit(hint_bg, (hint_x, hint_y))
+
+            # Заголовок подсказки (белый)
+            font = pygame.font.Font(get_font_path('gulag'), 25)
+            text = font.render('!HELP!', True, WHITE)
+
+            # Центрируем заголовок внутри подсказки
+            title_x = hint_x + (hint_width - text.get_width()) // 2
+            title_y = hint_y + 15
+            SCREEN.blit(text, (title_x, title_y))
+
+            # Декоративные линии (также центрируем)
+            line_y = hint_y + 39
+            line_start_x = hint_x + (hint_width - 80) // 2
+            pygame.draw.rect(SCREEN, WHITE, (line_start_x, line_y, 80, 2))
+
+            line_y2 = hint_y + 47
+            line_start_x2 = hint_x + (hint_width - 820) // 2
+            pygame.draw.rect(SCREEN, WHITE, (line_start_x2, line_y2, 820, 2))
+
+            # Текст подсказки про опыт
+            font = pygame.font.Font(get_font_path('podkova'), 20)
+            lines = [
+                'За победу над врагами вы получаете опыт,',
+                'дающий вам привилегии (впоследствии)'
+            ]
+
+            # Центрируем каждую строку текста
+            for i, line in enumerate(lines):
+                text = font.render(line, True, WHITE)
+                line_x = hint_x + (hint_width - text.get_width()) // 2
+                line_y = hint_y + 50 + 25 * i
+                SCREEN.blit(text, (line_x, line_y))
+
+            print("Подсказка про опыт отображена")
 
         # Обработка субтитров
         if SUBTITLES == 'ON':

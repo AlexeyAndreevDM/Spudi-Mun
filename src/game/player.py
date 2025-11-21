@@ -80,7 +80,7 @@ class Player:
         self.has_attacked = False  # Игрок хотя бы раз атаковал
         self.show_heal_hint = False
         self.heal_hint_shown = False  # Чтобы показывать только один раз за сессию низкого здоровья
-        self.first_kill = False  # Флаг первого убийства
+        self.exp_hint_shown = False
 
         # Система концентрации
         self.concentration = 50.0  # Изначально заполнена наполовину (50%)
@@ -336,6 +336,8 @@ class Player:
             self.death_flash_timer -= 1
         if self.death_delay_timer > 0:
             self.death_delay_timer -= 1
+        if self.exp_hint_timer > 0:  # Добавляем обновление таймера опыта
+            self.exp_hint_timer -= 1
 
     def is_flashing(self):
         """Проверка, нужно ли показывать эффект"""
@@ -382,12 +384,13 @@ class Player:
             self.attack_cooldown = 30
             self.increase_concentration()
 
-            # увеличиваем xp за убийство врага
+            # Увеличиваем xp за убийство врага
             if closest_enemy.health <= 0:
                 self.exp += 100
-                if not self.first_kill:
-                    self.exp_hint_timer = 180
-                    self.first_kill = True
+                # Показываем подсказку только при первом убийстве
+                if not self.exp_hint_shown:
+                    self.exp_hint_timer = 250
+                    self.exp_hint_shown = True
                 print(f"[EXP] +100! Всего: {self.exp}")
 
             try:
