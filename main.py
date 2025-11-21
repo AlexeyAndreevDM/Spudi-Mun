@@ -1144,6 +1144,7 @@ def draw_damage_flash(screen, player):
 def main_game():
     from src.game.player import Player
     from src.game.enemy import Enemy
+    from src import config
 
     # Объявляем глобальные переменные
     global sdvigy, DIFFICULTY, MUSIC_STATUS, CURRENT_SUIT, st, CURRENT_CUTSCENE, SUBTITLES
@@ -1162,14 +1163,14 @@ def main_game():
 
     # Инициализация переменных
     sdvigx = -500
-    sdvigy = 1400  # Начальное положение для падения
+    sdvigy = 1000  # Начальное положение для падения 1400
     tiles = math.ceil(SCREEN_WIDTH / bg.get_width()) + 1
     hp = 100
 
     # Создаем игрока
     player = Player()
     player.st = st
-    player.health = hp - 90
+    player.health = hp
 
     # Создаем врагов
     enemies = [
@@ -1185,6 +1186,14 @@ def main_game():
     while True:
         ticks = pygame.time.get_ticks()
         keys = pygame.key.get_pressed()
+
+        if config.SHAKE_TIMER > 0:
+            config.SHAKE_TIMER -= 1
+            offset_x = random.uniform(-config.SHAKE_INTENSITY, config.SHAKE_INTENSITY)
+            offset_y = random.uniform(-config.SHAKE_INTENSITY, config.SHAKE_INTENSITY)
+        else:
+            offset_x = 0
+            offset_y = 0
 
         # Обработка музыки
         if MUSIC_STATUS == -1 and not pygame.mixer.music.get_busy():
@@ -1301,7 +1310,7 @@ def main_game():
         # Обновление игрока
         player.update(keys, ticks, sdvigy)
 
-        # Обновление врагов (передаем sdvigy для корректировки позиции)
+        # Обновление врагов (передаем callback для тряски камеры)
         for enemy in enemies:
             enemy.update(player, sdvigx, enemies)
 
@@ -1382,7 +1391,6 @@ def main_game():
         # Отрисовка
         SCREEN.fill(BLACK)
 
-        # Отрисовка фона
         # Отрисовка фона бесконечно в обе стороны
         bg_width = bg.get_width()
         road_width = road.get_width()
@@ -1400,14 +1408,14 @@ def main_game():
         tiles = math.ceil(SCREEN_WIDTH / bg_width) + 2  # Для bg
         i = -1  # Начинать с -1 для левой стороны
         while i < tiles:
-            SCREEN.blit(bg, (bg_width * i + bg_offset, -2000 + SCREEN_HEIGHT - 100 + sdvigy))
+            SCREEN.blit(bg, (bg_width * i + bg_offset + offset_x, -2000 + SCREEN_HEIGHT - 100 + sdvigy + offset_y))
             i += 1
 
         # Аналогично для road
         tiles = math.ceil(SCREEN_WIDTH / road_width) + 2
         i = -1
         while i < tiles:
-            SCREEN.blit(road, (road_width * i + road_offset, 800 + sdvigy))
+            SCREEN.blit(road, (road_width * i + road_offset + offset_x, 800 + sdvigy + offset_y))
             i += 1
 
         # Отрисовка здоровья игрока
@@ -1446,12 +1454,17 @@ def main_game():
         health_text = font.render(f"{int(player.health)}", True, WHITE)
         SCREEN.blit(health_text, (460, 53))
 
+        # Отрисовка опыта (справа от здоровья)
+        font = pygame.font.Font(get_font_path('monospace_bold'), 30)
+        exp_text = font.render(f"Опыт: {player.exp}", True, WHITE)
+        SCREEN.blit(exp_text, (SCREEN_WIDTH - 250, 53))
+
         # Отрисовка игрока
-        player.draw(SCREEN, sdvigx, sdvigy)
+        player.draw(SCREEN, sdvigx + offset_x, sdvigy + offset_y)
 
         # Отрисовка врагов
         for enemy in enemies:
-            enemy.draw(SCREEN, sdvigx, 930 + sdvigy)
+            enemy.draw(SCREEN, sdvigx + offset_x, 930 + sdvigy + offset_y)
 
         # Отрисовка подсказки управления (ПОСЛЕ всех объектов)
         if player.st == -100 and -330 <= sdvigy <= 900:
@@ -1596,6 +1609,16 @@ def main_game():
                 SCREEN.blit(text, (line_x, line_y))
 
             print("Подсказка про лечение отображена")
+
+        # Подсказка опыта при первом убийстве
+        if player.exp_hint_timer > 0:
+            player.exp_hint_timer -= 1
+            font = pygame.font.Font(get_font_path('monospace_bold'), 22)
+            hint_text = "За победу над врагами вы получаете опыт, дающий вам привилегии (впоследствии)"
+            text = font.render(hint_text, True, WHITE)
+            tx = SCREEN_WIDTH // 2 - text.get_width() // 2
+            ty = SCREEN_HEIGHT - 200
+            SCREEN.blit(text, (tx, ty))
 
         # Обработка субтитров
         if SUBTITLES == 'ON':

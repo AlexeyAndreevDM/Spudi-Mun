@@ -43,6 +43,10 @@ class Player:
         # Здоровье
         self.health = PLAYER_MAX_HEALTH
 
+        # Опыт
+        self.exp = 0
+        self.exp_hint_timer = 0  # Таймер подсказки опыта
+
         # Спрайты
         self.sprites = {}
         self.load_sprites()
@@ -76,6 +80,7 @@ class Player:
         self.has_attacked = False  # Игрок хотя бы раз атаковал
         self.show_heal_hint = False
         self.heal_hint_shown = False  # Чтобы показывать только один раз за сессию низкого здоровья
+        self.first_kill = False  # Флаг первого убийства
 
         # Система концентрации
         self.concentration = 50.0  # Изначально заполнена наполовину (50%)
@@ -301,6 +306,10 @@ class Player:
             self.health = 0
             self.die()  # Вызываем метод смерти
 
+        from src import config
+        config.SHAKE_INTENSITY = max(1.0, amount / 5.0)
+        config.SHAKE_TIMER = 10
+
         # Запускаем эффект красной рамки
         self.damage_flash_timer = DAMAGE_FLASH_DURATION
         print(f"[PLAYER] Получен урон: {amount}, HP: {self.health}")
@@ -343,6 +352,11 @@ class Player:
         if not self.can_attack():
             return None
 
+        # Отмечаем, что игрок атаковал (даже если промах)
+        if not self.has_attacked:
+            self.has_attacked = True
+            self.show_attack_hint = False  # Скрываем подсказку после первой атаки
+
         closest_enemy = None
         min_distance = float('inf')
 
@@ -367,6 +381,14 @@ class Player:
             closest_enemy.take_damage(self.attack_damage)
             self.attack_cooldown = 30
             self.increase_concentration()
+
+            # увеличиваем xp за убийство врага
+            if closest_enemy.health <= 0:
+                self.exp += 100
+                if not self.first_kill:
+                    self.exp_hint_timer = 180
+                    self.first_kill = True
+                print(f"[EXP] +100! Всего: {self.exp}")
 
             try:
                 punch_sound = pygame.mixer.Sound(SOUND_FILES['punch'])
