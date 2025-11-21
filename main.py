@@ -167,14 +167,19 @@ def main_menu():
 
             # Загрузка и отображение слотов сохранения
             try:
-                with open(os.path.join(SAVES_DIR, "saves.txt"), mode="r") as f:
+                with open(os.path.join(SAVES_DIR, "Saves.txt"), mode="r") as f:
                     txt = f.readlines()
-                    for i in txt:
-                        if i.strip():
-                            pygame.draw.rect(SCREEN, MENU_HIGHLIGHT, (203, 131 + 91 * txt.index(i), 385, 73))
-                            font = pygame.font.Font(get_font_path('monospace_bold'), FONT_SIZES['medium'])
-                            text = font.render(str(txt.index(i) + 1), True, WHITE)
-                            SCREEN.blit(text, (220, 145 + 91 * txt.index(i)))
+                    for i in range(len(txt)):
+                        line = txt[i].strip()
+                        font = pygame.font.Font(get_font_path('monospace_bold'), FONT_SIZES['medium'])
+
+                        # Разбираем строку: "номер [опыт]"
+                        parts = line.split()
+                        if len(parts) >= 2 and parts[1].isdigit():
+                            # Есть опыт - отображаем "номер Опыт: число
+                            pygame.draw.rect(SCREEN, MENU_HIGHLIGHT, (203, 131 + 91 * i, 385, 73))
+                            text = font.render(f"{parts[0]} Опыт: {parts[1]}", True, WHITE)
+                            SCREEN.blit(text, (220, 150 + 91 * i))
             except FileNotFoundError:
                 pass
 
@@ -185,6 +190,35 @@ def main_menu():
                     if event1.key == pygame.K_DOWN:
                         im = (im + 1) % 6
                     if event1.key == pygame.K_x:
+                        # Сохраняем выбор слота в файл, сохраняя все существующие данные
+                        try:
+                            # Читаем текущие данные файла
+                            existing_data = {}
+                            try:
+                                with open(os.path.join(SAVES_DIR, "Saves.txt"), mode="r") as f:
+                                    lines = f.readlines()
+                                    for i, line in enumerate(lines):
+                                        if i < 6:  # Только первые 6 слотов
+                                            existing_data[i] = line.strip()
+                            except FileNotFoundError:
+                                # Если файла нет, создаем пустые данные
+                                for i in range(6):
+                                    existing_data[i] = str(i + 1)
+
+                            # Обновляем выбранный слот и сохраняем все слоты
+                            with open(os.path.join(SAVES_DIR, "Saves.txt"), mode="w") as f:
+                                for i in range(6):
+                                    if i == im:
+                                        f.write(f"{i + 1} Выбрана\n")
+                                    else:
+                                        # Сохраняем существующие данные для других слотов
+                                        if i in existing_data and "Выбрана" not in existing_data[i]:
+                                            f.write(existing_data[i] + "\n")
+                                        else:
+                                            f.write(f"{i + 1}\n")
+                        except Exception as e:
+                            print(f"Ошибка сохранения: {e}")
+
                         st = 3
                         im = 0
                     if event1.key == pygame.K_o:
@@ -1152,6 +1186,9 @@ def main_game():
     CURRENT_CUTSCENE += 1
     st = -100
 
+    # Глобальная переменная для хранения выбранного слота сохранения
+    selected_save_slot = 6  # По умолчанию 6 слот
+
     web_swing_speed_x = 0
     web_swing_speed_y = 0
 
@@ -1171,6 +1208,18 @@ def main_game():
     player = Player()
     player.st = st
     player.health = hp
+
+    # Определяем выбранный слот сохранения
+    try:
+        with open(os.path.join(SAVES_DIR, "Saves.txt"), mode="r") as f:
+            lines = f.readlines()
+            for line in lines:
+                parts = line.strip().split()
+                if len(parts) >= 2 and parts[1] == "Выбрана":
+                    selected_save_slot = int(parts[0])
+                    break
+    except:
+        selected_save_slot = 6  # По умолчанию 6 слот
 
     # Создаем врагов
     enemies = [
@@ -1697,6 +1746,54 @@ def main_game():
         # Обработка событий
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
+                # Сохраняем прогресс перед выходом, обновляя только выбранный слот
+                try:
+                    # Читаем все текущие данные
+                    all_slots = []
+                    try:
+                        with open(os.path.join(SAVES_DIR, "Saves.txt"), mode="r") as f:
+                            all_slots = f.readlines()
+                    except FileNotFoundError:
+                        # Если файла нет, создаем базовые слоты
+                        for i in range(6):
+                            all_slots.append(f"{i + 1}\n")
+
+                    # Обновляем только строку с "Выбрана"
+                    updated_slots = []
+                    found_selected = False
+
+                    for slot_line in all_slots:
+                        parts = slot_line.strip().split()
+                        if len(parts) >= 2 and parts[1] == "Выбрана":
+                            # Это выбранный слот - заменяем "Выбрана" на количество очков
+                            updated_slots.append(f"{parts[0]} {player.exp}\n")
+                            found_selected = True
+                        else:
+                            # Сохраняем другие слоты без изменений
+                            updated_slots.append(slot_line)
+
+                    # Если не нашли выбранный слот, используем слот 6 по умолчанию
+                    if not found_selected:
+                        if len(updated_slots) >= 6:
+                            # Заменяем 6 слот
+                            parts = updated_slots[5].strip().split()
+                            if parts:
+                                updated_slots[5] = f"{parts[0]} {player.exp}\n"
+                        else:
+                            # Если слотов меньше 6, дополняем и устанавливаем в 6
+                            while len(updated_slots) < 6:
+                                updated_slots.append(f"{len(updated_slots) + 1}\n")
+                            updated_slots[5] = f"6 {player.exp}\n"
+
+                    # Записываем все обновленные данные
+                    with open(os.path.join(SAVES_DIR, "Saves.txt"), mode="w") as f:
+                        f.writelines(updated_slots)
+
+                    print(f"Прогресс сохранен, опыт: {player.exp}")
+
+                except Exception as e:
+                    print(f"Ошибка при сохранении: {e}")
+
                 pygame.quit()
                 sys.exit()
             if ev.type == pygame.KEYDOWN:
