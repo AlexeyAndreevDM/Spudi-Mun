@@ -56,7 +56,7 @@ def main_menu():
     d_arc = 0.0
     time = 0
 
-    expectation = randint(500, 600)
+    expectation = randint(1500, 2200)
 
     # Загрузка музыки главного меню
     pygame.mixer.music.load(get_music_path("Web Launch.mp3"))
@@ -707,7 +707,7 @@ def main_menu():
                             pi + d_arc, 11 * pi / 6 + d_arc)
 
             pygame.time.wait(7)
-            time += 100
+            time += 23
 
             if time >= expectation:
                 if vp == 0:
