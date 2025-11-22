@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="scaling added">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="road.jpeg replacement">
+      <change beforePath="$PROJECT_DIR$/data/saves/Saves.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/saves/Saves.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -298,7 +298,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763799313949</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="road.jpeg replacement">
+      <option name="closed" value="true" />
+      <created>1763802578651</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1763802578651</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -320,7 +328,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="movements controller not fixed" />
     <MESSAGE value="flight both directions" />
     <MESSAGE value="background fixed" />
     <MESSAGE value="landing fixed" />
@@ -345,6 +352,7 @@
     <MESSAGE value="back to play from menu" />
     <MESSAGE value="math.ceil(kx) added" />
     <MESSAGE value="scaling added" />
-    <option name="LAST_COMMIT_MESSAGE" value="scaling added" />
+    <MESSAGE value="road.jpeg replacement" />
+    <option name="LAST_COMMIT_MESSAGE" value="road.jpeg replacement" />
   </component>
 </project>

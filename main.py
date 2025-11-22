@@ -1575,7 +1575,8 @@ def main_game():
 
         # Если игрок мертв, обрабатываем эффекты смерти
         if player.is_dead:
-            # Воспроизводим звук смерти один раз при начале смерти
+            pygame.mixer.music.unload()
+            # Воспроизводим звук смерти один раз в начале смерти
             if not player.death_sound_played:
                 try:
                     death_sound_path = SOUND_FILES['death']
@@ -1742,7 +1743,7 @@ def main_game():
         for enemy in enemies:
             enemy.draw(SCREEN, sdvigx + offset_x, 930 + sdvigy + offset_y)
 
-        # Функция для отрисовки подсказок (оптимизирована)
+        # Функция для отрисовки подсказок
         def draw_hint(lines, hint_type="normal"):
             """Универсальная функция отрисовки подсказок"""
             hint_width = scale_value(900)
@@ -1783,7 +1784,6 @@ def main_game():
                 line_y = hint_y + scale_value(50) + scale_value(25) * i
                 SCREEN.blit(text, (line_x, line_y))
 
-            print(f"Подсказка {hint_type} отображена")
 
         # Отрисовка подсказки управления (ПОСЛЕ всех объектов)
         if player.st == -100 and -330 <= sdvigy <= 900:
