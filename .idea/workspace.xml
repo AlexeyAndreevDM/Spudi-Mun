@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="enemy overlay fixed">
+    <list default="true" id="fb8645a0-4c4e-4aa6-9be4-6c88f6016d5c" name="Changes" comment="scaling added">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/game/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/game/player.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -228,7 +226,79 @@
       <option name="project" value="LOCAL" />
       <updated>1763640261322</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="death fixed">
+      <option name="closed" value="true" />
+      <created>1763642868274</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1763642868274</updated>
+    </task>
+    <task id="LOCAL-00020" summary="particles created, not used">
+      <option name="closed" value="true" />
+      <created>1763668686943</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1763668686943</updated>
+    </task>
+    <task id="LOCAL-00021" summary="camera shake added">
+      <option name="closed" value="true" />
+      <created>1763723453838</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1763723453838</updated>
+    </task>
+    <task id="LOCAL-00022" summary="xp added">
+      <option name="closed" value="true" />
+      <created>1763724594374</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1763724594374</updated>
+    </task>
+    <task id="LOCAL-00023" summary="save added">
+      <option name="closed" value="true" />
+      <created>1763732829291</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1763732829291</updated>
+    </task>
+    <task id="LOCAL-00024" summary="pause menu added">
+      <option name="closed" value="true" />
+      <created>1763739420177</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1763739420177</updated>
+    </task>
+    <task id="LOCAL-00025" summary="back to play from menu">
+      <option name="closed" value="true" />
+      <created>1763756281734</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1763756281734</updated>
+    </task>
+    <task id="LOCAL-00026" summary="math.ceil(kx) added">
+      <option name="closed" value="true" />
+      <created>1763757452520</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1763757452520</updated>
+    </task>
+    <task id="LOCAL-00027" summary="scaling added">
+      <option name="closed" value="true" />
+      <created>1763799313949</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1763799313949</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -250,8 +320,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Scratched version" />
-    <MESSAGE value="cube size fixed" />
     <MESSAGE value="movements controller not fixed" />
     <MESSAGE value="flight both directions" />
     <MESSAGE value="background fixed" />
@@ -268,17 +336,15 @@
     <MESSAGE value="concentration added" />
     <MESSAGE value="healing added" />
     <MESSAGE value="enemy overlay fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="enemy overlay fixed" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/main.py</url>
-          <line>1003</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="death fixed" />
+    <MESSAGE value="particles created, not used" />
+    <MESSAGE value="camera shake added" />
+    <MESSAGE value="xp added" />
+    <MESSAGE value="save added" />
+    <MESSAGE value="pause menu added" />
+    <MESSAGE value="back to play from menu" />
+    <MESSAGE value="math.ceil(kx) added" />
+    <MESSAGE value="scaling added" />
+    <option name="LAST_COMMIT_MESSAGE" value="scaling added" />
   </component>
 </project>

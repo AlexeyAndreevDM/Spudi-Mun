@@ -44,7 +44,7 @@ def load_image_safe(path, default_image=PLACEHOLDER_IMAGE, convert_alpha=True):
 
 
 def main_menu():
-    st = 5  # Начинаем с начального экрана
+    st = 0  # Начинаем с начального экрана
     global cut_scene
     global im
     global DIFFICULTY
@@ -1382,7 +1382,7 @@ def main_game():
     # Загрузка фонов с масштабированием
     bg = load_image_safe(get_image_path("backgrounds", "fhomewthspandpavmnt.jpg"), convert_alpha=False)
     bg = pygame.transform.scale(bg, (scale_value(1414), scale_value(2000)))
-    road = load_image_safe(get_image_path("backgrounds", "дорога.jpeg"), convert_alpha=False)
+    road = load_image_safe(get_image_path("backgrounds", "road.jpeg"), convert_alpha=False)
     road = pygame.transform.scale(road, (scale_value(2011), scale_value(354)))
 
     # Инициализация переменных
