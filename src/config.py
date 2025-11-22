@@ -64,6 +64,7 @@ PLACEHOLDER_IMAGE = os.path.join(BASE_DIR, "white_cube.png")
 BASE_SCREEN_WIDTH = 1470
 BASE_SCREEN_HEIGHT = 900
 
+
 # Автоматическое масштабирование
 def get_screen_scale():
     """Автоматически определяет масштаб для текущего экрана"""
@@ -86,15 +87,18 @@ def get_screen_scale():
     except:
         return 1.0  # Fallback
 
+
 # Глобальный масштаб
 SCALE = get_screen_scale()
 SCALE_X = SCALE
 SCALE_Y = SCALE
 
+
 # Функции масштабирования
 def scale_value(value):
     """Масштабирует любое числовое значение"""
     return int(value * SCALE)
+
 
 def scale_rect(rect):
     """Масштабирует pygame.Rect"""
@@ -105,15 +109,18 @@ def scale_rect(rect):
         scale_value(rect.height)
     )
 
+
 def scale_font_size(size):
     """Масштабирует размер шрифта"""
     return max(12, int(size * SCALE))  # Минимальный размер 12
+
 
 def scale_surface(surface):
     """Масштабирует поверхность pygame"""
     new_width = scale_value(surface.get_width())
     new_height = scale_value(surface.get_height())
     return pygame.transform.scale(surface, (new_width, new_height))
+
 
 # Масштабированные размеры экрана
 SCREEN_WIDTH = scale_value(BASE_SCREEN_WIDTH)
@@ -138,7 +145,7 @@ PLAYER_START_X = scale_value(BASE_SCREEN_WIDTH // 2 - 150 + 15)
 PLAYER_START_Y = scale_value(BASE_SCREEN_HEIGHT // 2 - 200 + 7)
 PLAYER_SPEED = scale_value(5)
 JUMP_STRENGTH = -10  # не масштабируется
-SWING_STRENGTH = 4   # не масштабируется
+SWING_STRENGTH = 4  # не масштабируется
 
 # Сдвиг камеры (масштабируется)
 SCROLL_SPEED = scale_value(2)
@@ -338,6 +345,7 @@ HINT_HEIGHT = scale_value(100)
 HINT_X = (SCREEN_WIDTH - scale_value(900)) // 2
 HINT_Y = scale_value(150)
 
+
 # =============================================
 # ФУНКЦИИ ДЛЯ РАБОТЫ С ПУТЯМИ
 # =============================================
@@ -346,17 +354,21 @@ def get_image_path(*path_parts):
     """Безопасно создает путь к изображению"""
     return os.path.join(IMAGES_DIR, *path_parts)
 
+
 def get_sound_path(*path_parts):
     """Безопасно создает путь к звуку"""
     return os.path.join(SOUNDS_DIR, *path_parts)
+
 
 def get_music_path(*path_parts):
     """Безопасно создает путь к музыке"""
     return os.path.join(MUSIC_DIR, *path_parts)
 
+
 def get_font_path(font_name):
     """Возвращает путь к шрифту"""
     return FONT_FILES.get(font_name, FONT_FILES['monospace_bold'])
+
 
 def load_image_safe(path, default_image=PLACEHOLDER_IMAGE, convert_alpha=True):
     """Безопасно загружает изображение. Если файл не найден, использует изображение-заглушку."""
@@ -379,6 +391,7 @@ def load_image_safe(path, default_image=PLACEHOLDER_IMAGE, convert_alpha=True):
             surf.fill((255, 0, 255))
             return surf
 
+
 # =============================================
 # ПРОВЕРКА СУЩЕСТВОВАНИЯ ДИРЕКТОРИЙ
 # =============================================
@@ -395,6 +408,7 @@ def ensure_directories():
 
     for directory in directories:
         os.makedirs(directory, exist_ok=True)
+
 
 # Автоматически создаем директории при импорте
 ensure_directories()

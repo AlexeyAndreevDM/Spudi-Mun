@@ -10,7 +10,7 @@ from src.config import *
 
 class Player:
     def __init__(self):
-        # Фиксированная позиция на экране (как в оригинале)
+        # Фиксированная позиция на экране (масштабируется через конфиг)
         self.screen_x = PLAYER_START_X
         self.screen_y = PLAYER_START_Y
         self.width = PLAYER_WIDTH
@@ -21,7 +21,7 @@ class Player:
         self.facing_right = True
         self.on_ground = False
 
-        # Переменные для совместимости
+        # Переменные для совместимости (не масштабируются)
         self.coords_increase = 0
         self.SMRt = -50
         self.srt = -40
@@ -37,39 +37,38 @@ class Player:
 
         # Паутина
         self.web_swinging = False
-
         self.swing_cycle = 0  # Счетчик циклов раскачки для затухания
 
-        # Здоровье
+        # Здоровье (не масштабируется)
         self.health = PLAYER_MAX_HEALTH
 
-        # Опыт
+        # Опыт (не масштабируется)
         self.exp = 0
         self.exp_hint_timer = 0  # Таймер подсказки опыта
 
-        # Спрайты
+        # Спрайты (масштабируются через размеры)
         self.sprites = {}
         self.load_sprites()
 
-        # Эффекты повреждения
+        # Эффекты повреждения (не масштабируются)
         self.damage_flash_timer = 0
         self.death_flash_timer = 0
 
-        # Эффекты смерти
+        # Эффекты смерти (не масштабируются)
         self.death_flash_timer = 0
         self.death_delay_timer = 0  # Таймер задержки перед экраном смерти
         self.death_sound_played = False  # Флаг для отслеживания воспроизведения звука
         self.death_screen_shown = False  # Добавляем явный флаг
 
-        # Эффекты лечения
+        # Эффекты лечения (не масштабируются)
         self.heal_flash_timer = 0  # Таймер для зеленой рамки лечения
 
         # Флаги состояния
-        self.is_dead = False  # Добавьте этот флаг
+        self.is_dead = False
 
-        # Атака и кулдаун
+        # Атака и кулдаун (не масштабируются)
         self.attack_cooldown = 0
-        self.attack_range = 100
+        self.attack_range = scale_value(100)  # Масштабируемая зона атаки
         self.attack_damage = 25
 
         # Флаги звуков
@@ -82,7 +81,7 @@ class Player:
         self.heal_hint_shown = False  # Чтобы показывать только один раз за сессию низкого здоровья
         self.exp_hint_shown = False
 
-        # Система концентрации
+        # Система концентрации (не масштабируется)
         self.concentration = 50.0  # Изначально заполнена наполовину (50%)
         self.max_concentration = 100.0
         self.concentration_gain_per_hit = 5.0  # +5% за удар
@@ -96,52 +95,50 @@ class Player:
         """Загрузка всех спрайтов для классического костюма с использованием вашей функции"""
         try:
             # Основные позы
-            self.sprites = { # если не отображается, но работает - надо дописать
+            self.sprites = {
                 # Поза приземления
-                'pose_land': self.load_and_scale_image('TEMA 40.png', self.width, self.height),
-                'pose_land_rev': self.load_and_scale_image('TEMA 40_rev.png', self.width, self.height),
+                'pose_land': self.load_and_scale_image('TEMA 40.png'),
+                'pose_land_rev': self.load_and_scale_image('TEMA 40_rev.png'),
                 # Прыжок
-                'jump': self.load_and_scale_image('TEMA 206.png', self.width, self.height),
-                'jump_rev': self.load_and_scale_image('TEMA 206_rev.png', self.width, self.height),
+                'jump': self.load_and_scale_image('TEMA 206.png'),
+                'jump_rev': self.load_and_scale_image('TEMA 206_rev.png'),
                 # Паутина
-                'web_throw': self.load_and_scale_image('TEMA 143.png', self.width, self.height),
-                'web_throw_rev': self.load_and_scale_image('TEMA 143_rev.png', self.width, self.height),
-                'swing_1': self.load_and_scale_image('fly_pose1_cs.png', self.width, self.height),
-                'swing_1_rev': self.load_and_scale_image('fly_pose1_cs_rev.png', self.width, self.height),
-                'swing_7': self.load_and_scale_image('fly_pose7_cs.png', self.width, self.height),
-                'swing_7_rev': self.load_and_scale_image('fly_pose7_cs_rev.png', self.width, self.height),
-                'swing_8': self.load_and_scale_image('fly_pose8_cs.png', self.width, self.height),
-                'swing_8_rev': self.load_and_scale_image('fly_pose8_cs_rev.png', self.width, self.height),
-                'swing_9': self.load_and_scale_image('fly_pose9_cs.png', self.width, self.height),
+                'web_throw': self.load_and_scale_image('TEMA 143.png'),
+                'web_throw_rev': self.load_and_scale_image('TEMA 143_rev.png'),
+                'swing_1': self.load_and_scale_image('fly_pose1_cs.png'),
+                'swing_1_rev': self.load_and_scale_image('fly_pose1_cs_rev.png'),
+                'swing_7': self.load_and_scale_image('fly_pose7_cs.png'),
+                'swing_7_rev': self.load_and_scale_image('fly_pose7_cs_rev.png'),
+                'swing_8': self.load_and_scale_image('fly_pose8_cs.png'),
+                'swing_8_rev': self.load_and_scale_image('fly_pose8_cs_rev.png'),
+                'swing_9': self.load_and_scale_image('fly_pose9_cs.png'),
                 # Стояние
-                'idle_1': self.load_and_scale_image('TEMA 2.png', self.width, self.height),
-                'idle_2': self.load_and_scale_image('spider_stay5_cs.png', self.width, self.height),
-                'idle_1_rev': self.load_and_scale_image('TEMA 2_rev.png', self.width, self.height),
-                'idle_2_rev': self.load_and_scale_image('spider_stay5_cs_rev.png', self.width, self.height),
+                'idle_1': self.load_and_scale_image('TEMA 2.png'),
+                'idle_2': self.load_and_scale_image('spider_stay5_cs.png'),
+                'idle_1_rev': self.load_and_scale_image('TEMA 2_rev.png'),
+                'idle_2_rev': self.load_and_scale_image('spider_stay5_cs_rev.png'),
                 # Ходьба
-                'walk_1': self.load_and_scale_image('TEMA 100.png', self.width, self.height),
-                'walk_2': self.load_and_scale_image('TEMA 82.png', self.width, self.height),
-                'walk_3': self.load_and_scale_image('TEMA 84.png', self.width, self.height),
-                'walk_4': self.load_and_scale_image('TEMA 108.png', self.width, self.height),
-                'walk_5': self.load_and_scale_image('TEMA 116.png', self.width, self.height),
-                'walk_1_rev': self.load_and_scale_image('TEMA 100_rev.png', self.width, self.height),
-                'walk_2_rev': self.load_and_scale_image('TEMA 82_rev.png', self.width, self.height),
-                'walk_3_rev': self.load_and_scale_image('TEMA 84_rev.png', self.width, self.height),
-                'walk_4_rev': self.load_and_scale_image('TEMA 108_rev.png', self.width, self.height),
-                'walk_5_rev': self.load_and_scale_image('TEMA 116_rev.png', self.width, self.height),
+                'walk_1': self.load_and_scale_image('TEMA 100.png'),
+                'walk_2': self.load_and_scale_image('TEMA 82.png'),
+                'walk_3': self.load_and_scale_image('TEMA 84.png'),
+                'walk_4': self.load_and_scale_image('TEMA 108.png'),
+                'walk_5': self.load_and_scale_image('TEMA 116.png'),
+                'walk_1_rev': self.load_and_scale_image('TEMA 100_rev.png'),
+                'walk_2_rev': self.load_and_scale_image('TEMA 82_rev.png'),
+                'walk_3_rev': self.load_and_scale_image('TEMA 84_rev.png'),
+                'walk_4_rev': self.load_and_scale_image('TEMA 108_rev.png'),
+                'walk_5_rev': self.load_and_scale_image('TEMA 116_rev.png'),
                 # Смерть
-                'death': self.load_and_scale_image('spider_pose-1_cs.png', self.width, self.height),
+                'death': self.load_and_scale_image('spider_pose-1_cs.png'),
                 # Удар
-                'punch': self.load_and_scale_image('TEMA 70.png', self.width, self.height),
+                'punch': self.load_and_scale_image('TEMA 70.png'),
             }
             print("Спрайты игрока загружены успешно")
         except Exception as e:
             print(f"Ошибка загрузки спрайтов: {e}")
 
-    def load_and_scale_image(self, filename, width, height):
+    def load_and_scale_image(self, filename):
         """Загрузка и масштабирование изображения с использованием ЕДИНОЙ функции из config"""
-        # print(f"[DEBUG] Загрузка спрайта: {filename}")
-
         try:
             # Пробуем разные пути
             paths_to_try = [
@@ -153,37 +150,36 @@ class Player:
 
             for image_path in paths_to_try:
                 if os.path.exists(image_path):
-                    print(f"[DEBUG] Файл найден: {image_path}")
                     # Используем ЕДИНУЮ функцию из config
                     image = load_image_safe(image_path, convert_alpha=True)
-                    return pygame.transform.scale(image, (int(width), int(height)))
+                    return pygame.transform.scale(image, (int(self.width), int(self.height)))
 
             # Если файл не найден - используем функцию из config с заглушкой
             print(f"[DEBUG] Файл не найден, используем заглушку: {filename}")
             placeholder = load_image_safe(PLACEHOLDER_IMAGE, convert_alpha=True)
-            return pygame.transform.scale(placeholder, (int(width), int(height)))
+            return pygame.transform.scale(placeholder, (int(self.width), int(self.height)))
 
         except Exception as e:
             print(f"[DEBUG] Ошибка загрузки {filename}: {e}")
             # Используем ЕДИНУЮ функцию для заглушки
             placeholder = load_image_safe(PLACEHOLDER_IMAGE, convert_alpha=True)
-            return pygame.transform.scale(placeholder, (int(width), int(height)))
+            return pygame.transform.scale(placeholder, (int(self.width), int(self.height)))
 
     def handle_input(self, keys, ticks, sdvigy):
         """Обработка ввода пользователя"""
         # Бросок паутины
-        if (self.st == 4 or self.st == -100) and keys[pygame.K_LSHIFT] and sdvigy > 150:
+        if (self.st == 4 or self.st == -100) and keys[pygame.K_LSHIFT] and sdvigy > scale_value(150):
             self.start_web_swing(ticks)
-        # Движение влево/вправо - ОБНОВЛЕНО
+        # Движение влево/вправо
         if self.st == 0 and self.on_ground:
             if keys[pygame.K_d]:
                 self.move_right(ticks)
             elif keys[pygame.K_a]:
                 self.move_left(ticks)
-        # Управление во время полета на паутине - ОБНОВЛЕНО ДЛЯ st=-1
-        if (self.st == 1 or self.st == -1) and keys[pygame.K_LSHIFT] and sdvigy > 150:
+        # Управление во время полета на паутине
+        if (self.st == 1 or self.st == -1) and keys[pygame.K_LSHIFT] and sdvigy > scale_value(150):
             self.continue_web_swing()
-        # Отпускание паутины - ОБНОВЛЕНО ДЛЯ st=-1
+        # Отпускание паутины
         if (self.st == 1 or self.st == -1) and not keys[pygame.K_LSHIFT]:
             self.release_web_swing(ticks)
 
@@ -196,27 +192,19 @@ class Player:
                 if event.key == pygame.K_d and event.key != pygame.K_a and self.st in [3, 4]:
                     self.facing_right = True
                     self.revst = 0
-                    print(f"[FACING_KEYDOWN] Changed to RIGHT, st={self.st}")
                 elif event.key == pygame.K_a and event.key != pygame.K_d:
                     self.facing_right = False
                     self.revst = 1
-                    print(f"[FACING_KEYDOWN] Changed to LEFT, st={self.st}")
 
-                # Логируем только если направление действительно изменилось
-                if old_facing != self.facing_right:
-                    print(f"[FACING_CHANGED] {old_facing} -> {self.facing_right}")
             elif self.st == 0 and self.st != 4:
                 # Прыжок
                 if event.key == pygame.K_SPACE:
                     self.st = 4
                     self.coords_increase = 0
-                    print(f"[JUMP] Starting jump, st={self.st}")  # Для отладки
-
 
     def start_web_swing(self, ticks):
         """Начало полета на паутине"""
-        print(f"[DEBUG] start_web_swing: called, changing st from {self.st} to 1")
-        # ДОБАВЛЕНО: Учитываем текущее направление при начале полета
+        # Учитываем текущее направление при начале полета
         if self.facing_right:
             self.st = 1  # Полет вправо
         else:
@@ -225,7 +213,6 @@ class Player:
         self.coords_increase = 0
         self.SMRt = -50
         self.web_swinging = True
-        print(f"[DEBUG] start_web_swing: new st = {self.st}, web_swinging = {self.web_swinging}")
         self.play_web_sound()
 
     def continue_web_swing(self):
@@ -239,7 +226,7 @@ class Player:
             self.coords_increase = 0
             self.facing_right = not self.facing_right
 
-            # ДОБАВЛЕНО: Переключение между st=1 и st=-1 при развороте
+            # Переключение между st=1 и st=-1 при развороте
             if self.st == 1:
                 self.st = -1  # Переход в обратное направление
             else:
@@ -256,10 +243,8 @@ class Player:
             self.st = 2
             self.coords_increase = 0
             self.SMRt = 20  # Начальное значение для st=2
-            # print(f"[RELEASE_WEB] Переход в st=2, SMRt={self.SMRt}")
         else:
             self.st = 3
-            # print(f"[RELEASE_WEB] Переход в st=3 (короткий бросок)")
 
     def move_right(self, ticks):
         """Движение вправо"""
@@ -269,9 +254,6 @@ class Player:
         self.facing_right = True
         self.revst = 0
 
-        # Здесь будет логика изменения sdvigx (как в старом коде)
-        # Пока просто устанавливаем флаги
-
     def move_left(self, ticks):
         """Движение влево"""
         self.moving_left = True
@@ -280,13 +262,11 @@ class Player:
         self.facing_right = False
         self.revst = 1
 
-        # Здесь будет логика изменения sdvigx
-
     def apply_movement(self, sdvigx):
         """Применяет движение и возвращает новый sdvigx"""
         if self.st == 0 and self.on_ground:  # Только на земле
             if self.moving_right:
-                sdvigx -= PLAYER_SPEED  # Движение вправо (как в старом коде)
+                sdvigx -= PLAYER_SPEED  # Движение вправо
             elif self.moving_left:
                 sdvigx += PLAYER_SPEED  # Движение влево
 
@@ -312,7 +292,6 @@ class Player:
 
         # Запускаем эффект красной рамки
         self.damage_flash_timer = DAMAGE_FLASH_DURATION
-        print(f"[PLAYER] Получен урон: {amount}, HP: {self.health}")
 
     def die(self):
         """Обработка смерти игрока"""
@@ -321,10 +300,10 @@ class Player:
 
     def start_death_effect(self):
         """Запуск эффекта смерти"""
-        self.death_flash_timer = DEATH_FLASH_DURATION  # 45 кадров при 60 FPS (750 мс)
-        self.death_delay_timer = 90  # 90 кадров при 60 FPS (1500 мс)
-        self.death_sound_played = False  # Сбрасываем флаг звука
-        self.death_screen_shown = False  # Сбрасываем при новой смерти
+        self.death_flash_timer = DEATH_FLASH_DURATION
+        self.death_delay_timer = 90
+        self.death_sound_played = False
+        self.death_screen_shown = False
 
     def update_effects(self):
         """Обновление таймеров эффектов"""
@@ -336,14 +315,14 @@ class Player:
             self.death_flash_timer -= 1
         if self.death_delay_timer > 0:
             self.death_delay_timer -= 1
-        if self.exp_hint_timer > 0:  # Добавляем обновление таймера опыта
+        if self.exp_hint_timer > 0:
             self.exp_hint_timer -= 1
 
     def is_flashing(self):
         """Проверка, нужно ли показывать эффект"""
         return (self.damage_flash_timer > 0 or
                 self.death_flash_timer > 0 or
-                self.heal_flash_timer > 0)  # Добавляем проверку лечения
+                self.heal_flash_timer > 0)
 
     def can_attack(self):
         """Может ли игрок атаковать?"""
@@ -391,7 +370,6 @@ class Player:
                 if not self.exp_hint_shown:
                     self.exp_hint_timer = 250
                     self.exp_hint_shown = True
-                print(f"[EXP] +100! Всего: {self.exp}")
 
             try:
                 punch_sound = pygame.mixer.Sound(SOUND_FILES['punch'])
@@ -415,7 +393,6 @@ class Player:
         """Использование концентрации для лечения - тратится только необходимое количество"""
         # Если здоровье уже полное, не тратим концентрацию
         if self.health >= PLAYER_MAX_HEALTH:
-            print("[CONCENTRATION] Здоровье уже полное!")
             return False
 
         # Если концентрация пуста, не можем лечиться
@@ -444,12 +421,7 @@ class Player:
 
         # Эффект лечения
         self.heal_effect_timer = 30
-
-        # Эффект лечения - зеленая рамка
         self.heal_flash_timer = 40
-
-        print(f"[CONCENTRATION] Использовано {concentration_used}% концентрации! +{health_gained:.1f} HP")
-        print(f"[CONCENTRATION] Осталось концентрации: {self.concentration}%")
 
         return True
 
@@ -487,7 +459,7 @@ class Player:
         if self.on_ground and not keys[pygame.K_d] and not keys[pygame.K_a]:
             self.walking = False
 
-        # ОБНОВЛЕНИЕ ДЛЯ ST=2...
+        # ОБНОВЛЕНИЕ ДЛЯ ST=2
         if self.st == 2:
             self.coords_increase += 1
 
@@ -498,15 +470,16 @@ class Player:
                 self.st = 3
                 self.coords_increase = 0
 
-        # Проверка на землю
-        if sdvigy <= -415 and not self.web_swinging:
+        # Проверка на землю (масштабированная)
+        ground_level = scale_value(-415)
+        if sdvigy <= ground_level and not self.web_swinging:
             if self.st == -100:
                 self.st = 0
                 try:
                     land_sound = pygame.mixer.Sound(SOUND_FILES['punch_ground'])
                     land_sound.play()
                 except:
-                    print("NO")
+                    pass
             self.on_ground = True
             if self.st in [2, 3]:
                 self.st = 0
@@ -527,7 +500,7 @@ class Player:
             if rotation != 0:
                 sprite = pygame.transform.rotate(sprite, rotation)
 
-            # Фиксированная позиция на экране
+            # Фиксированная позиция на экране (уже масштабирована через конфиг)
             screen_x = self.screen_x + draw_position[0]
             screen_y = self.screen_y + draw_position[1]
 
@@ -538,23 +511,23 @@ class Player:
                 self.draw_web_line(screen, sdvigx, sdvigy)
 
     def get_render_info(self):
-        """Определение текущего спрайта"""
+        """Определение текущего спрайта с масштабированными смещениями"""
         direction = "" if self.facing_right else "_rev"
 
         if self.health <= 0:
-            return "death", (27, 140), 0
+            return "death", (scale_value(27), scale_value(140)), 0
         if self.st == -100:
-            return "swing_7", (27, 0), -65
+            return "swing_7", (scale_value(27), 0), -65
         elif self.st == 0:
             if self.on_ground:
                 if hasattr(self, 'walking') and self.walking:
                     walk_cycle = int(pygame.time.get_ticks() / 100) % 5 + 1
-                    return f"walk_{walk_cycle}{direction}", (20, 140), 0
+                    return f"walk_{walk_cycle}{direction}", (scale_value(20), scale_value(140)), 0
                 else:
-                    return "idle_1", (20, 140), 0
+                    return "idle_1", (scale_value(20), scale_value(140)), 0
             else:
-                return f"swing_8{direction}", (0, 150), 0
-        elif self.st == 1 or self.st == -1:  # ОБЪЕДИНЕНО ДЛЯ ОБОИХ НАПРАВЛЕНИЙ
+                return f"swing_8{direction}", (0, scale_value(150)), 0
+        elif self.st == 1 or self.st == -1:
             if self.coords_increase < 310:
                 rotation = -40 + (self.coords_increase / 310) * 40
             else:
@@ -562,56 +535,56 @@ class Player:
             rotation = max(-40, min(45, rotation))
             if not self.facing_right:
                 rotation = -rotation
-            return f"swing_1{direction}", (20, 100), rotation
+            return f"swing_1{direction}", (scale_value(20), scale_value(100)), rotation
         elif self.st == 2:
-            # Полет после отпускания паутины (как в старом коде)
+            # Полет после отпускания паутины
             rotation = self.SMRt
 
             # Инвертируем угол для направления влево
             if not self.facing_right:
                 rotation = -rotation
 
-            return f"swing_7{direction}", (60, 40), rotation  # Позиция как в старом коде: (60, 40)
-        elif self.st == 3:  # Свободное падение - ВСЕГДА ОТОБРАЖАЕМ
-            # ИСПРАВЛЕНИЕ: Инвертируем угол для направления влево
-            rotation = -65  # Базовый угол
-            # Если смотрим влево, инвертируем угол
+            return f"swing_7{direction}", (scale_value(60), scale_value(40)), rotation
+        elif self.st == 3:
+            # Свободное падение
+            rotation = -65
             if not self.facing_right:
                 rotation = -rotation
-            return f"swing_7{direction}", (27, 0), rotation
+            return f"swing_7{direction}", (scale_value(27), 0), rotation
         elif self.st == 4:
-            return f"jump{direction}", (40, 40), 0
-        return "idle_1", (20, 140), 0
+            return f"jump{direction}", (scale_value(40), scale_value(40)), 0
+        return "idle_1", (scale_value(20), scale_value(140)), 0
 
     def draw_web_line(self, screen, sdvigx, sdvigy):
+        """Отрисовка линии паутины с масштабированием"""
         # Примерная высота, где паутина цепляется к зданию
-        building_top_y = -2000 + SCREEN_HEIGHT - 100 + sdvigy + 100
+        building_top_y = -2000 + SCREEN_HEIGHT - scale_value(100) + sdvigy + scale_value(100)
 
-        # Вычисляем координаты края спрайта на экране, откуда тянется паутина
+        # Вычисляем координаты края спрайта на экране
         sprite_key, draw_position, rotation = self.get_render_info()
         sprite_screen_x = self.screen_x + draw_position[0]
         sprite_screen_y = self.screen_y + draw_position[1]
 
         # Создаём Rect
         sprite_rect = pygame.Rect(sprite_screen_x, sprite_screen_y, self.width, self.height)
-        # print("Позиции", sprite_rect.topright, sprite_screen_x, sprite_screen_y)
 
         # Выбираем стартовую точку в зависимости от направления
         if self.facing_right:
-            start_x, start_y = sprite_rect.topright  # <-- Правый верхний угол
+            start_x, start_y = sprite_rect.topright
         else:
-            start_x, start_y = sprite_rect.topleft  # <-- Левый верхний угол
+            start_x, start_y = sprite_rect.topleft
 
         # end_x — координата на экране, где крепится паутина к зданию
-        # Привязываем к краю фона в зависимости от направления
         if self.facing_right:
-            end_x = SCREEN_WIDTH - 250 * SCALE_X - self.coords_increase * 2
+            end_x = SCREEN_WIDTH - scale_value(250) - self.coords_increase * 2
         else:
-            end_x = 300 + self.coords_increase * 2
+            end_x = scale_value(300) + self.coords_increase * 2
 
         end_y = building_top_y
 
-        pygame.draw.line(screen, WHITE, (start_x, start_y), (end_x, end_y), 2)
+        # Масштабируем толщину линии
+        line_thickness = max(1, scale_value(2))
+        pygame.draw.line(screen, WHITE, (start_x, start_y), (end_x, end_y), line_thickness)
 
     def play_web_sound(self):
         """Воспроизведение звука паутины"""

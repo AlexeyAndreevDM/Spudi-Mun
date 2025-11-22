@@ -11,26 +11,28 @@ class Enemy:
     def __init__(self, world_x):
         # Позиция в мире (независимая от камеры)
         self.world_x = world_x
-        self.width = 170
-        self.height = 170
+
+        # Масштабируемые размеры
+        self.width = scale_value(170)
+        self.height = scale_value(170)
 
         # Состояния
         self.state = "idle"
         self.facing_right = False
         self.health = 100
 
-        # Скорости (только 2: базовая для преследования, в 2 раза медленнее для патрулирования)
+        # Скорости (не масштабируются - геймплейные параметры)
         self.base_speed = 2.0
         self.patrol_speed = self.base_speed / 2  # 1.0 - медленное патрулирование
         self.chase_speed = self.base_speed * 1.2  # 2.4 - в 1.2 раза быстрее базовой для преследования
 
-        # Минимальное расстояние до игрока
-        self.min_approach_distance = 110
+        # Минимальное расстояние до игрока (масштабируется)
+        self.min_approach_distance = scale_value(110)
 
         # Для предотвращения наложения
         self.avoidance_force = 0
 
-        # Анимация и таймеры
+        # Анимация и таймеры (не масштабируются)
         self.walk_counter = 0
         self.attack_cooldown = 0
         self.hurt_timer = 0
@@ -39,9 +41,9 @@ class Enemy:
         self.sprites = {}
         self.load_sprites()
 
-        # Зоны обнаружения
-        self.detection_range = 300
-        self.attack_range = 140
+        # Зоны обнаружения (масштабируются)
+        self.detection_range = scale_value(300)
+        self.attack_range = scale_value(140)
 
     def load_sprites(self):
         """Загрузка спрайтов врага - один раз"""
@@ -121,7 +123,7 @@ class Enemy:
         self.avoidance_force = separation_force * 3  # Множитель для усиления эффекта
 
     def update(self, player, sdvigx, enemies):
-        """Добавьте обработку смерти в update"""
+        """Обновление состояния врага"""
         if self.state == "dead":
             return
         elif self.state == "dying":
@@ -218,7 +220,7 @@ class Enemy:
 
         # Экранная позиция = world_x + sdvigx
         screen_x = self.world_x + sdvigx
-        final_y = road_y - self.height + 50
+        final_y = road_y - self.height + scale_value(50)  # Масштабируем отступ от дороги
 
         sprite = self.get_current_sprite()
         if not self.facing_right:
@@ -232,11 +234,11 @@ class Enemy:
         return self.sprites['idle']
 
     def draw_health_bar(self, screen, screen_x, y_pos):
-        """Полоска здоровья"""
-        bar_width = 100
-        bar_height = 6
+        """Полоска здоровья (масштабируется)"""
+        bar_width = scale_value(100)
+        bar_height = scale_value(6)
         bar_x = screen_x + (self.width - bar_width) // 2
-        bar_y = y_pos - 15
+        bar_y = y_pos - scale_value(15)  # Масштабируем отступ сверху
 
         pygame.draw.rect(screen, (100, 0, 0), (bar_x, bar_y, bar_width, bar_height))
         health_width = max(0, (self.health / 100) * bar_width)
