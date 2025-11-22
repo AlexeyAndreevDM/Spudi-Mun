@@ -60,15 +60,41 @@
 
 ## 🎯 Controls
 
+### 🎮 In-Game Controls
+
 | Action | Control | Description |
 |--------|---------|-------------|
-| **Movement** | `A/D` or `←/→` | Move left/right |
+| **Movement** | `A/D` | Move left/right |
 | **Jump** | `SPACE` | Vertical jump |
 | **Web Swing** | `L-SHIFT` | Throw/web swing (hold) |
 | **Attack** | `LMB` | Melee attack |
 | **Heal** | `1` | Use concentration for healing |
 | **Pause Menu** | `TAB` | Access suit selection & settings |
-| **Exit** | `ESC` | Quit game |
+
+### 📋 Main Menu Controls
+
+| Action | Control | Description |
+|--------|---------|-------------|
+| **Navigation** | `↑/↓/←/→` | Move through menu options |
+| **Select** | `X` | Confirm selection |
+| **Back** | `O` | Return to previous screen |
+| **Exit Game** | `ESC` | Quit to desktop |
+
+### ⏸️ Pause Menu Controls
+
+| Action | Control | Description |
+|--------|---------|-------------|
+| **Navigation** | `↑/↓/←/→` | Navigate menu options |
+| **Select** | `LMB` or `X` | Choose option/select suit |
+| **Resume Game** | `TAB` | Return to gameplay |
+| **Exit to Menu** | `ESC` | Quit to main menu |
+
+### 🛠️ System Controls
+
+| Action | Control | Description |
+|--------|---------|-------------|
+| **Force Quit** | `ESC` | Immediate exit (developer) |
+| **Window Close** | `X` | Standard window close |
 
 ## 🎮 Gameplay Systems
 
@@ -232,9 +258,7 @@ DIFFICULTY_SETTINGS = {
 
 | Issue | Status | Workaround |
 |-------|--------|------------|
-| Health text positioning | 🔄 Investigating | Manual position adjustment in code |
-| Sound loading errors | ✅ Resolved | Fallback to placeholder system |
-| Scaling on very small screens | ⚠️ Limited | Minimum scale of 0.8x enforced |
+| Saving when exit | ⚠️ Limited | No save when closing pause menu or using Escape |
 
 ## 🔮 Roadmap
 
